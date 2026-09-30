@@ -36,11 +36,72 @@ BASE = Path(__file__).resolve().parent.parent
 FRONTEND = BASE / "frontend"
 
 if FRONTEND.exists():
-    app.mount("/static", StaticFiles(directory=FRONTEND / "static"), name="static")
+    # Static folder mount (CSS, JS, images)
+    static_dir = FRONTEND / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+    # All HTML pages
     @app.get("/", include_in_schema=False)
     def frontend_home():
         return FileResponse(FRONTEND / "index.html")
+
+    @app.get("/login", include_in_schema=False)
+    def login_page():
+        return FileResponse(FRONTEND / "login.html")
+
+    @app.get("/signup", include_in_schema=False)
+    def signup_page():
+        return FileResponse(FRONTEND / "signup.html")
+
+    @app.get("/dashboard", include_in_schema=False)
+    def dashboard_page():
+        return FileResponse(FRONTEND / "dashboard.html")
+
+    @app.get("/pricing", include_in_schema=False)
+    def pricing_page():
+        return FileResponse(FRONTEND / "pricing.html")
+
+    @app.get("/profile", include_in_schema=False)
+    def profile_page():
+        return FileResponse(FRONTEND / "profile.html")
+
+    @app.get("/settings", include_in_schema=False)
+    def settings_page():
+        return FileResponse(FRONTEND / "settings.html")
+
+    @app.get("/reports", include_in_schema=False)
+    def reports_page():
+        return FileResponse(FRONTEND / "reports.html")
+
+    @app.get("/help", include_in_schema=False)
+    def help_page():
+        return FileResponse(FRONTEND / "help.html")
+
+    @app.get("/plan-upload", include_in_schema=False)
+    def plan_upload_page():
+        return FileResponse(FRONTEND / "plan-upload.html")
+
+    @app.get("/plan-report", include_in_schema=False)
+    def plan_report_page():
+        return FileResponse(FRONTEND / "plan-report.html")
+
+    @app.get("/chakra-form", include_in_schema=False)
+    def chakra_form_page():
+        return FileResponse(FRONTEND / "chakra-form.html")
+
+    @app.get("/chakra-overlay", include_in_schema=False)
+    def chakra_overlay_page():
+        return FileResponse(FRONTEND / "chakra-overlay.html")
+
+    @app.get("/report/{report_id}", include_in_schema=False)
+    def serve_report(report_id: str):
+        return FileResponse(FRONTEND / "report.html")
+
+    @app.get("/upload", include_in_schema=False)
+    def serve_upload_page():
+        return FileResponse(FRONTEND / "upload.html")
+
 else:
     @app.get("/", tags=["Root"])
     def root():
@@ -55,98 +116,3 @@ def health():
         "total_devatas": len(get_all_devatas()),
         "total_elements": len(get_elements_data()["elements"])
     }
-
-@app.get("/report/{report_id}", include_in_schema=False)
-def serve_report(report_id: str):
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "report.html")
-
-@app.get("/upload", include_in_schema=False)
-def serve_upload_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "upload.html")
-
-
-
-@app.get("/chakra-form", include_in_schema=False)
-def chakra_form_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "chakra-form.html")
-
-# ═══ DATABASE INIT ═══
-@app.on_event("startup")
-def startup_event():
-    from database.db import init_db
-    init_db()
-    print("[INFO] Vastu One API started")
-
-@app.get("/login", include_in_schema=False)
-def login_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "login.html")
-
-
-@app.get("/signup", include_in_schema=False)
-def signup_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "signup.html")
-
-@app.get("/dashboard", include_in_schema=False)
-def dashboard_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "dashboard.html")
-
-@app.get("/pricing", include_in_schema=False)
-def pricing_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "pricing.html")
-
-@app.get("/reports", include_in_schema=False)
-def reports_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "reports.html")
-
-@app.get("/rooms-form", include_in_schema=False)
-def rooms_form_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "rooms-form.html")
-
-
-
-@app.get("/chakra-overlay", include_in_schema=False)
-def chakra_overlay_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "chakra-overlay.html")
-
-
-
-@app.get("/plan-report/{report_id}", include_in_schema=False)
-def plan_report_page(report_id: str):
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "plan-report.html")
-
-
-
-@app.get("/plan-upload", include_in_schema=False)
-def plan_upload_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "plan-upload.html")
-
-
-
-@app.get("/profile", include_in_schema=False)
-def profile_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "profile.html")
-
-
-@app.get("/settings", include_in_schema=False)
-def settings_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "settings.html")
-
-
-@app.get("/help", include_in_schema=False)
-def help_page():
-    from fastapi.responses import FileResponse
-    return FileResponse(FRONTEND / "help.html")

@@ -18,13 +18,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN playwright install chromium && playwright install-deps chromium
-
-COPY . .
-
 ENV CHROME_PATH=/usr/bin/chromium
 ENV FONT_REGULAR=/usr/share/fonts/truetype/noto/NotoSansDevanagari-Regular.ttf
 ENV FONT_BOLD=/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf
 ENV PYTHONUNBUFFERED=1
+
+# YAHAN CODE COPY HO RAHA HAI
+COPY . .
 
 EXPOSE 8000
 CMD ["sh", "-c", "uvicorn api.server:app --host 0.0.0.0 --port ${PORT:-8000}"]
