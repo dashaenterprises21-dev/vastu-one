@@ -3,7 +3,6 @@ Vastu AI - PDF Generator (v2)
 Loads Noto Sans Devanagari from file:// path
 """
 
-import os
 from pathlib import Path
 from datetime import datetime
 from jinja2 import Template
@@ -13,11 +12,11 @@ import io
 import base64
 
 TEMPLATE_PATH = Path(__file__).resolve().parent / "templates" / "report.html"
-CHROME_PATH = os.environ.get("CHROME_PATH") or (r"C:\Program Files\Google\Chrome\Application\chrome.exe" if os.name == "nt" else "/usr/bin/chromium")
+CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # Windows font path
-FONT_REGULAR = Path(os.environ.get("FONT_REGULAR") or ("C:/Windows/Fonts/NotoSansDevanagari-Regular.ttf" if os.name == "nt" else "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Regular.ttf"))
-FONT_BOLD = Path(os.environ.get("FONT_BOLD") or ("C:/Windows/Fonts/NotoSansDevanagari-Bold.ttf" if os.name == "nt" else "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf"))
+FONT_REGULAR = Path("C:/Windows/Fonts/NotoSansDevanagari-Regular.ttf")
+FONT_BOLD = Path("C:/Windows/Fonts/NotoSansDevanagari-Bold.ttf")
 
 
 def get_font_css():
@@ -205,6 +204,3 @@ class HTMLVastuReport:
 
         print(f"[INFO] PDF created: {self.output_path} ({len(pages)} pages)")
         return self.output_path
-
-
-

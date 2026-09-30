@@ -36,4 +36,5 @@ floorplan-model/
 Thumbs.db
 
 # Logs
-*.log
+*.log__pycache__/
+*.pyc

@@ -1,0 +1,16 @@
+﻿.git
+.gitignore
+*.bak
+*.pyc
+__pycache__
+.venv
+venv
+env
+.pytest_cache
+.vscode
+.idea
+*.log
+logs
+.DS_Store
+Thumbs.db
+test_output.json
