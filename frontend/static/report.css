@@ -1,0 +1,419 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Noto Sans Devanagari', 'Nirmala UI', sans-serif;
+    color: #0f1419;
+    background: #f3f4f6;
+    line-height: 1.6;
+}
+
+.action-bar {
+    position: sticky;
+    top: 0;
+    background: #1e2530;
+    color: white;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+.om { font-size: 24px; }
+.actions { display: flex; gap: 10px; }
+
+.btn-primary {
+    background: #f59e0b; color: #000; border: none;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+}
+.btn-primary:hover { background: #fbbf24; }
+
+.btn-secondary {
+    background: transparent; color: white;
+    border: 1px solid #4b5563; padding: 10px 20px;
+    border-radius: 8px; font-size: 14px; cursor: pointer;
+    font-family: inherit;
+}
+
+.report-container {
+    max-width: 210mm;
+    margin: 20px auto;
+    background: white;
+    padding: 20mm 15mm;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.report-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #f59e0b;
+    margin-bottom: 30px;
+}
+.report-header .om-icon { font-size: 42px; margin-bottom: 8px; }
+.report-header h1 {
+    font-size: 32px; color: #f59e0b; letter-spacing: 2px;
+}
+.report-header .subtitle {
+    font-size: 14px; color: #6b7280; margin-top: 4px;
+}
+.report-meta {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #6b7280;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.score-hero { text-align: center; padding: 30px 0; margin-bottom: 30px; }
+.score-number {
+    font-size: 72px; font-weight: 700;
+    color: #f59e0b; line-height: 1;
+}
+.score-max { font-size: 16px; color: #6b7280; }
+.score-grade {
+    display: inline-block; background: #f59e0b; color: white;
+    padding: 8px 32px; border-radius: 8px;
+    font-size: 20px; font-weight: 700; margin-top: 16px;
+}
+
+.section { margin: 30px 0; page-break-inside: avoid; }
+.section h2 {
+    font-size: 20px; color: #1e2530;
+    padding-bottom: 8px; border-bottom: 2px solid #f59e0b;
+    margin-bottom: 16px;
+}
+.section h3 { font-size: 16px; color: #d97706; margin: 20px 0 12px 0; }
+
+.data-table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0; font-size: 13px;
+}
+.data-table th {
+    background: #1e2530; color: white;
+    padding: 10px; text-align: left; font-weight: 600;
+}
+.data-table td {
+    padding: 10px; border: 1px solid #e5e7eb; vertical-align: top;
+}
+.data-table tr:nth-child(even) td { background: #f9fafb; }
+.data-table tr.total td {
+    background: #fef3c7; font-weight: 700; color: #92400e;
+}
+
+.card {
+    background: #f9fafb; border-left: 5px solid #ef4444;
+    padding: 16px; margin: 12px 0; border-radius: 4px;
+    page-break-inside: avoid;
+}
+.card.remedy { border-left-color: #3b82f6; }
+.card.room { border-left-color: #8b5cf6; }
+
+.card-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 10px;
+}
+.card-title { font-size: 15px; font-weight: 700; color: #0f1419; }
+
+.badge {
+    padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; color: white;
+}
+.badge-red { background: #ef4444; }
+.badge-blue { background: #3b82f6; }
+.badge-green { background: #10b981; }
+.badge-orange { background: #f59e0b; }
+
+.card-row { margin: 6px 0; font-size: 13px; }
+.card-row b { color: #6b7280; display: inline-block; min-width: 110px; }
+
+.shastra-ref {
+    background: #f3e8ff; border-left: 3px solid #8b5cf6;
+    padding: 10px 14px; margin-top: 10px;
+    color: #6b21a8; font-size: 12px; font-style: italic;
+    border-radius: 3px;
+}
+
+.mantra {
+    background: #fef3c7; padding: 12px; margin-top: 10px;
+    text-align: center; font-weight: 700;
+    color: #92400e; font-size: 14px; border-radius: 4px;
+}
+
+.chakra-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 2px;
+    max-width: 450px;
+    margin: 20px auto;
+    border: 2px solid #1e2530;
+    padding: 4px;
+    background: white;
+}
+.chakra-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    border-radius: 2px;
+    text-align: center;
+    padding: 2px;
+}
+.zone-NE { background: #10b981; }
+.zone-N { background: #3b82f6; }
+.zone-E { background: #f59e0b; }
+.zone-SE { background: #ef4444; }
+.zone-S { background: #ea580c; }
+.zone-SW { background: #d97706; }
+.zone-W { background: #8b5cf6; }
+.zone-NW { background: #0ea5e9; }
+.zone-brahma { background: #fbbf24; border: 2px solid #92400e; }
+.zone-defect { background: #dc2626 !important; border: 2px solid #7f1d1d !important; }
+.zone-correct { background: #059669 !important; border: 2px solid #065f46 !important; }
+
+.cta {
+    background: #fef3c7; border: 2px solid #f59e0b;
+    padding: 20px; text-align: center;
+    border-radius: 8px; margin: 20px 0;
+}
+.cta h3 { color: #92400e; margin-bottom: 8px; font-size: 16px; }
+.cta p { color: #78350f; font-size: 13px; margin: 4px 0; }
+.cta b { color: #0f1419; }
+
+.disclaimer {
+    background: #f3f4f6; padding: 16px;
+    border-radius: 6px; font-size: 11px;
+    color: #4b5563; line-height: 1.7; margin-top: 20px;
+}
+.disclaimer h3 {
+    color: #92400e; font-size: 13px; margin-bottom: 8px;
+}
+
+.report-footer {
+    text-align: center; padding-top: 20px;
+    margin-top: 30px; border-top: 1px solid #e5e7eb;
+    font-size: 11px; color: #9ca3af;
+}
+
+@media print {
+    body { background: white; font-size: 11pt; }
+    .no-print { display: none !important; }
+    .report-container {
+        box-shadow: none; margin: 0; padding: 0;
+        max-width: 100%;
+    }
+    .section { page-break-inside: avoid; }
+    .card { page-break-inside: avoid; }
+    @page { size: A4; margin: 15mm 12mm; }
+}
+/* ═══ METHODOLOGY STEPS ═══ */
+.method-step {
+    background: white;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.step-num {
+    display: inline-block;
+    background: #f59e0b;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 700;
+    font-size: 11px;
+    margin-right: 8px;
+}
+
+/* ═══ CHAKRA LEGEND ═══ */
+.chakra-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 15px;
+    font-size: 11px;
+}
+.chakra-legend span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.legend-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid #1e2530;
+}
+
+/* ═══ TABLE ROW COLORS ═══ */
+.data-table tr.row-defect td { background: #fee2e2 !important; }
+.data-table tr.row-correct td { background: #d1fae5 !important; }
+
+/* ═══ ROLE SECTION ═══ */
+.role-section {
+    background: linear-gradient(135deg, #fef9f3 0%, #fef3c7 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0;
+}
+.role-section h3 {
+    color: #92400e;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.role-section p {
+    font-size: 12px;
+    color: #0f1419;
+    margin: 6px 0;
+    line-height: 1.65;
+}
+.role-section p b { color: #92400e; }
+
+/* ═══ ACTION ITEMS ═══ */
+.action-item {
+    background: #f9fafb;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 6px 0;
+    font-size: 12px;
+    border-radius: 3px;
+}
+.action-item.priority-high {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+}
+.action-item.priority-medium {
+    border-left-color: #f59e0b;
+    background: #fef3c7;
+}
+.action-item.priority-low {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+.action-item b {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+    margin-right: 8px;
+    font-size: 11px;
+}
+/* ═══ METHODOLOGY STEPS ═══ */
+.method-step {
+    background: white;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.step-num {
+    display: inline-block;
+    background: #f59e0b;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-weight: 700;
+    font-size: 11px;
+    margin-right: 8px;
+}
+
+/* ═══ CHAKRA LEGEND ═══ */
+.chakra-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 15px;
+    font-size: 11px;
+}
+.chakra-legend span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.legend-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid #1e2530;
+}
+
+/* ═══ TABLE ROW COLORS ═══ */
+.data-table tr.row-defect td { background: #fee2e2 !important; }
+.data-table tr.row-correct td { background: #d1fae5 !important; }
+
+/* ═══ ROLE SECTION ═══ */
+.role-section {
+    background: linear-gradient(135deg, #fef9f3 0%, #fef3c7 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0;
+}
+.role-section h3 {
+    color: #92400e;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.role-section p {
+    font-size: 12px;
+    color: #0f1419;
+    margin: 6px 0;
+    line-height: 1.65;
+}
+.role-section p b { color: #92400e; }
+
+/* ═══ ACTION ITEMS ═══ */
+.action-item {
+    background: #f9fafb;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 6px 0;
+    font-size: 12px;
+    border-radius: 3px;
+}
+.action-item.priority-high {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+}
+.action-item.priority-medium {
+    border-left-color: #f59e0b;
+    background: #fef3c7;
+}
+.action-item.priority-low {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+.action-item b {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+    margin-right: 8px;
+    font-size: 11px;
+}

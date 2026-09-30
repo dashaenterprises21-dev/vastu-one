@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>मेरी Reports — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/reports.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <a href="/dashboard" class="btn-back">← Dashboard</a>
+    </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="container main">
+
+    <div class="page-header">
+        <div>
+            <h1>📄 मेरी Reports</h1>
+            <p>आपकी सारी वास्तु reports एक जगह</p>
+        </div>
+        <a href="/upload" class="btn-new">📤 नई Report बनाएँ</a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterReports('all', this)">सभी</button>
+        <button class="filter-btn" onclick="filterReports('paid', this)">✅ Paid</button>
+        <button class="filter-btn" onclick="filterReports('pending', this)">⏳ Pending</button>
+        <button class="filter-btn" onclick="filterReports('bronze', this)">🎯 Bronze</button>
+<button class="filter-btn" onclick="filterReports('silver', this)">⭐ Silver</button>
+<button class="filter-btn" onclick="filterReports('gold', this)">👑 Gold</button>
+<button class="filter-btn" onclick="filterReports('platinum', this)">💎 Platinum</button>
+    </div>
+
+    <!-- Reports Grid -->
+    <div id="reportsGrid" class="reports-grid">
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Reports लोड हो रही हैं...</p>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p class="footer-sub">बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/reports.js"></script>
+</body>
+</html>

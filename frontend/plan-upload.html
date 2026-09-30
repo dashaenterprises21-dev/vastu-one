@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Upload — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/plan-upload.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <a href="/dashboard" class="btn-back">← Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="container main">
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="om-symbol">🕉️</div>
+        <h1>अपना Plan Upload करें</h1>
+        <p>AI आपके plan को पढ़कर 45 देवताओं + शास्त्रों से analysis करेगा</p>
+    </section>
+
+    <!-- STEP 1: UPLOAD -->
+    <section class="step-section" id="stepUpload">
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" id="planInput" accept=".png,.jpg,.jpeg,.webp" hidden>
+            <div class="upload-content">
+                <div class="upload-icon">📐</div>
+                <h3>Plan Image यहाँ Drop करें</h3>
+                <p>या click करके file चुनें</p>
+                <p class="upload-formats">PNG, JPG, JPEG, WEBP — Max 10 MB</p>
+                <button class="btn-upload" onclick="document.getElementById('planInput').click()">
+                    📁 File चुनें
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- STEP 2: PREVIEW -->
+    <section class="step-section" id="stepPreview" style="display:none;">
+        <div class="preview-card">
+            <div class="preview-header">
+                <h3>📸 Preview</h3>
+                <button class="btn-remove" onclick="removeFile()">✕ हटाएँ</button>
+            </div>
+            <div class="preview-image-wrap">
+                <img id="previewImage" src="" alt="Plan preview">
+            </div>
+            <div class="preview-info">
+                <span><b>File:</b> <span id="fileName">—</span></span>
+                <span><b>Size:</b> <span id="fileSize">—</span></span>
+            </div>
+            <button class="btn-analyze" id="analyzeBtn" onclick="analyzePlan()">
+                🔍 AI से Analyze करें
+            </button>
+        </div>
+    </section>
+
+    <!-- STEP 3: LOADING -->
+    <section class="step-section" id="stepLoading" style="display:none;">
+        <div class="loading-card">
+            <div class="spinner"></div>
+            <h3>🤖 AI Analysis हो रहा है...</h3>
+            <div class="progress-steps">
+                <div class="p-step" id="ps1">⏳ Plan पढ़ा जा रहा है</div>
+                <div class="p-step" id="ps2">⏳ Rooms detect हो रहे हैं</div>
+                <div class="p-step" id="ps3">⏳ Directions निकाले जा रहे हैं</div>
+                <div class="p-step" id="ps4">⏳ 45 देवताओं से check हो रहा है</div>
+                <div class="p-step" id="ps5">⏳ शास्त्र प्रमाण जोड़े जा रहे हैं</div>
+                <div class="p-step" id="ps6">⏳ Report तैयार हो रही है</div>
+            </div>
+            <p class="loading-note">⏱️ इसमें 30-60 seconds लग सकते हैं</p>
+        </div>
+    </section>
+
+    <!-- STEP 4: ERROR -->
+    <section class="step-section" id="stepError" style="display:none;">
+        <div class="error-card">
+            <div class="error-icon">⚠️</div>
+            <h3 id="errorTitle">कुछ गड़बड़ हो गई</h3>
+            <p id="errorMessage">दोबारा try करें</p>
+            <button class="btn-retry" onclick="removeFile()">🔄 नया Plan Upload करें</button>
+        </div>
+    </section>
+
+    <!-- Info -->
+    <div class="info-section">
+        <h3>🕉️ क्या होगा analysis में:</h3>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icon">🏠</div>
+                <h4>12+ Rooms Detect</h4>
+                <p>AI आपके plan से सारे rooms, doors, windows निकालेगा</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🧭</div>
+                <h4>Direction Analysis</h4>
+                <p>हर room का exact direction — compass से match</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🕉️</div>
+                <h4>45 देवता Check</h4>
+                <p>हर room को 45 देवताओं से verify करेगा</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">📖</div>
+                <h4>शास्त्र प्रमाण</h4>
+                <p>बृहत्संहिता, मयमतम् से हर दोष का प्रमाण</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">💊</div>
+                <h4>Non-Demolition उपाय</h4>
+                <p>तोड़-फोड़ बिना हर दोष का समाधान</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🕉️</div>
+                <h4>मंत्र + रंग</h4>
+                <p>हर उपाय के साथ मंत्र और रंग सुझाव</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p class="footer-sub">बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/plan-upload.js"></script>
+</body>
+</html>

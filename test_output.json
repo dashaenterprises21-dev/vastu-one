@@ -1,0 +1,422 @@
+﻿{
+    "devata_audit":  {
+                         "total_issues":  1,
+                         "total_correct":  1,
+                         "issues":  [
+                                        {
+                                            "pada":  1,
+                                            "devata":  "Shikhi",
+                                            "hindi":  "à¤¶à¤¿à¤à¥",
+                                            "direction":  "NE",
+                                            "object":  "toilet",
+                                            "problem":  "toilet in Shikhi (à¤¶à¤¿à¤à¥) zone",
+                                            "severity":  "high",
+                                            "domain_affected":  [
+                                                                    "health",
+                                                                    "immunity"
+                                                                ],
+                                            "shastra_reference":  {
+                                                                      "id":  "BST-53-67",
+                                                                      "source":  "Brihat Samhita",
+                                                                      "chapter":  53,
+                                                                      "verse":  67,
+                                                                      "meaning":  "à¤¯à¤¦à¤¿ à¤µà¤¾à¤¸à¥à¤¤à¥ à¤ªà¥à¤°à¥à¤· à¤à¤¾ à¤¦à¤¾à¤¹à¤¿à¤¨à¤¾ à¤¹à¤¾à¤¥ à¤à¤à¤¾ à¤¹à¥ (à¤à¤° à¤à¤¾ à¤à¥à¤°à¤¿à¤¡ à¤à¥à¤à¤¾ à¤¹à¥) â à¤§à¤¨ à¤à¤° à¤ªà¤¤à¥à¤¨à¥ à¤à¥ à¤¹à¤¾à¤¨à¤¿",
+                                                                      "category":  "grid_completeness",
+                                                                      "impact":  "wealth_spouse"
+                                                                  },
+                                            "penalty":  8,
+                                            "positive_objects":  [
+                                                                     "water",
+                                                                     "plants"
+                                                                 ],
+                                            "negative_objects":  [
+                                                                     "toilet",
+                                                                     "fire"
+                                                                 ]
+                                        }
+                                    ],
+                         "positive_hits":  [
+                                               {
+                                                   "pada":  21,
+                                                   "devata":  "Varuna",
+                                                   "hindi":  "à¤µà¤°à¥à¤£",
+                                                   "direction":  "W",
+                                                   "object":  "water",
+                                                   "domain":  [
+                                                                  "rain",
+                                                                  "purification"
+                                                              ],
+                                                   "element":  "water",
+                                                   "status":  "correct",
+                                                   "reason":  "water correct in à¤µà¤°à¥à¤£",
+                                                   "shastra_reference":  null
+                                               }
+                                           ],
+                         "all_devatas_status":  [
+                                                    {
+                                                        "pada":  1,
+                                                        "devata":  "Shikhi",
+                                                        "hindi":  "à¤¶à¤¿à¤à¥",
+                                                        "direction":  "NE",
+                                                        "object":  "toilet",
+                                                        "domain":  [
+                                                                       "health",
+                                                                       "immunity"
+                                                                   ],
+                                                        "element":  "water",
+                                                        "status":  "defect",
+                                                        "reason":  "toilet in Shikhi (à¤¶à¤¿à¤à¥) zone",
+                                                        "shastra_reference":  {
+                                                                                  "id":  "BST-53-67",
+                                                                                  "source":  "Brihat Samhita",
+                                                                                  "chapter":  53,
+                                                                                  "verse":  67,
+                                                                                  "meaning":  "à¤¯à¤¦à¤¿ à¤µà¤¾à¤¸à¥à¤¤à¥ à¤ªà¥à¤°à¥à¤· à¤à¤¾ à¤¦à¤¾à¤¹à¤¿à¤¨à¤¾ à¤¹à¤¾à¤¥ à¤à¤à¤¾ à¤¹à¥ (à¤à¤° à¤à¤¾ à¤à¥à¤°à¤¿à¤¡ à¤à¥à¤à¤¾ à¤¹à¥) â à¤§à¤¨ à¤à¤° à¤ªà¤¤à¥à¤¨à¥ à¤à¥ à¤¹à¤¾à¤¨à¤¿",
+                                                                                  "category":  "grid_completeness",
+                                                                                  "impact":  "wealth_spouse"
+                                                                              }
+                                                    },
+                                                    {
+                                                        "pada":  41,
+                                                        "devata":  "Mitra",
+                                                        "hindi":  "à¤®à¤¿à¤¤à¥à¤°",
+                                                        "direction":  "N-inner",
+                                                        "object":  "heavy",
+                                                        "domain":  [
+                                                                       "partnership",
+                                                                       "friendship"
+                                                                   ],
+                                                        "element":  "water",
+                                                        "status":  "neutral",
+                                                        "reason":  null,
+                                                        "shastra_reference":  null
+                                                    },
+                                                    {
+                                                        "pada":  21,
+                                                        "devata":  "Varuna",
+                                                        "hindi":  "à¤µà¤°à¥à¤£",
+                                                        "direction":  "W",
+                                                        "object":  "water",
+                                                        "domain":  [
+                                                                       "rain",
+                                                                       "purification"
+                                                                   ],
+                                                        "element":  "water",
+                                                        "status":  "correct",
+                                                        "reason":  "water correct in à¤µà¤°à¥à¤£",
+                                                        "shastra_reference":  null
+                                                    }
+                                                ],
+                         "devata_score":  94
+                     },
+    "element_balance":  {
+                            "weak_elements":  [
+                                                  "Space"
+                                              ],
+                            "strong_elements":  [
+
+                                                ],
+                            "element_score":  70.0,
+                            "balance":  {
+                                            "Earth":  0,
+                                            "Water":  0,
+                                            "Fire":  0,
+                                            "Air":  0,
+                                            "Space":  -4
+                                        }
+                        },
+    "brahma_audit":  {
+                         "center_object":  "heavy",
+                         "score":  20,
+                         "shastra_reason":  "à¤¬à¥à¤°à¤¹à¥à¤®à¤¸à¥à¤¥à¤¾à¤¨ à¤®à¥à¤ à¤­à¤¾à¤°à¥ à¤µà¤¸à¥à¤¤à¥ â à¤µà¤à¤¶ à¤µà¥à¤¦à¥à¤§à¤¿ à¤°à¥à¤à¤¤à¥ (BST 53.67)",
+                         "issues":  [
+                                        "à¤¬à¥à¤°à¤¹à¥à¤®à¤¸à¥à¤¥à¤¾à¤¨ à¤®à¥à¤ à¤­à¤¾à¤°à¥ à¤µà¤¸à¥à¤¤à¥ â à¤µà¤à¤¶ à¤µà¥à¤¦à¥à¤§à¤¿ à¤°à¥à¤à¤¤à¥ (BST 53.67)"
+                                    ]
+                     },
+    "direction_strength":  {
+                               "total_score":  84.33,
+                               "zones":  [
+                                             {
+                                                 "zone":  "NE",
+                                                 "name":  "à¤à¤¶à¤¾à¤¨",
+                                                 "element":  "à¤à¤²",
+                                                 "deity":  "à¤¶à¤¿à¤µ/à¤à¤²",
+                                                 "score":  93.0,
+                                                 "base_score":  100,
+                                                 "used":  true,
+                                                 "objects":  [
+                                                                 "toilet",
+                                                                 "water"
+                                                             ],
+                                                 "notes":  [
+                                                               "â toilet â à¤\u0085à¤¶à¥à¤­",
+                                                               "â water â à¤¶à¥à¤­"
+                                                           ],
+                                                 "status":  "excellent"
+                                             },
+                                             {
+                                                 "zone":  "N",
+                                                 "name":  "à¤à¤¤à¥à¤¤à¤°",
+                                                 "element":  "à¤à¤²",
+                                                 "deity":  "à¤à¥à¤¬à¥à¤°",
+                                                 "score":  95.0,
+                                                 "base_score":  95,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "excellent"
+                                             },
+                                             {
+                                                 "zone":  "E",
+                                                 "name":  "à¤ªà¥à¤°à¥à¤µ",
+                                                 "element":  "à¤\u0085à¤à¥à¤¨à¤¿",
+                                                 "deity":  "à¤à¤à¤¦à¥à¤°",
+                                                 "score":  95.0,
+                                                 "base_score":  95,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "excellent"
+                                             },
+                                             {
+                                                 "zone":  "SE",
+                                                 "name":  "à¤à¤à¥à¤¨à¥à¤¯",
+                                                 "element":  "à¤\u0085à¤à¥à¤¨à¤¿",
+                                                 "deity":  "à¤\u0085à¤à¥à¤¨à¤¿",
+                                                 "score":  85.0,
+                                                 "base_score":  85,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "good"
+                                             },
+                                             {
+                                                 "zone":  "NW",
+                                                 "name":  "à¤µà¤¾à¤¯à¤µà¥à¤¯",
+                                                 "element":  "à¤µà¤¾à¤¯à¥",
+                                                 "deity":  "à¤µà¤¾à¤¯à¥",
+                                                 "score":  80.0,
+                                                 "base_score":  80,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "good"
+                                             },
+                                             {
+                                                 "zone":  "W",
+                                                 "name":  "à¤ªà¤¶à¥à¤à¤¿à¤®",
+                                                 "element":  "à¤à¤²",
+                                                 "deity":  "à¤µà¤°à¥à¤£",
+                                                 "score":  80.0,
+                                                 "base_score":  80,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "good"
+                                             },
+                                             {
+                                                 "zone":  "S",
+                                                 "name":  "à¤¦à¤à¥à¤·à¤¿à¤£",
+                                                 "element":  "à¤ªà¥à¤¥à¥à¤µà¥",
+                                                 "deity":  "à¤¯à¤®",
+                                                 "score":  75.0,
+                                                 "base_score":  75,
+                                                 "used":  false,
+                                                 "objects":  [
+
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "good"
+                                             },
+                                             {
+                                                 "zone":  "SW",
+                                                 "name":  "à¤¨à¥à¤à¤¤à¥à¤¯",
+                                                 "element":  "à¤ªà¥à¤¥à¥à¤µà¥",
+                                                 "deity":  "à¤ªà¤¿à¤¤à¤°",
+                                                 "score":  70.0,
+                                                 "base_score":  70,
+                                                 "used":  true,
+                                                 "objects":  [
+                                                                 "cash"
+                                                             ],
+                                                 "notes":  [
+
+                                                           ],
+                                                 "status":  "good"
+                                             },
+                                             {
+                                                 "zone":  "CENTER",
+                                                 "name":  "à¤¬à¥à¤°à¤¹à¥à¤®à¤¸à¥à¤¥à¤¾à¤¨",
+                                                 "element":  "à¤à¤à¤¾à¤¶",
+                                                 "deity":  "à¤¬à¥à¤°à¤¹à¥à¤®à¤¾",
+                                                 "score":  90.0,
+                                                 "base_score":  100,
+                                                 "used":  true,
+                                                 "objects":  [
+                                                                 "heavy"
+                                                             ],
+                                                 "notes":  [
+                                                               "â heavy â à¤\u0085à¤¶à¥à¤­"
+                                                           ],
+                                                 "status":  "excellent"
+                                             }
+                                         ]
+                           },
+    "room_analysis":  {
+                          "total_rooms_analyzed":  3,
+                          "correct_placements":  1,
+                          "defects":  2,
+                          "rooms":  [
+                                        {
+                                            "room_type":  "bathroom",
+                                            "room_hindi":  "à¤¶à¥à¤à¤¾à¤²à¤¯",
+                                            "zone":  "NE",
+                                            "object":  "toilet",
+                                            "row":  0,
+                                            "col":  0,
+                                            "is_correct":  false,
+                                            "is_defect":  true,
+                                            "best_directions":  [
+                                                                    "NW",
+                                                                    "W",
+                                                                    "S"
+                                                                ],
+                                            "bad_directions":  [
+                                                                   "NE",
+                                                                   "SE",
+                                                                   "CENTER"
+                                                               ],
+                                            "shastra":  "Brihat Samhita 53.67: à¤à¤¶à¤¾à¤¨ à¤®à¥à¤ à¤¶à¥à¤à¤¾à¤²à¤¯ = à¤µà¤à¤¶ à¤¨à¤¾à¤¶",
+                                            "reason":  "NW à¤µà¤¾à¤¯à¥ à¤¤à¤¤à¥à¤µ â à¤\u0085à¤ªà¤µà¤¾à¤¹ à¤à¥ à¤²à¤¿à¤ à¤à¤¤à¥à¤¤à¤®",
+                                            "status":  "defect"
+                                        },
+                                        {
+                                            "room_type":  "cash",
+                                            "room_hindi":  "à¤¤à¤¿à¤à¥à¤°à¥",
+                                            "zone":  "SW",
+                                            "object":  "cash",
+                                            "row":  8,
+                                            "col":  8,
+                                            "is_correct":  false,
+                                            "is_defect":  true,
+                                            "best_directions":  [
+                                                                    "N",
+                                                                    "NE",
+                                                                    "W"
+                                                                ],
+                                            "bad_directions":  [
+                                                                   "SE",
+                                                                   "S",
+                                                                   "SW"
+                                                               ],
+                                            "shastra":  "Samarangana Sutradhara: à¤à¤¤à¥à¤¤à¤° à¤®à¥à¤ à¤§à¤¨ = à¤à¥à¤¬à¥à¤° à¤µà¤¾à¤¸",
+                                            "reason":  "N à¤®à¥à¤ à¤à¥à¤¬à¥à¤° â à¤§à¤¨ à¤à¤¾ à¤¦à¥à¤µà¤¤à¤¾",
+                                            "status":  "defect"
+                                        },
+                                        {
+                                            "room_type":  "water",
+                                            "room_hindi":  "à¤à¤² à¤¸à¥à¤°à¥à¤¤",
+                                            "zone":  "NE",
+                                            "object":  "water",
+                                            "row":  2,
+                                            "col":  2,
+                                            "is_correct":  true,
+                                            "is_defect":  false,
+                                            "best_directions":  [
+                                                                    "NE",
+                                                                    "N",
+                                                                    "E"
+                                                                ],
+                                            "bad_directions":  [
+                                                                   "SE",
+                                                                   "SW",
+                                                                   "S"
+                                                               ],
+                                            "shastra":  "Mayamata: à¤à¤¶à¤¾à¤¨ à¤®à¥à¤ à¤à¤² = à¤ªà¥à¤£à¥à¤¯",
+                                            "reason":  "NE à¤à¤² à¤¤à¤¤à¥à¤µ à¤à¤¾ à¤®à¥à¤²",
+                                            "status":  "correct"
+                                        }
+                                    ]
+                      },
+    "remedies":  [
+                     {
+                         "devata":  "Shikhi",
+                         "hindi":  "à¤¶à¤¿à¤à¥",
+                         "direction":  "NE",
+                         "problem_domain":  [
+                                                "health",
+                                                "immunity"
+                                            ],
+                         "remedy":  {
+                                        "element_balance":  [
+                                                                "water fountain",
+                                                                "blue color",
+                                                                "aquarium",
+                                                                "silver items"
+                                                            ],
+                                        "positive_objects":  [
+                                                                 "water",
+                                                                 "plants"
+                                                             ],
+                                        "avoid":  [
+                                                      "toilet",
+                                                      "fire"
+                                                  ],
+                                        "color":  [
+                                                      "blue",
+                                                      "white",
+                                                      "black"
+                                                  ],
+                                        "mantra":  "Om Shikhiaya Namaha",
+                                        "puja_direction":  "NE"
+                                    },
+                         "shastra_reference":  {
+                                                   "id":  "BST-53-67",
+                                                   "source":  "Brihat Samhita",
+                                                   "chapter":  53,
+                                                   "verse":  67,
+                                                   "meaning":  "à¤¯à¤¦à¤¿ à¤µà¤¾à¤¸à¥à¤¤à¥ à¤ªà¥à¤°à¥à¤· à¤à¤¾ à¤¦à¤¾à¤¹à¤¿à¤¨à¤¾ à¤¹à¤¾à¤¥ à¤à¤à¤¾ à¤¹à¥ (à¤à¤° à¤à¤¾ à¤à¥à¤°à¤¿à¤¡ à¤à¥à¤à¤¾ à¤¹à¥) â à¤§à¤¨ à¤à¤° à¤ªà¤¤à¥à¤¨à¥ à¤à¥ à¤¹à¤¾à¤¨à¤¿",
+                                                   "category":  "grid_completeness",
+                                                   "impact":  "wealth_spouse"
+                                               }
+                     }
+                 ],
+    "final_score":  {
+                        "total_score":  68.77,
+                        "grade":  "C (Average)",
+                        "breakdown":  {
+                                          "devata_audit":  94.0,
+                                          "element_balance":  70.0,
+                                          "brahma_sthan":  20.0,
+                                          "direction_strength":  84.33
+                                      },
+                        "weights":  {
+                                        "devata_audit":  0.35,
+                                        "element_balance":  0.2,
+                                        "brahma_sthan":  0.25,
+                                        "direction_strength":  0.2
+                                    }
+                    }
+}

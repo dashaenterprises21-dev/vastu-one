@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Vastu One - रिपोर्ट</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/report.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="action-bar no-print">
+    <div class="brand">
+        <img src="/static/logo/vastu_logo.png" alt="Vastu One" class="brand-logo">
+        <div class="brand-text">
+            <span class="brand-title">VASTU ONE</span>
+            <span class="brand-sub">India Ka No.1 Vastu Engine</span>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="btn-primary" onclick="window.print()">
+            📄 PDF सेव करें (Ctrl+P)
+        </button>
+        <button class="btn-secondary" onclick="window.history.back()">
+            ← वापस
+        </button>
+    </div>
+</div>
+
+<div class="report-container" id="reportContent">
+    <div class="loading">🕉️ रिपोर्ट लोड हो रही है...</div>
+</div>
+
+<script src="/static/report.js"></script>
+</body>
+</html>

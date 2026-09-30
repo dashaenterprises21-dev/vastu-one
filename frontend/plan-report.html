@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Analysis Report — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/plan-report.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button class="btn-toolbar" onclick="window.print()">🖨️ Print PDF</button>
+            <a href="/chakra-overlay" class="btn-back">← नया Plan</a>
+        </div>
+    </div>
+</header>
+
+<main class="container main" id="reportContent">
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>रिपोर्ट लोड हो रही है...</p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p class="footer-sub">बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/plan-report.js"></script>
+</body>
+</html>

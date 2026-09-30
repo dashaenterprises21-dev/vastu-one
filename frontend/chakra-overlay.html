@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Upload + Chakra — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/chakra-overlay.css">
+<script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button class="btn-toolbar" onclick="rotateChakra(-15)">↺ -15°</button>
+            <button class="btn-toolbar" onclick="rotateChakra(15)">↻ +15°</button>
+            <button class="btn-toolbar" onclick="toggleChakra()">👁️ Toggle</button>
+            <button class="btn-toolbar" onclick="opacityChakra()">🎨 Opacity</button>
+            <button class="btn-toolbar" onclick="resetChakra()">🔄 Reset</button>
+            <a href="/dashboard" class="btn-back">← Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<main class="container main">
+
+    <section class="hero">
+        <div class="om-symbol">🕉️</div>
+        <h1>अपना Plan Upload करें + चक्र Overlay</h1>
+        <p>Plan upload करें → चक्र overlay हो जाएगा → rooms place करें → analyze करें</p>
+    </section>
+
+    <!-- Step 1: Upload -->
+    <div class="step-card" id="stepUpload">
+        <div class="step-header">
+            <span class="step-num">1</span>
+            <h3>Plan Upload करें</h3>
+        </div>
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" id="planInput" accept=".png,.jpg,.jpeg,.webp" hidden>
+            <div class="upload-content">
+                <div class="upload-icon">📐</div>
+                <h3>Plan Image यहाँ Drop करें</h3>
+                <p>या click करके file चुनें</p>
+                <p class="upload-formats">PNG, JPG, JPEG, WEBP — Max 10 MB</p>
+                <button class="btn-upload">📁 File चुनें</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Chakra Overlay Canvas -->
+    <div class="step-card" id="stepCanvas" style="display:none;">
+        <div class="step-header">
+            <span class="step-num">2</span>
+            <h3>चक्र Adjust करें</h3>
+        </div>
+        <p class="canvas-hint">💡 चक्र को drag करें • Rotate करने के लिए ऊपर के buttons use करें • Opacity से हल्का/गाढ़ा करें</p>
+        <div class="canvas-wrap">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <!-- Step 3: Room Palette -->
+    <div class="step-card" id="stepPalette" style="display:none;">
+        <div class="step-header">
+            <span class="step-num">3</span>
+            <h3>Rooms Place करें</h3>
+        </div>
+        <p class="canvas-hint">💡 Room select करें → Canvas पर click करें जहाँ वो room है</p>
+        <div class="palette-grid" id="roomPalette"></div>
+    </div>
+
+    <!-- Options -->
+    <div class="step-card" id="stepOptions" style="display:none;">
+        <div class="step-header">
+            <span class="step-num">4</span>
+            <h3>Property की जानकारी</h3>
+        </div>
+        <div class="options-grid">
+            <div class="option"><label>Property Type</label>
+                <select id="propertyType">
+                    <option value="flat">Flat</option>
+                    <option value="house" selected>House</option>
+                    <option value="villa">Villa</option>
+                    <option value="shop">Shop</option>
+                    <option value="office">Office</option>
+                </select>
+            </div>
+            <div class="option"><label>Floor</label>
+                <select id="floor">
+                    <option value="ground" selected>Ground</option>
+                    <option value="1">1st Floor</option>
+                    <option value="2">2nd Floor</option>
+                    <option value="3">3rd Floor</option>
+                </select>
+            </div>
+            <div class="option"><label>Plot Shape</label>
+                <select id="plotShape">
+                    <option value="square" selected>Square</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="irregular">Irregular</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section" id="stepSubmit" style="display:none;">
+        <button class="btn-analyze" onclick="analyzeVastu()" id="analyzeBtn">
+            🔍 वास्तु विश्लेषण करें
+        </button>
+        <p class="submit-note">🕉️ बृहत्संहिता + समरांगण + मयमतम् + मानसार आधारित</p>
+    </div>
+
+</main>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <h3>🔍 विश्लेषण हो रहा है...</h3>
+        <p>45 देवताओं से check कर रहे हैं</p>
+        <p class="loading-sub">शास्त्र प्रमाण के साथ</p>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p class="footer-sub">बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/chakra-overlay.js"></script>
+</body>
+</html>

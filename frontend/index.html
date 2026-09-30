@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vastu One — India Ka No.1 Vastu Engine</title>
+    <link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+    <div class="container header-inner">
+        <div class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One" style="height:52px;width:auto;filter:drop-shadow(0 2px 8px rgba(245,158,11,0.5));">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p class="tagline">India Ka No.1 Vastu Engine — 45 देवता • 81 पद • 5 तत्व</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span class="badge">v1.0</span>
+            <a href="/docs" target="_blank" class="btn-small">API Docs</a>
+        </div>
+    </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="container">
+
+    <!-- Input Section -->
+    <section class="input-section">
+        <h2>🏠 अपना घर/ऑफिस डालें</h2>
+        <p class="subtitle">नीचे दिए गए फॉर्म में अपने कमरों और वस्तुओं की जगह बताएं</p>
+
+        <div class="input-grid">
+            <div class="input-card">
+                <h3>प्लान इनपुट</h3>
+
+                <div class="plan-builder" id="planBuilder">
+                    <!-- Plan rows यहाँ जाएँगे -->
+                </div>
+
+                <button class="btn-secondary" onclick="addPlanRow()">+ नई वस्तु जोड़ें</button>
+
+                <div class="preset-buttons">
+                    <button class="btn-preset" onclick="loadPreset('default')">डिफ़ॉल्ट</button>
+                    <button class="btn-preset" onclick="loadPreset('good')">शुभ घर</button>
+                    <button class="btn-preset" onclick="loadPreset('bad')">दोषपूर्ण</button>
+                </div>
+            </div>
+
+            <div class="input-card preview-card">
+                <h3>81 पद ग्रिड प्रीव्यू</h3>
+                <div class="grid-preview" id="gridPreview">
+                    <!-- 9x9 grid यहाँ render होगा -->
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><span class="dot green"></span> उत्तर-पूर्व (ईशान)</div>
+                    <div class="legend-item"><span class="dot red"></span> दक्षिण-पूर्व (अग्नि)</div>
+                    <div class="legend-item"><span class="dot orange"></span> दक्षिण-पश्चिम (नैऋत्य)</div>
+                    <div class="legend-item"><span class="dot blue"></span> उत्तर-पश्चिम (वायव्य)</div>
+                    <div class="legend-item"><span class="dot purple"></span> ब्रह्मस्थान (केंद्र)</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-primary btn-analyze" onclick="analyzeVastu()">
+            🔱 वास्तु विश्लेषण करें
+        </button>
+    </section>
+
+    <!-- Loading -->
+    <div class="loading" id="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>शास्त्रों से जाँच हो रही है...</p>
+    </div>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results" style="display:none;">
+
+        <!-- Score Card -->
+        <div class="score-hero" id="scoreHero">
+            <div class="score-circle">
+                <svg viewBox="0 0 200 200">
+                    <circle class="score-bg" cx="100" cy="100" r="85"/>
+                    <circle class="score-progress" id="scoreProgress" cx="100" cy="100" r="85"/>
+                </svg>
+                <div class="score-text">
+                    <span class="score-number" id="scoreNumber">0</span>
+                    <span class="score-max">/ 100</span>
+                </div>
+            </div>
+            <div class="score-info">
+                <h2 id="scoreGrade">—</h2>
+                <p id="scoreMessage">विश्लेषण जारी है...</p>
+                <div class="breakdown-chips" id="breakdownChips"></div>
+            </div>
+        </div>
+
+        <!-- Issues -->
+        <div class="result-block" id="issuesBlock">
+            <h2>⚠️ मिले दोष</h2>
+            <div class="issues-list" id="issuesList"></div>
+        </div>
+
+        <!-- Positives -->
+        <div class="result-block" id="positivesBlock">
+            <h2>✅ सही जगह पर</h2>
+            <div class="positives-list" id="positivesList"></div>
+        </div>
+
+        <!-- Remedies -->
+        <div class="result-block" id="remediesBlock">
+            <h2>💡 उपाय (शास्त्रोक्त)</h2>
+            <div class="remedies-list" id="remediesList"></div>
+        </div>
+
+        <!-- Element Balance -->
+        <div class="result-block" id="elementsBlock">
+            <h2>🌊 पंच तत्व संतुलन</h2>
+            <div class="elements-grid" id="elementsGrid"></div>
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>🕉️ Vastu AI — बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार पर आधारित</p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

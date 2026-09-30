@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<style>
+{{ font_css }}
+
+
+
+
+
+
+
+
+
+
+@page { size: A4; margin: 0; }
+    @bottom-right { content: "पषठ " counter(page) " / " counter(pages); font-size: 8pt; color: #9ca3af; }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'VastuFont', 'Noto Sans Devanagari', sans-serif; font-feature-settings: "liga" 1, "calt" 1; -webkit-font-feature-settings: "liga" 1, "calt" 1; text-rendering: optimizeLegibility;
+    color: #0f1419;
+    font-size: 10pt;
+    line-height: 1.55;
+}
+
+h1 {
+    font-size: 18pt;
+    color: #0f1419;
+    margin: 0 0 10pt 0;
+    padding-bottom: 5pt;
+    border-bottom: 2pt solid #f59e0b;
+}
+
+h2 {
+    font-size: 13pt;
+    color: #d97706;
+    margin: 12pt 0 8pt 0;
+}
+
+h3 {
+    font-size: 11pt;
+    color: #1e2530;
+    margin: 8pt 0 4pt 0;
+}
+
+p { margin: 4pt 0; }
+
+/*  COVER  */
+.cover {
+    text-align: center;
+    padding-top: 30mm;
+    page-break-after: always;
+}
+
+.cover .om { font-size: 60pt; margin-bottom: 10pt; }
+
+.cover .title {
+    font-size: 44pt;
+    font-weight: bold;
+    color: #f59e0b;
+    letter-spacing: 3pt;
+    margin: 6pt 0;
+}
+
+.cover .tagline {
+    font-size: 15pt;
+    color: #6b7280;
+    margin-bottom: 45pt;
+}
+
+.cover .score-label {
+    font-size: 12pt;
+    color: #6b7280;
+    margin-top: 20pt;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+}
+
+.cover .score {
+    font-size: 96pt;
+    font-weight: bold;
+    color: #f59e0b;
+    line-height: 1;
+    margin: 8pt 0;
+}
+
+.cover .score-max { font-size: 16pt; color: #6b7280; }
+
+.cover .grade-badge {
+    display: inline-block;
+    background: #f59e0b;
+    color: white;
+    padding: 12pt 40pt;
+    border-radius: 10pt;
+    font-size: 22pt;
+    font-weight: bold;
+    margin: 25pt 0 30pt 0;
+}
+
+.cover .info-table {
+    margin: 20mm auto 0;
+    width: 85%;
+    max-width: 400pt;
+    border-collapse: collapse;
+}
+
+.cover .info-table td {
+    padding: 10pt 8pt;
+    border-bottom: 0.5pt solid #e5e7eb;
+    text-align: left;
+    font-size: 11pt;
+}
+
+.cover .info-table td:first-child {
+    color: #6b7280;
+    font-weight: bold;
+    width: 40%;
+}
+
+.cover .sources {
+    margin-top: 30mm;
+    color: #6b7280;
+    font-size: 10pt;
+    font-style: italic;
+}
+
+/*  SECTIONS  */
+.section { page-break-before: always; }
+
+/*  TABLES  */
+table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10pt 0;
+    font-size: 9.5pt;
+}
+
+table.data th {
+    background: #1e2530;
+    color: white;
+    padding: 8pt 6pt;
+    text-align: left;
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+table.data td {
+    padding: 7pt 6pt;
+    border: 0.5pt solid #e5e7eb;
+    vertical-align: top;
+}
+
+table.data tr:nth-child(even) td { background: #f9fafb; }
+
+table.data tr.total td {
+    background: #fef3c7;
+    font-weight: bold;
+    color: #92400e;
+}
+
+table.data tr.defect td { background: #fee2e2; }
+table.data tr.correct td { background: #d1fae5; }
+table.data tr.neutral td { background: #f3f4f6; }
+
+/* Status badges */
+.status {
+    padding: 2pt 8pt;
+    border-radius: 4pt;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+}
+.status-defect { background: #ef4444; }
+.status-correct { background: #10b981; }
+.status-neutral { background: #6b7280; }
+.status-excellent { background: #10b981; }
+.status-good { background: #3b82f6; }
+.status-average { background: #f59e0b; }
+.status-poor { background: #ef4444; }
+
+/*  CARDS  */
+.card {
+    background: #f9fafb;
+    padding: 12pt;
+    margin: 10pt 0;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+}
+
+.issue-card { border-left: 5pt solid #ef4444; }
+.remedy-card { border-left: 5pt solid #3b82f6; }
+.room-card { border-left: 5pt solid #8b5cf6; }
+.method-card { border-left: 5pt solid #f59e0b; background: #fffbeb; }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8pt;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 12pt;
+    color: #0f1419;
+}
+
+.badge {
+    color: white;
+    padding: 2pt 8pt;
+    border-radius: 4pt;
+    font-size: 8pt;
+    font-weight: bold;
+}
+.badge-red { background: #ef4444; }
+.badge-blue { background: #3b82f6; }
+.badge-green { background: #10b981; }
+.badge-orange { background: #f59e0b; }
+.badge-purple { background: #8b5cf6; }
+
+.card-row {
+    margin: 4pt 0;
+    font-size: 9.5pt;
+}
+
+.card-row b {
+    color: #6b7280;
+    display: inline-block;
+    min-width: 100pt;
+}
+
+.shastra-ref {
+    background: #f3e8ff;
+    border-left: 3pt solid #8b5cf6;
+    padding: 8pt 12pt;
+    margin-top: 8pt;
+    color: #6b21a8;
+    font-size: 9pt;
+    font-style: italic;
+    border-radius: 3pt;
+}
+
+.mantra {
+    background: #fef3c7;
+    padding: 10pt;
+    margin-top: 10pt;
+    text-align: center;
+    font-weight: bold;
+    color: #92400e;
+    font-size: 11pt;
+    border-radius: 5pt;
+}
+
+/*  ELEMENTS  */
+.element-weak { background: #fee2e2 !important; color: #991b1b; font-weight: bold; }
+.element-strong { background: #d1fae5 !important; color: #065f46; font-weight: bold; }
+
+/*  81 PADA CHAKRA  */
+.pada-chakra {
+    width: 100%;
+    max-width: 500pt;
+    margin: 15pt auto;
+    border: 2pt solid #1e2530;
+    border-radius: 6pt;
+    padding: 6pt;
+    background: #fff;
+}
+
+.chakra-row {
+    display: flex;
+    gap: 2pt;
+    margin-bottom: 2pt;
+}
+
+.chakra-cell {
+    flex: 1;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3pt;
+    color: #fff;
+    font-size: 6pt;
+    text-align: center;
+    padding: 1pt;
+    border: 0.5pt solid rgba(255,255,255,0.3);
+    min-height: 28pt;
+}
+
+.chakra-devata {
+    font-weight: bold;
+    font-size: 7pt;
+    line-height: 1.1;
+}
+
+.chakra-object {
+    font-size: 5pt;
+    margin-top: 1pt;
+    opacity: 0.9;
+    background: rgba(0,0,0,0.35);
+    padding: 0 2pt;
+    border-radius: 2pt;
+}
+
+.chakra-NE { background: #10b981; }
+.chakra-N  { background: #3b82f6; }
+.chakra-E  { background: #f59e0b; }
+.chakra-SE { background: #ef4444; }
+.chakra-S  { background: #ea580c; }
+.chakra-SW { background: #d97706; }
+.chakra-W  { background: #8b5cf6; }
+.chakra-NW { background: #0ea5e9; }
+.chakra-brahma { background: #fbbf24; border: 2pt solid #92400e; }
+
+.chakra-defect {
+    background: #dc2626 !important;
+    border: 2pt solid #7f1d1d !important;
+    box-shadow: 0 0 3pt rgba(220, 38, 38, 0.8);
+}
+
+.chakra-correct {
+    background: #059669 !important;
+    border: 2pt solid #065f46 !important;
+}
+
+.chakra-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8pt;
+    justify-content: center;
+    margin-top: 12pt;
+    font-size: 8pt;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 3pt;
+}
+
+.legend-box {
+    width: 10pt;
+    height: 10pt;
+    border-radius: 2pt;
+    display: inline-block;
+    border: 0.5pt solid #1e2530;
+}
+
+/*  ZONE CHART  */
+.zone-bar {
+    display: flex;
+    align-items: center;
+    margin: 4pt 0;
+    font-size: 9pt;
+}
+.zone-label {
+    width: 90pt;
+    font-weight: bold;
+}
+.zone-bar-fill {
+    height: 14pt;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    border-radius: 3pt;
+    margin-right: 6pt;
+}
+.zone-score {
+    font-weight: bold;
+    color: #d97706;
+}
+
+/*  CTA  */
+.cta {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1.5pt solid #f59e0b;
+    padding: 18pt;
+    text-align: center;
+    margin: 18pt 0;
+    border-radius: 8pt;
+}
+
+.cta .cta-title {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #92400e;
+    margin-bottom: 6pt;
+}
+
+.cta .cta-sub {
+    font-size: 10pt;
+    color: #78350f;
+    margin-bottom: 10pt;
+}
+
+.cta .cta-line {
+    font-size: 10pt;
+    color: #0f1419;
+    margin: 3pt 0;
+    font-weight: bold;
+}
+
+/*  NEW: STRONG DISCLAIMER  */
+.role-section {
+    background: linear-gradient(135deg, #fef9f3 0%, #fef3c7 100%);
+    border: 1pt solid #f59e0b;
+    border-radius: 8pt;
+    padding: 16pt;
+    margin: 12pt 0;
+}
+
+.role-section h3 {
+    color: #92400e;
+    font-size: 12pt;
+    margin-bottom: 8pt;
+    display: flex;
+    align-items: center;
+    gap: 6pt;
+}
+
+.role-section p {
+    font-size: 9.5pt;
+    color: #0f1419;
+    margin: 6pt 0;
+    line-height: 1.65;
+}
+
+.role-section p b {
+    color: #92400e;
+}
+
+.method-step {
+    background: white;
+    border-left: 4pt solid #f59e0b;
+    padding: 10pt 14pt;
+    margin: 6pt 0;
+    border-radius: 4pt;
+    font-size: 10pt;
+}
+
+.method-step .step-num {
+    display: inline-block;
+    background: #f59e0b;
+    color: white;
+    width: 18pt;
+    height: 18pt;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 18pt;
+    font-weight: bold;
+    font-size: 9pt;
+    margin-right: 6pt;
+}
+
+.legal-box {
+    background: #f3f4f6;
+    border: 0.5pt solid #d1d5db;
+    border-radius: 4pt;
+    padding: 10pt;
+    margin-top: 10pt;
+    font-size: 8.5pt;
+    color: #4b5563;
+    line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<!--  PAGE 1: COVER  -->
+<div class="cover">
+    <div class="om"></div>
+    <div class="title">VASTU AI</div>
+    <div class="tagline">शसतर-आधरत वसत वशलषण</div>
+
+    <div class="score-label">कल वसत सकर</div>
+    <div class="score">{{ final_score.total_score }}</div>
+    <div class="score-max">/ 100</div>
+
+    <div class="grade-badge">{{ final_score.grade }}</div>
+
+    <table class="info-table">
+        <tr><td>नम</td><td>{{ client_name }}</td></tr>
+        <tr><td>पत</td><td>{{ client_address }}</td></tr>
+        <tr><td>रपरट तरख</td><td>{{ report_date }}</td></tr>
+        <tr><td>रपरट आईड</td><td>{{ report_id }}</td></tr>
+    </table>
+
+    <div class="sources">बहतसहत  समरगण सतरधर  मयमतम  मनसर</div>
+</div>
+
+<!--  PAGE 2: METHODOLOGY  -->
+<div class="section">
+    <h1>हमर वध (Our Methodology)</h1>
+    <p>यह रपरट कस बन  परदरश परकरय:</p>
+
+    <div class="method-step">
+        <span class="step-num">1</span>
+        <b>आपक plan लत ह</b>  row, column, object क सथ
+    </div>
+    <div class="method-step">
+        <span class="step-num">2</span>
+        <b>81 पद म map करत ह</b>  बहतसहत अधयय 53.45 क अनसर
+    </div>
+    <div class="method-step">
+        <span class="step-num">3</span>
+        <b>45 दवतओ स check करत ह</b>  समरगण सतरधर अधयय 39
+    </div>
+    <div class="method-step">
+        <span class="step-num">4</span>
+        <b>5 ततव क balance दखत ह</b>  मयमतम क सदधत पर
+    </div>
+    <div class="method-step">
+        <span class="step-num">5</span>
+        <b>बरहमसथन क audit करत ह</b>  बहतसहत 53.67
+    </div>
+    <div class="method-step">
+        <span class="step-num">6</span>
+        <b>शसतरय नयम लग करत ह</b>  हर दष क लए शलक परमण क सथ
+    </div>
+    <div class="method-step">
+        <span class="step-num">7</span>
+        <b>Action Plan बनत ह</b>  Priority क अनसर
+    </div>
+
+    <div class="card method-card" style="margin-top:15pt;">
+        <p><b> यह वध कस भ अनभव वसत वशषजञ क वध क समन ह</b>  हमन बस इस AI क मधयम स तज, ससत और transparent बनय ह</p>
+    </div>
+</div>
+
+<!--  PAGE 3: EXECUTIVE SUMMARY  -->
+<div class="section">
+    <h1>करयकर सरश</h1>
+
+    <table class="data">
+        <thead>
+            <tr><th>घटक</th><th>सकर</th><th>वजन</th><th>सथत</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>दवत ऑडट (45 दवत)</td>
+                <td>{{ final_score.breakdown.devata_audit }}</td>
+                <td>35%</td>
+                <td>{% if final_score.breakdown.devata_audit >= 80 %}उततम{% elif final_score.breakdown.devata_audit >= 60 %}मधयम{% else %}सधर आवशयक{% endif %}</td>
+            </tr>
+            <tr>
+                <td>ततव सतलन (5 ततव)</td>
+                <td>{{ final_score.breakdown.element_balance }}</td>
+                <td>20%</td>
+                <td>{% if final_score.breakdown.element_balance >= 80 %}उततम{% elif final_score.breakdown.element_balance >= 60 %}मधयम{% else %}सधर आवशयक{% endif %}</td>
+            </tr>
+            <tr>
+                <td>बरहमसथन</td>
+                <td>{{ final_score.breakdown.brahma_sthan }}</td>
+                <td>25%</td>
+                <td>{% if final_score.breakdown.brahma_sthan >= 80 %}उततम{% elif final_score.breakdown.brahma_sthan >= 60 %}मधयम{% else %}सधर आवशयक{% endif %}</td>
+            </tr>
+            <tr>
+                <td>दश शकत (16 जन)</td>
+                <td>{{ final_score.breakdown.direction_strength }}</td>
+                <td>20%</td>
+                <td>{% if final_score.breakdown.direction_strength >= 80 %}उततम{% elif final_score.breakdown.direction_strength >= 60 %}मधयम{% else %}सधर आवशयक{% endif %}</td>
+            </tr>
+            <tr class="total">
+                <td>कल सकर</td>
+                <td>{{ final_score.total_score }}</td>
+                <td>100%</td>
+                <td>{{ final_score.grade }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>मखय नषकरष</h2>
+    <p>इस वशलषण म <b>{{ devata_audit.total_issues }} दष</b> और <b>{{ devata_audit.total_correct }} सह सथन</b> पए गए ह</p>
+
+    {% if devata_audit.issues %}
+    <h3> मखय दष</h3>
+    {% for issue in devata_audit.issues %}
+    <p> <b>{{ issue.hindi }} ({{ issue.direction }})</b>  {{ issue.problem }}  परभव: {{ issue.domain_affected|join(', ') }}</p>
+    {% endfor %}
+    {% endif %}
+
+    {% if devata_audit.positive_hits %}
+    <h3> सह सथन</h3>
+    {% for hit in devata_audit.positive_hits %}
+    <p> <b>{{ hit.hindi }} ({{ hit.direction }})</b>  {{ hit.object }} सह जगह पर</p>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!--  PAGE 4: 81 PADA CHAKRA  -->
+<div class="section">
+    <h1>81 पद वसत चकर</h1>
+    <p>यह आपक plan क visual representation  99 गरड म हर cell एक दवत क कषतर ह</p>
+
+    <div class="pada-chakra">
+        {% for row in chakra_cells %}
+        <div class="chakra-row">
+            {% for cell in row %}
+            <div class="chakra-cell chakra-{{ cell.zone_class }}{% if cell.status == 'defect' %} chakra-defect{% elif cell.status == 'correct' %} chakra-correct{% endif %}">
+                <div class="chakra-devata">{{ cell.hindi_short }}</div>
+                {% if cell.object_short %}
+                <div class="chakra-object">{{ cell.object_short }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="chakra-legend">
+        <div class="legend-item"><span class="legend-box chakra-defect"></span> दष</div>
+        <div class="legend-item"><span class="legend-box chakra-correct"></span> सह</div>
+        <div class="legend-item"><span class="legend-box chakra-brahma"></span> बरहमसथन</div>
+        <div class="legend-item"><span class="legend-box chakra-NE"></span> ईशन</div>
+        <div class="legend-item"><span class="legend-box chakra-SE"></span> आगनय</div>
+        <div class="legend-item"><span class="legend-box chakra-SW"></span> नऋतय</div>
+        <div class="legend-item"><span class="legend-box chakra-NW"></span> वयवय</div>
+    </div>
+</div>
+
+<!--  PAGE 5: 81 PADAS DETAIL  -->
+<div class="section">
+    <h1>81 पद  वसतत ववरण</h1>
+    <p>हर पद म कन-स दवत, कन-स दश, शसतर कय कहत ह</p>
+
+    <table class="data">
+        <thead>
+            <tr>
+                <th>पद</th>
+                <th>दवत</th>
+                <th>दश</th>
+                <th>सथत</th>
+                <th>शसतर नरदश</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pada in all_padas_detail %}
+            <tr class="{% if pada.status == 'defect' %}defect{% elif pada.status == 'correct' %}correct{% endif %}">
+                <td>#{{ pada.pada }}</td>
+                <td><b>{{ pada.hindi }}</b></td>
+                <td>{{ pada.direction }}</td>
+                <td>
+                    {% if pada.status == 'defect' %}
+                    <span class="status status-defect">दष  {{ pada.object }}</span>
+                    {% elif pada.status == 'correct' %}
+                    <span class="status status-correct">सह  {{ pada.object }}</span>
+                    {% else %}
+                    <span class="status status-neutral">खल</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if pada.positive %} {{ pada.positive|join(', ') }}<br>{% endif %}
+                    {% if pada.negative %} {{ pada.negative|join(', ') }}{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!--  PAGE 6: ROOM ANALYSIS  -->
+<div class="section">
+    <h1>ककष-वर वशलषण</h1>
+    <p>आपक plan म <b>{{ room_analysis.total_rooms_analyzed }} कमर/वसतए</b> मल इनम <b>{{ room_analysis.correct_placements }} सह</b> और <b>{{ room_analysis.defects }} दषपरण</b> ह</p>
+
+    {% for room in room_analysis.rooms %}
+    <div class="card room-card">
+        <div class="card-header">
+            <span class="card-title">{{ room.room_hindi }}  {{ room.zone }}</span>
+            <span class="badge {% if room.status == 'correct' %}badge-green{% elif room.status == 'defect' %}badge-red{% else %}badge-orange{% endif %}">
+                {% if room.status == 'correct' %}सह{% elif room.status == 'defect' %}दष{% else %}समनय{% endif %}
+            </span>
+        </div>
+        <div class="card-row"><b>वसत:</b> {{ room.object }}</div>
+        <div class="card-row"><b>इषट दशए:</b> {{ room.best_directions|join(', ') }}</div>
+        <div class="card-row"><b>अशभ दशए:</b> {{ room.bad_directions|join(', ') }}</div>
+        <div class="shastra-ref"><b>शसतर:</b> {{ room.shastra }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!--  PAGE 7: 45 DEVATAS STATUS  -->
+<div class="section">
+    <h1>दवत Status Table</h1>
+    <p>आपक plan क वसतए कस दवत क कषतर म ह  पर status</p>
+
+    <table class="data">
+        <thead>
+            <tr>
+                <th>पद</th>
+                <th>दवत</th>
+                <th>दश</th>
+                <th>वसत</th>
+                <th>सथत</th>
+                <th>परभव</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in devata_audit.all_devatas_status %}
+            <tr class="{{ d.status }}">
+                <td>#{{ d.pada }}</td>
+                <td><b>{{ d.hindi }}</b></td>
+                <td>{{ d.direction }}</td>
+                <td>{{ d.object }}</td>
+                <td>
+                    <span class="status status-{% if d.status == 'defect' %}defect{% elif d.status == 'correct' %}correct{% else %}neutral{% endif %}">
+                        {% if d.status == 'defect' %}दष{% elif d.status == 'correct' %}सह{% else %}समनय{% endif %}
+                    </span>
+                </td>
+                <td>{{ d.domain|join(', ') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!--  PAGE 8: DIRECTION STRENGTH  -->
+<div class="section">
+    <h1>16 जन दश शकत</h1>
+    <p>हर दश क score  0 (कमजर) स 100 (उततम)</p>
+
+    {% for zone in direction_strength.zones %}
+    {% if zone.used %}
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">{{ zone.name }} ({{ zone.zone }})</span>
+            <span class="badge badge-{% if zone.status == 'excellent' %}green{% elif zone.status == 'good' %}blue{% elif zone.status == 'average' %}orange{% else %}red{% endif %}">
+                {{ zone.score }}/100
+            </span>
+        </div>
+        <div class="card-row"><b>ततव:</b> {{ zone.element }} | <b>दवत:</b> {{ zone.deity }}</div>
+        {% if zone.objects %}<div class="card-row"><b>वसतए:</b> {{ zone.objects|join(', ') }}</div>{% endif %}
+        {% if zone.notes %}<div class="card-row"><b>टपपण:</b> {{ zone.notes|join('  ') }}</div>{% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<!--  PAGE 9: DEFECTS  -->
+<div class="section">
+    <h1>वसतत दष वशलषण</h1>
+
+    {% for issue in devata_audit.issues %}
+    <div class="card issue-card">
+        <div class="card-header">
+            <span class="card-title">दष #{{ loop.index }}: {{ issue.hindi }} ({{ issue.direction }})</span>
+            <span class="badge badge-red">{% if issue.severity == 'high' %}गभर{% else %}मधयम{% endif %}</span>
+        </div>
+        <div class="card-row"><b>समसय:</b> {{ issue.problem }}</div>
+        <div class="card-row"><b>परभव:</b> {{ issue.domain_affected|join(', ') }}</div>
+        <div class="card-row"><b>पद सखय:</b> #{{ issue.pada }}</div>
+        {% if issue.shastra_reference %}
+        <div class="shastra-ref">
+            <b>शसतर परमण ({{ issue.shastra_reference.source }} {{ issue.shastra_reference.chapter }}.{{ issue.shastra_reference.verse }}):</b><br>
+            {{ issue.shastra_reference.meaning }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!--  PAGE 10: REMEDIES  -->
+<div class="section">
+    <h1>शसतरकत उपय</h1>
+
+    {% for r in remedies %}
+    <div class="card remedy-card">
+        <div class="card-header">
+            <span class="card-title">उपय #{{ loop.index }}: {{ r.hindi }} ({{ r.devata }})</span>
+            <span class="badge badge-blue">{{ r.direction }}</span>
+        </div>
+        <div class="card-row"><b style="color:#10b981;"> कर:</b> {{ r.remedy.positive_objects|join(', ') }}</div>
+        <div class="card-row"><b style="color:#ef4444;"> न कर:</b> {{ r.remedy.avoid|join(', ') }}</div>
+        <div class="card-row"><b style="color:#3b82f6;"> रग:</b> {{ r.remedy.color|join(', ') }}</div>
+        <div class="card-row"><b style="color:#8b5cf6;"> ततव सतलन:</b> {{ r.remedy.element_balance|join(', ') }}</div>
+        <div class="mantra"> मतर: {{ r.remedy.mantra }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!--  PAGE 11: BRAHMASTHAN  -->
+<div class="section">
+    <h1>बरहमसथन वशलषण</h1>
+    <p>बरहमसथन  घर क कदर (पद #45)  सबस पवतर सथन ह इस खल और सवचछ रखन शसतर म अनवरय ह</p>
+
+    <div class="card issue-card">
+        <div class="card-header">
+            <span class="card-title">कदर म रख वसत: {{ brahma_audit.center_object or 'कछ नह' }}</span>
+            <span class="badge {% if brahma_audit.score >= 80 %}badge-green{% elif brahma_audit.score >= 50 %}badge-orange{% else %}badge-red{% endif %}">
+                सकर: {{ brahma_audit.score }}/100
+            </span>
+        </div>
+        {% if brahma_audit.shastra_reason %}
+        <div class="shastra-ref"><b>शसतर करण:</b> {{ brahma_audit.shastra_reason }}</div>
+        {% endif %}
+    </div>
+
+    <h2>बरहमसथन म कय रख</h2>
+    <div class="card">
+        <div class="card-row"><b style="color:#10b981;"> कर:</b> खल सथन, परकश, पज सथल, तलस क पध</div>
+        <div class="card-row"><b style="color:#ef4444;"> न कर:</b> शचलय, भर समन, अगन, जल सरत, भडरण, बसतर</div>
+    </div>
+</div>
+
+<!--  PAGE 12: ELEMENTS  -->
+<div class="section">
+    <h1>पच ततव सतलन</h1>
+
+    <table class="data">
+        <thead>
+            <tr><th>ततव</th><th>सतलन</th><th>सथत</th></tr>
+        </thead>
+        <tbody>
+            {% for name, val in element_balance.balance.items() %}
+            <tr class="{% if val < 0 %}defect{% elif val > 3 %}correct{% endif %}">
+                <td><b>{{ {'Earth':'पथव','Water':'जल','Fire':'अगन','Air':'वय','Space':'आकश'}.get(name, name) }}</b></td>
+                <td>{{ val }}</td>
+                <td>{% if val < 0 %}कमजर{% elif val > 3 %}परबल{% else %}सतलत{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if element_balance.weak_elements %}
+    <h2> कमजर ततव</h2>
+    {% for el in element_balance.weak_elements %}
+    <div class="card issue-card">
+        <div class="card-row"><b>{{ {'Earth':'पथव','Water':'जल','Fire':'अगन','Air':'वय','Space':'आकश'}.get(el, el) }}</b> कमजर ह  इसक सतलन जरर ह</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!--  PAGE 13: SHASTRA  -->
+<div class="section">
+    <h1>शसतर परमण</h1>
+    <p>इस रपरट म उपयग कए गए शसतरय सरत:</p>
+
+    <div class="card">
+        <h3> बहतसहत (वरहमहर, 6व सद)</h3>
+        <p>वसत मडल, 45 दवत, 81 पद, गह-नरमण नयम</p>
+    </div>
+    <div class="card">
+        <h3> समरगण सतरधर (रज भज, 11व सद)</h3>
+        <p>दवर वधन, मरम-वध, दश परव</p>
+    </div>
+    <div class="card">
+        <h3> मयमतम (मयमन)</h3>
+        <p>आवसय वसत, ककष यजन</p>
+    </div>
+    <div class="card">
+        <h3> मनसर</h3>
+        <p>वसत वशवकश  मदर, नगर, गह</p>
+    </div>
+
+    {% if devata_audit.issues %}
+    <h2>इस रपरट म उदधत शलक</h2>
+    {% for issue in devata_audit.issues %}
+    {% if issue.shastra_reference %}
+    <div class="card">
+        <div class="card-row"><b>{{ issue.shastra_reference.source }}  अधयय {{ issue.shastra_reference.chapter }}, शलक {{ issue.shastra_reference.verse }}</b></div>
+        <div class="card-row"><i>"{{ issue.shastra_reference.meaning }}"</i></div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!--  PAGE 14: ACTION PLAN  -->
+<div class="section">
+    <h1>करय यजन (Action Plan)</h1>
+
+    {% if devata_audit.issues %}
+    <h2> उचच परथमकत</h2>
+    {% for issue in devata_audit.issues %}
+    {% if issue.severity == 'high' %}
+    <div class="card issue-card">
+        <div class="card-row"><b>उचच</b>  {{ issue.hindi }} ({{ issue.direction }})  {{ issue.problem }}</div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    {% if brahma_audit.score < 50 %}
+    <div class="card issue-card">
+        <div class="card-row"><b>उचच</b>  बरहमसथन सधर  कदर स भर/अशभ वसतए हटए</div>
+    </div>
+    {% endif %}
+
+    {% if element_balance.weak_elements %}
+    <h2> मधयम परथमकत</h2>
+    {% for el in element_balance.weak_elements %}
+    <div class="card">
+        <div class="card-row"><b>मधयम</b>  {{ el }} ततव सतलत कर  रग, वसतए बदल</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <h2> दरघकलक सझव</h2>
+    <div class="card">
+        <div class="card-row">नयमत रप स 81 पद गरड क पन मलयकन कर</div>
+    </div>
+    <div class="card">
+        <div class="card-row">बड बदलव स पहल वसत परमरश ल</div>
+    </div>
+</div>
+
+<!--  PAGE 15: ROLE + DISCLAIMER  -->
+<div class="section">
+    <h1>हमर भमक और नषकरष</h1>
+
+    {% if final_score.total_score >= 90 %}
+    <p>आपक सथन शसतर क अनसर <b>उततम</b> ह कई बड दष नह मल</p>
+    {% elif final_score.total_score >= 70 %}
+    <p>आपक सथन <b>अचछ</b> ह, लकन कछ सधर सभव ह</p>
+    {% elif final_score.total_score >= 50 %}
+    <p>आपक सथन म <b>कछ महतवपरण दष</b> ह उपय जलद कर</p>
+    {% else %}
+    <p><b>गभर दष</b> पए गए ह तरत वशषजञ स परमरश ल</p>
+    {% endif %}
+
+    <div class="role-section">
+        <h3> हमर भमक</h3>
+        <p><b>Vastu AI एक शसतर-आधरत analysis tool ह</b> हमर कम: बहतसहत, समरगण सतरधर, मयमतम और मनसर  इन 4 परमणक गरथ क जञन AI क मधयम स तज स आप तक पहचन</p>
+        <p><b>हम कय नह करत:</b> हम आपक वयकतगत जवन, भगय, य भवषय क भवषयवण नह करत हम पशवर वसत परमरश क वकलप नह ह</p>
+        <p><b>आपक भमक:</b> यह रपरट एक <b>मरगदरशक</b> ह कस भ बड नरणय (नरमण, खरद, वसतर) स पहल इस रपरट क अपन architect य अनभव वसत वशषजञ स verify जरर करवए</p>
+    </div>
+
+    <div class="cta">
+        <div class="cta-title"> वयकतगत परमरश चहए?</div>
+        <div class="cta-sub">वसत वशषजञ स 1:1 बत कर</div>
+        <div class="cta-line"> वहटसएप: +91-XXXXX-XXXXX</div>
+        <div class="cta-line"> ईमल: consult@vastuai.in</div>
+        <div class="cta-line"> वबसइट: vastuai.in</div>
+    </div>
+
+    <h2>कनन सचन (Legal Notice)</h2>
+    <div class="legal-box">
+        यह रपरट कवल सचनतमक और शकषक उददशय क लए ह यह कस भ परकर क वयवसयक वसत सलह, इजनयरग सलह, य नरमण सलह क वकलप नह ह Vastu AI, इसक ससथपक, करमचर, और सहयग  कस भ परतयकष य अपरतयकष परणम, हन, य कषत क लए जममदर नह हग ज इस रपरट क उपयग स उतपनन ह रपरट म द गई जनकर "as-is" आधर पर परदन क गई ह उपयगकरत सवय इस जनकर क उपयग क परण उततरदयतव वहन करत ह सभ शसतरय सदरभ मल गरथ स लए गए ह और उनक वयखय AI दवर क गई ह कस भ ववद क सथत म, कषतरधकर भरत क नययलय क हग  Vastu AI
+    </div>
+</div>
+
+</body>
+</html>
