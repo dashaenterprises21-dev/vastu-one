@@ -1,8 +1,9 @@
 """
 Vastu One - Database Setup
-SQLAlchemy + SQLite (development) / PostgreSQL (production)
+SQLite (local) + PostgreSQL (Railway)
 """
 
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -11,17 +12,32 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "vastu_one.db"
 
-# SQLite for development
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+# Priority 1: ENV variable (Railway)
+# Priority 2: SQLite (local fallback)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# For production, switch to:
-# DATABASE_URL = "postgresql://user:password@localhost/vastu_one"
+if not DATABASE_URL:
+    DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
-    echo=False,
-)
+# Fix Railway's postgres:// → postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Engine config
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=False,
+    )
+else:
+    # PostgreSQL
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        echo=False,
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -41,4 +57,4 @@ def init_db():
     """Create all tables"""
     from database import models  # Import to register models
     Base.metadata.create_all(bind=engine)
-    print("[INFO] Database initialized")
+    print(f"[INFO] Database initialized: {DATABASE_URL[:30]}...")
