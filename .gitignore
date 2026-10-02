@@ -22,7 +22,7 @@ venv/
 env/
 
 # Models (बहुत बड़ी हैं)
-models/
+# models/ — allow best.pt (6 MB)
 llama-cpp/
 floorplan-model/
 
