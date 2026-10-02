@@ -1,187 +1,71 @@
-// ═══ VASTU ONE — Plan Upload ═══
+// VASTU ONE - Plan Upload Logic
 
 let selectedFile = null;
+let analysisResult = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("vastu_token");
-    if (!token) {
-        window.location.href = "/login";
-        return;
-    }
+const planInput = document.getElementById("planInput");
 
-    attachUploadListeners();
-});
-
-// ═══ UPLOAD LISTENERS ═══
-function attachUploadListeners() {
-    const zone = document.getElementById("uploadZone");
-    const input = document.getElementById("planInput");
-
-    zone.addEventListener("click", () => input.click());
-
-    zone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        zone.classList.add("dragover");
-    });
-
-    zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
-
-    zone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        zone.classList.remove("dragover");
-        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-    });
-
-    input.addEventListener("change", (e) => {
-        if (e.target.files[0]) handleFile(e.target.files[0]);
+if (planInput) {
+    planInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
     });
 }
 
-// ═══ FILE HANDLING ═══
 function handleFile(file) {
-    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp", "application/pdf"];
 
     if (!allowed.includes(file.type)) {
-        alert("❌ सिर्फ PNG, JPG, JPEG, WEBP files allowed हैं");
+        alert("Sirf PNG, JPG, PDF files allowed hain");
         return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-        alert("❌ File 10 MB से छोटी होनी चाहिए");
+        alert("File 10 MB se chhoti honi chahiye");
         return;
     }
 
     selectedFile = file;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        document.getElementById("previewImage").src = e.target.result;
-        document.getElementById("fileName").textContent = file.name;
-        document.getElementById("fileSize").textContent = formatSize(file.size);
-
-        // Show preview, hide others
-        document.getElementById("stepUpload").style.display = "none";
-        document.getElementById("stepPreview").style.display = "block";
-        document.getElementById("stepLoading").style.display = "none";
-        document.getElementById("stepError").style.display = "none";
-    };
-    reader.readAsDataURL(file);
+    analyzePlan();
 }
 
-function formatSize(bytes) {
-    if (bytes < 1024) return bytes + " B";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-}
-
-function removeFile() {
-    selectedFile = null;
-    document.getElementById("planInput").value = "";
-
-    document.getElementById("stepUpload").style.display = "block";
-    document.getElementById("stepPreview").style.display = "none";
-    document.getElementById("stepLoading").style.display = "none";
-    document.getElementById("stepError").style.display = "none";
-}
-
-// ═══ ANALYZE PLAN ═══
 async function analyzePlan() {
     if (!selectedFile) {
-        alert("पहले file चुनें");
+        alert("Pehle file chunein");
         return;
     }
 
-    const token = localStorage.getItem("vastu_token");
-    if (!token) {
-        window.location.href = "/login";
-        return;
-    }
-
-    // Show loading
-    document.getElementById("stepPreview").style.display = "none";
-    document.getElementById("stepLoading").style.display = "block";
-
-    // Animate progress steps
-    animateProgress();
-
-    // Prepare form data
     const formData = new FormData();
     formData.append("file", selectedFile);
 
+    // Show loading if element exists
+    const loadingEl = document.getElementById("loadingSection");
+    if (loadingEl) loadingEl.style.display = "block";
+
     try {
-        const response = await fetch("/api/plan/analyze", {
+        const response = await fetch("/api/upload/plan", {
             method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
             body: formData
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            throw new Error(data.detail || "Analysis failed");
+            const errText = await response.text();
+            throw new Error("Upload failed: " + response.status + " - " + errText);
         }
 
-        // Success — redirect to report
-        showSuccessAndRedirect(data.report_id);
+        const data = await response.json();
+        analysisResult = data;
+
+        // Store for report page
+        localStorage.setItem("plan_analysis", JSON.stringify(data));
+
+        // Redirect to report page
+        const reportId = data.upload_id || "latest";
+        window.location.href = "/plan-report?id=" + reportId;
 
     } catch (err) {
+        alert("Error: " + err.message);
         console.error(err);
-        showError(err.message);
+        if (loadingEl) loadingEl.style.display = "none";
     }
-}
-
-// ═══ PROGRESS ANIMATION ═══
-function animateProgress() {
-    const steps = ["ps1", "ps2", "ps3", "ps4", "ps5", "ps6"];
-
-    // Reset
-    steps.forEach(id => {
-        const el = document.getElementById(id);
-        el.classList.remove("active", "done");
-        el.textContent = "⏳ " + el.textContent.replace("⏳ ", "").replace("✓ ", "");
-    });
-
-    // Animate each step
-    steps.forEach((id, i) => {
-        setTimeout(() => {
-            const el = document.getElementById(id);
-
-            // Mark previous as done
-            if (i > 0) {
-                const prev = document.getElementById(steps[i - 1]);
-                prev.classList.remove("active");
-                prev.classList.add("done");
-                prev.textContent = "✓ " + prev.textContent.replace("⏳ ", "").replace("✓ ", "");
-            }
-
-            // Activate current
-            el.classList.add("active");
-            el.textContent = "⏳ " + el.textContent.replace("⏳ ", "").replace("✓ ", "");
-        }, i * 1200);
-    });
-}
-
-// ═══ SUCCESS ═══
-function showSuccessAndRedirect(reportId) {
-    // Mark all steps done
-    ["ps1", "ps2", "ps3", "ps4", "ps5", "ps6"].forEach(id => {
-        const el = document.getElementById(id);
-        el.classList.remove("active");
-        el.classList.add("done");
-        el.textContent = "✓ " + el.textContent.replace("⏳ ", "").replace("✓ ", "");
-    });
-
-    // Redirect to report
-    setTimeout(() => {
-        window.location.href = "/plan-report/" + reportId;
-    }, 800);
-}
-
-// ═══ ERROR ═══
-function showError(message) {
-    document.getElementById("stepLoading").style.display = "none";
-    document.getElementById("stepError").style.display = "block";
-    document.getElementById("errorMessage").textContent = message;
 }

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vastu One - Plan Upload</title>
+<title>VASTU ONE - Plan Upload</title>
 <link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
 <link rel="stylesheet" href="/static/upload.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ═══ HEADER ═══ -->
 <header class="header">
     <div class="container header-inner">
         <div class="logo">
@@ -21,75 +20,73 @@
             </div>
         </div>
         <nav class="nav">
-            <a href="/" class="nav-link">होम</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
             <a href="/upload" class="nav-link active">Plan Upload</a>
             <a href="/docs" target="_blank" class="nav-link">API</a>
         </nav>
     </div>
 </header>
 
-<!-- ═══ MAIN ═══ -->
 <main class="container main">
 
-    <!-- Hero -->
     <section class="hero">
-        <h2>📤 अपना Plan Upload करें</h2>
-        <p>AI आपके plan को पढ़कर 81 पद वास्तु विश्लेषण करेगा</p>
+        <h2>Plan Upload Karein</h2>
+        <p>AI aapke plan ko padhkar 81 pad vastu vishleshan karega</p>
     </section>
 
-    <!-- Upload Zone -->
     <section class="upload-section">
         <div class="upload-zone" id="uploadZone">
-            <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.webp,.bmp" hidden>
+            <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.webp,.bmp,.pdf" hidden>
             <div class="upload-content">
                 <div class="upload-icon">📐</div>
-                <h3>Plan Image यहाँ Drop करें</h3>
-                <p>या क्लिक करके file चुनें</p>
-                <p class="upload-formats">PNG, JPG, JPEG, WEBP — Max 10 MB</p>
+                <h3>Plan File Yahan Drop Karein</h3>
+                <p>Ya click karke file chunein</p>
+                <p class="upload-formats">PNG, JPG, PDF - Max 10 MB</p>
                 <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
-                    �� File चुनें
+                    File Chunein
                 </button>
             </div>
         </div>
 
-        <!-- Preview -->
         <div class="preview-section" id="previewSection" style="display:none;">
             <div class="preview-header">
-                <h3>📸 Preview</h3>
-                <button class="btn-remove" onclick="removeFile()">✕ हटाएँ</button>
+                <h3>Preview</h3>
+                <button class="btn-remove" onclick="removeFile()">X Hataayein</button>
             </div>
             <div class="preview-image-wrap">
-                <img id="previewImage" src="" alt="Plan preview">
+                <img id="previewImage" src="" alt="Plan preview" style="max-width:100%;">
+                <div id="pdfPreview" style="display:none; padding:40px; text-align:center; background:#f0f0f0; border-radius:8px;">
+                    <div style="font-size:64px;">📄</div>
+                    <p style="margin-top:16px; font-size:18px;">PDF File Ready</p>
+                    <p style="color:#666; font-size:14px;">Analysis ke liye "AI se Analyze karein" dabayein</p>
+                </div>
             </div>
             <div class="preview-info">
-                <span><b>File:</b> <span id="fileName">—</span></span>
-                <span><b>Size:</b> <span id="fileSize">—</span></span>
+                <span><b>File:</b> <span id="fileName">-</span></span>
+                <span><b>Size:</b> <span id="fileSize">-</span></span>
             </div>
             <button class="btn-analyze" id="analyzeBtn" onclick="analyzePlan()">
-                🔍 AI से Analyze करें
+                AI se Analyze Karein
             </button>
         </div>
 
-        <!-- Loading -->
         <div class="loading-section" id="loadingSection" style="display:none;">
             <div class="spinner"></div>
-            <h3>🤖 AI Analysis हो रहा है...</h3>
+            <h3>AI Analysis ho raha hai...</h3>
             <div class="progress-steps">
-                <div class="step" id="step1">✓ Image Processing</div>
-                <div class="step" id="step2">⏳ Room Detection</div>
-                <div class="step" id="step3">⏳ 81-Pad Grid बनाया जा रहा है</div>
-                <div class="step" id="step4">⏳ Direction Analysis</div>
+                <div class="step" id="step1">Image Processing</div>
+                <div class="step" id="step2">Room Detection</div>
+                <div class="step" id="step3">81-Pad Grid banaya ja raha hai</div>
+                <div class="step" id="step4">Direction Analysis</div>
             </div>
         </div>
 
-        <!-- Results -->
         <div class="results-section" id="resultsSection" style="display:none;">
             <div class="results-header">
-                <h2>✅ Analysis Complete!</h2>
-                <button class="btn-new" onclick="startOver()">🔄 नया Plan</button>
+                <h2>Analysis Complete!</h2>
+                <button class="btn-new" onclick="startOver()">Naya Plan</button>
             </div>
 
-            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">🏠</div>
@@ -98,7 +95,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📐</div>
-                    <div class="stat-value" id="boundaryArea">—</div>
+                    <div class="stat-value" id="boundaryArea">-</div>
                     <div class="stat-label">Boundary Area</div>
                 </div>
                 <div class="stat-card">
@@ -108,33 +105,29 @@
                 </div>
             </div>
 
-            <!-- Grid Overlay -->
             <div class="result-block">
-                <h3>🎯 81 पद Grid Overlay</h3>
-                <p>आपके plan पर 9×9 वास्तु grid लगाया गया है</p>
+                <h3>81 Pad Grid Overlay</h3>
+                <p>Aapke plan par 9x9 vastu grid lagaya gaya hai</p>
                 <div class="grid-image-wrap">
                     <img id="gridOverlayImage" src="" alt="81 Pad Grid Overlay">
                 </div>
             </div>
 
-            <!-- Rooms Detail -->
             <div class="result-block">
-                <h3>🏠 Detected Rooms</h3>
+                <h3>Detected Rooms</h3>
                 <div class="rooms-list" id="roomsList"></div>
             </div>
 
-            <!-- Mappings -->
             <div class="result-block">
-                <h3>📊 Room → Vastu Position Mapping</h3>
+                <h3>Room to Vastu Position Mapping</h3>
                 <div class="mappings-list" id="mappingsList"></div>
             </div>
 
-            <!-- CTA -->
             <div class="cta-section">
-                <h3>📄 पूरी वास्तु रिपोर्ट चाहिए?</h3>
-                <p>AI से detailed analysis + शास्त्र प्रमाण + उपाय</p>
+                <h3>Puri Vastu Report Chahiye?</h3>
+                <p>AI se detailed analysis + shastra praman + upay</p>
                 <button class="btn-full-report" onclick="generateFullReport()">
-                    📋 Full Report Generate करें
+                    Full Report Generate Karein
                 </button>
             </div>
         </div>
@@ -142,9 +135,8 @@
 
 </main>
 
-<!-- ═══ FOOTER ═══ -->
 <footer class="footer">
-    <p>VASTU ONE — India Ka No.1 Vastu Engine | बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+    <p>VASTU ONE - India Ka No.1 Vastu Engine</p>
 </footer>
 
 <script src="/static/upload.js"></script>

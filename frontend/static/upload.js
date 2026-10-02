@@ -1,4 +1,4 @@
-// ═══ VASTU ONE - Upload Logic ═══
+// VASTU ONE - Upload Logic
 
 let selectedFile = null;
 let analysisResult = null;
@@ -6,7 +6,7 @@ let analysisResult = null;
 const uploadZone = document.getElementById("uploadZone");
 const fileInput = document.getElementById("fileInput");
 
-// ═══ DRAG & DROP ═══
+// DRAG & DROP
 uploadZone.addEventListener("click", () => fileInput.click());
 
 uploadZone.addEventListener("dragover", (e) => {
@@ -30,31 +30,43 @@ fileInput.addEventListener("change", (e) => {
     if (file) handleFile(file);
 });
 
-// ═══ FILE HANDLING ═══
+// FILE HANDLING
 function handleFile(file) {
-    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp"];
+    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp", "application/pdf"];
 
     if (!allowed.includes(file.type)) {
-        alert("❌ सिर्फ PNG, JPG, JPEG, WEBP, BMP files allowed हैं");
+        alert("Sirf PNG, JPG, PDF files allowed hain");
         return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-        alert("❌ File 10 MB से छोटी होनी चाहिए");
+        alert("File 10 MB se chhoti honi chahiye");
         return;
     }
 
     selectedFile = file;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        document.getElementById("previewImage").src = e.target.result;
-        document.getElementById("fileName").textContent = file.name;
-        document.getElementById("fileSize").textContent = formatSize(file.size);
-        document.getElementById("previewSection").style.display = "block";
-        document.getElementById("uploadZone").style.display = "none";
-    };
-    reader.readAsDataURL(file);
+    const isPDF = file.type === "application/pdf";
+
+    if (isPDF) {
+        // PDF - show placeholder
+        document.getElementById("previewImage").style.display = "none";
+        document.getElementById("pdfPreview").style.display = "block";
+    } else {
+        // Image - show preview
+        document.getElementById("previewImage").style.display = "block";
+        document.getElementById("pdfPreview").style.display = "none";
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById("previewImage").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = formatSize(file.size);
+    document.getElementById("previewSection").style.display = "block";
+    document.getElementById("uploadZone").style.display = "none";
 }
 
 function formatSize(bytes) {
@@ -76,14 +88,13 @@ function startOver() {
     analysisResult = null;
 }
 
-// ═══ ANALYSIS ═══
+// ANALYSIS
 async function analyzePlan() {
     if (!selectedFile) return;
 
     document.getElementById("previewSection").style.display = "none";
     document.getElementById("loadingSection").style.display = "block";
 
-    // Progress animation
     animateSteps();
 
     const formData = new FormData();
@@ -96,19 +107,19 @@ async function analyzePlan() {
         });
 
         if (!response.ok) {
-            throw new Error("Analysis failed: " + response.status);
+            const errText = await response.text();
+            throw new Error("Analysis failed: " + response.status + " - " + errText);
         }
 
         const data = await response.json();
         analysisResult = data;
 
-        // Wait for progress animation to complete
         await new Promise(r => setTimeout(r, 1500));
 
         renderResults(data);
 
     } catch (err) {
-        alert("❌ Error: " + err.message);
+        alert("Error: " + err.message);
         console.error(err);
         document.getElementById("loadingSection").style.display = "none";
         document.getElementById("previewSection").style.display = "block";
@@ -118,65 +129,64 @@ async function analyzePlan() {
 function animateSteps() {
     const steps = ["step1", "step2", "step3", "step4"];
     steps.forEach(id => {
-        document.getElementById(id).classList.remove("active", "done");
+        const el = document.getElementById(id);
+        if (el) el.classList.remove("active", "done");
     });
 
     steps.forEach((id, i) => {
         setTimeout(() => {
             const el = document.getElementById(id);
+            if (!el) return;
             if (i > 0) {
-                document.getElementById(steps[i-1]).classList.remove("active");
-                document.getElementById(steps[i-1]).classList.add("done");
-                document.getElementById(steps[i-1]).textContent = "✓ " + document.getElementById(steps[i-1]).textContent.replace("⏳ ", "").replace("✓ ", "");
+                const prev = document.getElementById(steps[i-1]);
+                if (prev) {
+                    prev.classList.remove("active");
+                    prev.classList.add("done");
+                }
             }
             el.classList.add("active");
-            el.textContent = "⏳ " + el.textContent.replace("⏳ ", "").replace("✓ ", "");
         }, i * 800);
     });
 }
 
-// ═══ RENDER RESULTS ═══
+// RENDER RESULTS
 function renderResults(data) {
     document.getElementById("loadingSection").style.display = "none";
     document.getElementById("resultsSection").style.display = "block";
 
     const a = data.analysis;
 
-    // Stats
     document.getElementById("roomsCount").textContent = a.rooms_detected || 0;
     document.getElementById("boundaryArea").textContent =
-        a.boundary ? Math.round(a.boundary.area / 1000) + "K px" : "—";
+        a.boundary ? Math.round(a.boundary.area / 1000) + "K px" : "-";
     document.getElementById("mappingsCount").textContent =
         (a.room_mappings || []).length;
 
-    // Grid Overlay
     if (a.grid_overlay) {
         document.getElementById("gridOverlayImage").src =
             "data:image/png;base64," + a.grid_overlay;
     }
 
-    // Rooms
     const roomsList = document.getElementById("roomsList");
     roomsList.innerHTML = "";
     (a.rooms || []).forEach((room, i) => {
         const div = document.createElement("div");
         div.className = "room-item";
         div.innerHTML = `
-            <div class="room-type">🏠 Room ${i+1}</div>
+            <div class="room-type">Room ${i+1}</div>
             <div class="room-meta">
                 Type: ${room.type || "unknown"}<br>
-                Area: ${Math.round(room.area)} px²<br>
+                Area: ${Math.round(room.area)} px<br>
                 Center: (${room.center[0]}, ${room.center[1]})
             </div>
         `;
         roomsList.appendChild(div);
     });
 
-    // Mappings
     const mappingsList = document.getElementById("mappingsList");
     mappingsList.innerHTML = "";
     if ((a.room_mappings || []).length === 0) {
-        mappingsList.innerHTML = "<p style='color:var(--text-dim)'>कोई room mapping नहीं मिली</p>";
+        mappingsList.innerHTML = "<p style='color:#999'>Koi room mapping nahi mili</p>";
     } else {
         a.room_mappings.forEach(m => {
             const div = document.createElement("div");
@@ -187,28 +197,23 @@ function renderResults(data) {
                     <span class="zone-badge">${m.zone}</span>
                 </div>
                 <div class="room-meta">
-                    पद #${m.pada} | Row ${m.row}, Col ${m.col}
+                    Pad #${m.pada} | Row ${m.row}, Col ${m.col}
                 </div>
             `;
             mappingsList.appendChild(div);
         });
     }
 
-    // Scroll to results
     document.getElementById("resultsSection").scrollIntoView({ behavior: "smooth" });
 }
 
-// ═══ FULL REPORT ═══
+// FULL REPORT
 function generateFullReport() {
     if (!analysisResult) {
-        alert("पहले analysis complete करें");
+        alert("Pehle analysis complete karein");
         return;
     }
 
-    // Store in localStorage for report page
     localStorage.setItem("plan_analysis", JSON.stringify(analysisResult));
-
-    alert("✅ Analysis saved! अब आप full report generate कर सकते हैं।");
-    // Future: redirect to report page with package selection
-    // window.location.href = "/report/select-package";
+    alert("Analysis saved! Ab aap full report generate kar sakte hain.");
 }
