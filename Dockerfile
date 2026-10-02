@@ -28,3 +28,6 @@ COPY . .
 
 EXPOSE 8000
 CMD ["sh", "-c", "uvicorn api.server:app --host 0.0.0.0 --port ${PORT:-8000}"]
+
+# YOLO model included - rebuild v2 
+RUN ls -la models/ || echo 'models not found'
