@@ -1,6 +1,7 @@
 """
-Vastu One - Advanced Floor Plan Parser v2.0
-4-Layer System: YOLO + OCR + Walls + Fusion
+Vastu One - Advanced Floor Plan Parser v2.1
+4-Layer System: YOLO + Tesseract OCR + Walls + Fusion
+(EasyOCR removed to save RAM on Railway free tier)
 """
 
 import cv2
@@ -9,10 +10,12 @@ from PIL import Image
 from pathlib import Path
 import base64
 import io
+import os
+import platform
 
 from engine.vision.class_mapping import CLASS_TO_ROOM, ROOM_GROUPING, get_room_info
 
-# YOLO imports
+# ═══ YOLO ═══
 try:
     from ultralytics import YOLO
     YOLO_AVAILABLE = True
@@ -20,43 +23,44 @@ except ImportError:
     YOLO_AVAILABLE = False
     print("[WARNING] YOLO not available")
 
-# OCR imports (optional)
+# ═══ TESSERACT OCR ═══
 try:
     import pytesseract
-    import os as _os
-    import platform as _platform
-    if _platform.system() == "Windows":
-        _tess_paths = [
+    if platform.system() == "Windows":
+        tesseract_paths = [
             r"C:\Program Files\Tesseract-OCR\tesseract.exe",
             r"C:\Users\HP\AppData\Local\Programs\Tesseract-OCR\tesseract.exe",
         ]
-        for _tp in _tess_paths:
-            if _os.path.exists(_tp):
-                pytesseract.pytesseract.tesseract_cmd = _tp
-                print(f"[INFO] Tesseract path: {_tp}")
+        for path in tesseract_paths:
+            if os.path.exists(path):
+                pytesseract.pytesseract.tesseract_cmd = path
+                print(f"[INFO] Tesseract path: {path}")
                 break
+    elif platform.system() == "Linux":
+        # Railway pe Tesseract /usr/bin/tesseract pe hota hai
+        if os.path.exists("/usr/bin/tesseract"):
+            pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+            print("[INFO] Tesseract path: /usr/bin/tesseract")
     TESSERACT_AVAILABLE = True
 except ImportError:
     TESSERACT_AVAILABLE = False
+    print("[WARNING] pytesseract not available")
 
-try:
-    import easyocr
-    EASYOCR_AVAILABLE = True
-except ImportError:
-    EASYOCR_AVAILABLE = False
+# EasyOCR disabled (RAM saving)
+EASYOCR_AVAILABLE = False
 
 
 MODEL_PATH = Path(__file__).resolve().parent.parent.parent / "models" / "best.pt"
 
 # OCR keywords → room type mapping
 OCR_KEYWORDS = {
-    "bedroom": ["bed room", "bedroom", "master bedroom", "bed room"],
+    "bedroom": ["bed room", "bedroom", "master bedroom", "bed"],
     "kitchen": ["kitchen", "kitchenette", "cook"],
-    "toilet": ["toilet", "w.c", "wc", "bathroom", "bath", "washroom"],
-    "living": ["living", "hall", "drawing", "lounge", "sitting"],
+    "toilet": ["toilet", "w.c", "wc", "bathroom", "bath", "washroom", "c.toilet", "c toilet"],
+    "living": ["living", "hall", "drawing", "lounge", "sitting", "drg"],
     "dining": ["dining", "dining hall", "dining room"],
     "store": ["store", "storage", "store room"],
-    "balcony": ["balcony", "sitout", "sit out", "verandah"],
+    "balcony": ["balcony", "sitout", "sit out", "verandah", "varandah"],
     "stair": ["stair", "staircase", "steps", "up"],
     "entrance": ["entry", "entrance", "main door", "foyer"],
     "parking": ["parking", "garage", "car"],
@@ -66,7 +70,7 @@ OCR_KEYWORDS = {
 
 
 class PlanParser:
-    """Advanced floor plan analysis: YOLO + OCR + Walls + Fusion"""
+    """Advanced floor plan analysis: YOLO + Tesseract OCR + Walls + Fusion"""
 
     def __init__(self):
         self.plan_image = None
@@ -75,7 +79,6 @@ class PlanParser:
         self.rooms_detected = []
         self.grid_81 = []
         self.yolo_model = None
-        self.easyocr_reader = None
 
         # Load YOLO
         if YOLO_AVAILABLE and MODEL_PATH.exists():
@@ -85,22 +88,13 @@ class PlanParser:
             except Exception as e:
                 print(f"[ERROR] YOLO load failed: {e}")
 
-        # Load EasyOCR (lazy)
-        if EASYOCR_AVAILABLE:
-            try:
-                self.easyocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False)
-                print("[INFO] EasyOCR loaded")
-            except Exception as e:
-                print(f"[WARNING] EasyOCR failed: {e}")
-
     def load_plan(self, image_path):
-        """Load and preprocess image"""
         img = cv2.imread(str(image_path))
         if img is None:
             raise ValueError(f"Cannot load image: {image_path}")
 
         h, w = img.shape[:2]
-        max_dim = 2000  # Higher for better detail
+        max_dim = 1800  # Reduced for RAM
         if max(h, w) > max_dim:
             scale = max_dim / max(h, w)
             img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
@@ -108,18 +102,15 @@ class PlanParser:
         self.plan_image = img
         return img
 
-    # ═══════════════════════════════════════════════════════════════
-    # LAYER 1: YOLO DETECTION
-    # ═══════════════════════════════════════════════════════════════
+    # ═══ LAYER 1: YOLO ═══
     def detect_with_yolo(self):
-        """YOLO detection - 35 classes"""
         if not self.yolo_model:
             return []
 
         try:
             results = self.yolo_model.predict(
                 self.plan_image,
-                conf=0.20,  # Lower threshold for more detections
+                conf=0.25,
                 iou=0.45,
                 verbose=False
             )
@@ -160,109 +151,82 @@ class PlanParser:
             print(f"[ERROR] YOLO detection failed: {e}")
             return []
 
-    # ═══════════════════════════════════════════════════════════════
-    # LAYER 2: OCR TEXT DETECTION
-    # ═══════════════════════════════════════════════════════════════
+    # ═══ LAYER 2: TESSERACT OCR ═══
     def detect_text_ocr(self):
-        """Detect text labels from plan using OCR"""
-        if not self.plan_image is not None:
+        if self.plan_image is None:
             return []
 
         results = []
 
-        # Try EasyOCR first (better for plans)
-        if self.easyocr_reader:
+        if TESSERACT_AVAILABLE:
             try:
-                # Upscale for better OCR
+                # Upscale 1.5x for better OCR
                 h, w = self.plan_image.shape[:2]
                 scale = 1.5
                 upscaled = cv2.resize(self.plan_image, (int(w*scale), int(h*scale)), interpolation=cv2.INTER_CUBIC)
-                ocr_raw = self.easyocr_reader.readtext(upscaled)
-                print(f"[DEBUG] EasyOCR raw results: {len(ocr_raw)}")
-                for bbox, text, conf in ocr_raw:
-                    if conf < 0.2:
-                        continue
-                    # Scale bbox back to original size
-                    bbox = [[p[0]/scale, p[1]/scale] for p in bbox]
-                    text_lower = text.lower().strip()
-                    room_type = self._match_text_to_room(text_lower)
-                    if room_type:
-                        # Convert bbox to x1,y1,x2,y2
-                        xs = [p[0] for p in bbox]
-                        ys = [p[1] for p in bbox]
-                        results.append({
-                            "text": text,
-                            "text_lower": text_lower,
-                            "room_type": room_type,
-                            "confidence": round(conf, 3),
-                            "bbox": [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))],
-                            "center": [int((min(xs)+max(xs))/2), int((min(ys)+max(ys))/2)],
-                        })
-            except Exception as e:
-                print(f"[WARNING] EasyOCR failed: {e}")
+                gray = cv2.cvtColor(upscaled, cv2.COLOR_BGR2GRAY)
 
-        # Fallback to Tesseract
-        if not results and TESSERACT_AVAILABLE:
-            try:
-                gray = cv2.cvtColor(self.plan_image, cv2.COLOR_BGR2GRAY)
-                data = pytesseract.image_to_data(gray, output_type=pytesseract.Output.DICT)
+                # Threshold for better text
+                _, thresh = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)
+
+                # Use psm 11 (sparse text)
+                data = pytesseract.image_to_data(
+                    thresh,
+                    output_type=pytesseract.Output.DICT,
+                    config='--psm 11'
+                )
+
                 for i, text in enumerate(data['text']):
                     text = text.strip()
                     if not text or len(text) < 3:
                         continue
+                    conf = data['conf'][i]
+                    if conf < 30:
+                        continue
                     text_lower = text.lower()
                     room_type = self._match_text_to_room(text_lower)
                     if room_type:
-                        x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
+                        x, y, ww, hh = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
+                        # Scale back to original
+                        x, y = int(x/scale), int(y/scale)
+                        ww, hh = int(ww/scale), int(hh/scale)
                         results.append({
                             "text": text,
                             "text_lower": text_lower,
                             "room_type": room_type,
-                            "confidence": data['conf'][i] / 100.0 if data['conf'][i] > 0 else 0.5,
-                            "bbox": [x, y, x+w, y+h],
-                            "center": [x + w//2, y + h//2],
+                            "confidence": conf / 100.0,
+                            "source": "tesseract",
+                            "bbox": [x, y, x+ww, y+hh],
+                            "center": [x + ww//2, y + hh//2],
                         })
+
+                print(f"[INFO] Tesseract found {len(results)} labels")
             except Exception as e:
                 print(f"[WARNING] Tesseract failed: {e}")
 
         self.ocr_results = results
-        print(f"[INFO] OCR detected {len(results)} text labels")
+        print(f"[INFO] OCR total: {len(results)} labels")
         return results
 
     def _match_text_to_room(self, text):
-        """Match OCR text to room type"""
         for room_type, keywords in OCR_KEYWORDS.items():
             for kw in keywords:
                 if kw in text:
                     return room_type
         return None
 
-    # ═══════════════════════════════════════════════════════════════
-    # LAYER 3: WALL DETECTION (Hough Lines)
-    # ═══════════════════════════════════════════════════════════════
+    # ═══ LAYER 3: WALLS ═══
     def detect_walls(self):
-        """Detect walls using Hough Lines"""
         if self.plan_image is None:
             return []
 
         gray = cv2.cvtColor(self.plan_image, cv2.COLOR_BGR2GRAY)
-
-        # Binarize
         _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
 
-        # Detect lines
-        lines = cv2.HoughLinesP(
-            thresh,
-            rho=1,
-            theta=np.pi / 180,
-            threshold=80,
-            minLineLength=50,
-            maxLineGap=10
-        )
+        lines = cv2.HoughLinesP(thresh, rho=1, theta=np.pi/180, threshold=80, minLineLength=50, maxLineGap=10)
 
         wall_lines = []
         if lines is not None:
-            # Handle both possible return formats
             lines_flat = lines.reshape(-1, 4) if len(lines.shape) > 2 else lines
             for line in lines_flat:
                 try:
@@ -280,17 +244,13 @@ class PlanParser:
         print(f"[INFO] Detected {len(wall_lines)} wall lines")
         return wall_lines
 
-    # ═══════════════════════════════════════════════════════════════
-    # LAYER 4: FUSION - Combine YOLO + OCR + Walls
-    # ═══════════════════════════════════════════════════════════════
+    # ═══ LAYER 4: FUSION ═══
     def fuse_rooms(self):
-        """Combine YOLO + OCR to create final rooms"""
         rooms = []
 
-        # STEP 1: OCR-based rooms (highest priority)
-        ocr_rooms = []
+        # OCR rooms (primary)
         for ocr in self.ocr_results:
-            ocr_rooms.append({
+            ocr_room = {
                 "room_type": ocr["room_type"],
                 "source": "ocr",
                 "confidence": ocr["confidence"],
@@ -298,109 +258,28 @@ class PlanParser:
                 "center": ocr["center"],
                 "label": ocr["text"],
                 "area": (ocr["bbox"][2]-ocr["bbox"][0]) * (ocr["bbox"][3]-ocr["bbox"][1]),
-            })
+                "objects": [],
+                "objects_count": 0,
+            }
 
-        # STEP 2: YOLO-based grouping
-        yolo_groups = self._group_yolo_by_room()
+            # Match YOLO objects near this OCR label
+            ox, oy = ocr["center"]
+            for d in self.detections:
+                if d["room_type"] in ["wall", "window", "door", "unknown"]:
+                    continue
+                dx, dy = d["center"]
+                if abs(ox - dx) < 400 and abs(oy - dy) < 400:
+                    ocr_room["objects"].append(d)
+                    ocr_room["objects_count"] += 1
 
-        # STEP 3: Merge OCR + YOLO
-        # OCR rooms = primary, YOLO fills gaps
-        used_yolo = set()
-
-        # Add OCR rooms
-        for ocr_room in ocr_rooms:
-            # Find matching YOLO objects near this OCR label
-            room_objects = []
-            ox, oy = ocr_room["center"]
-            for yg in yolo_groups:
-                yx, yy = yg["center"]
-                # Agar YOLO object OCR label ke paas hai (< 300px), toh same room
-                if abs(ox - yx) < 300 and abs(oy - yy) < 300:
-                    room_objects.append(yg)
-                    used_yolo.add(yg["id"])
-
-            ocr_room["objects"] = room_objects
-            ocr_room["objects_count"] = len(room_objects)
             rooms.append(ocr_room)
 
-        # Add YOLO rooms that weren't matched (no OCR label)
-        for yg in yolo_groups:
-            if yg["id"] not in used_yolo:
-                rooms.append({
-                    "room_type": yg["room_type"],
-                    "source": "yolo",
-                    "confidence": yg["confidence"],
-                    "bbox": yg["bbox"],
-                    "center": yg["center"],
-                    "label": yg["class_name"],
-                    "objects": [yg],
-                    "objects_count": 1,
-                    "area": yg["area"],
-                })
-
         self.rooms_detected = rooms
-        print(f"[INFO] Fused {len(rooms)} rooms (OCR: {len(ocr_rooms)}, YOLO: {len(yolo_groups)})")
+        print(f"[INFO] Fused {len(rooms)} rooms")
         return rooms
 
-    def _group_yolo_by_room(self):
-        """Group YOLO objects into rooms"""
-        if not self.detections:
-            return []
-
-        h, w = self.plan_image.shape[:2]
-        total_area = h * w
-
-        # Group by room type using ROOM_GROUPING
-        room_objects = {}
-
-        for d in self.detections:
-            cls_name = d["class_name"]
-            room_type = d["room_type"]
-
-            # Skip structural elements
-            if room_type in ["wall", "window", "door", "opening", "railing", "unknown"]:
-                continue
-
-            # Skip very small
-            if d["area"] < total_area * 0.0001:
-                continue
-
-            # Group by room type
-            if room_type not in room_objects:
-                room_objects[room_type] = []
-            room_objects[room_type].append(d)
-
-        # Create grouped rooms
-        grouped = []
-        for i, (room_type, objects) in enumerate(room_objects.items()):
-            # Merge bounding boxes
-            x1 = min(o["bbox"][0] for o in objects)
-            y1 = min(o["bbox"][1] for o in objects)
-            x2 = max(o["bbox"][2] for o in objects)
-            y2 = max(o["bbox"][3] for o in objects)
-
-            room_info = CLASS_TO_ROOM.get(objects[0]["class_name"], {})
-
-            grouped.append({
-                "id": i,
-                "room_type": room_type,
-                "hindi": room_info.get("hindi", "अज्ञात"),
-                "icon": room_info.get("icon", "❓"),
-                "class_name": objects[0]["class_name"],
-                "confidence": round(sum(o["confidence"] for o in objects) / len(objects), 3),
-                "bbox": [x1, y1, x2, y2],
-                "center": [(x1+x2)//2, (y1+y2)//2],
-                "area": (x2-x1) * (y2-y1),
-                "objects_count": len(objects),
-            })
-
-        return grouped
-
-    # ═══════════════════════════════════════════════════════════════
-    # BOUNDARY + GRID
-    # ═══════════════════════════════════════════════════════════════
+    # ═══ BOUNDARY + GRID ═══
     def detect_boundary(self):
-        """Detect outer boundary"""
         img = self.plan_image
         if img is None:
             return None
@@ -420,7 +299,6 @@ class PlanParser:
         }
 
     def overlay_81_grid(self):
-        """Overlay 9x9 Vastu grid"""
         img = self.plan_image
         if img is None:
             return None
@@ -441,34 +319,26 @@ class PlanParser:
                 cy = int(y + row * cell_h)
                 cw = int(cell_w)
                 ch = int(cell_h)
-
                 cv2.rectangle(overlay, (cx, cy), (cx + cw, cy + ch), (0, 255, 100), 1)
-
                 zone = self._get_zone(row, col)
                 grid_cells.append({
-                    "row": row,
-                    "col": col,
-                    "pada": row * 9 + col + 1,
-                    "bbox": [cx, cy, cw, ch],
-                    "zone": zone,
+                    "row": row, "col": col, "pada": row * 9 + col + 1,
+                    "bbox": [cx, cy, cw, ch], "zone": zone,
                 })
 
-        # Draw OCR labels
+        # Draw OCR labels (orange)
         for ocr in self.ocr_results:
             x1, y1, x2, y2 = ocr["bbox"]
             cv2.rectangle(overlay, (x1, y1), (x2, y2), (255, 100, 0), 2)
             cv2.putText(overlay, ocr["text"][:20], (x1, y1-5),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 100, 0), 1)
 
-        # Draw YOLO detections
+        # Draw YOLO detections (cyan)
         for det in self.detections:
             if det["room_type"] in ["wall", "window", "door", "unknown"]:
                 continue
             x1, y1, x2, y2 = det["bbox"]
             cv2.rectangle(overlay, (x1, y1), (x2, y2), (0, 200, 255), 2)
-            label = f"{det['class_name']}"
-            cv2.putText(overlay, label, (x1, y1 - 5),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 200, 255), 1)
 
         result = cv2.addWeighted(overlay, 0.7, img, 0.3, 0)
         self.grid_81 = grid_cells
@@ -486,14 +356,12 @@ class PlanParser:
         return "CENTER"
 
     def map_rooms_to_grid(self):
-        """Map rooms to 81-pad grid"""
         if not self.grid_81:
             return []
 
         mappings = []
         for room in self.rooms_detected:
             cx, cy = room["center"]
-
             for cell in self.grid_81:
                 gx, gy, gw, gh = cell["bbox"]
                 if gx <= cx <= gx + gw and gy <= cy <= gy + gh:
@@ -512,32 +380,20 @@ class PlanParser:
                         "objects_count": room.get("objects_count", 0),
                     })
                     break
-
         return mappings
 
     def image_to_base64(self, image):
         if isinstance(image, np.ndarray):
-            _, buffer = cv2.imencode('.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 85])
+            _, buffer = cv2.imencode('.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 80])
             return base64.b64encode(buffer).decode('utf-8')
         return None
 
     def analyze(self, image_path):
-        """Complete 4-layer analysis"""
         self.load_plan(image_path)
-
-        # Layer 1: YOLO
         detections = self.detect_with_yolo()
-
-        # Layer 2: OCR
         ocr_results = self.detect_text_ocr()
-
-        # Layer 3: Walls
         walls = self.detect_walls()
-
-        # Layer 4: Fusion
         rooms = self.fuse_rooms()
-
-        # Grid + mapping
         boundary = self.detect_boundary()
         grid_image = self.overlay_81_grid()
         mappings = self.map_rooms_to_grid()
