@@ -1,53 +1,57 @@
-// ═══ VASTU ONE — Plan Report ═══
+// ═══════════════════════════════════════════════════════════════
+// VASTU ONE — Plan Report Page
+// Reads localStorage data + renders report
+// ═══════════════════════════════════════════════════════════════
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("vastu_token");
-    if (!token) {
-        window.location.href = "/login";
-        return;
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    loadReport();
+});
 
-    const reportId = window.location.pathname.split("/").pop();
-    if (!reportId) {
-        showError("Report ID नहीं मिली");
-        return;
-    }
-
+function loadReport() {
     try {
-        const response = await fetch(`/api/plan/report/${reportId}`, {
-            headers: { "Authorization": "Bearer " + token }
-        });
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                showError("Report नहीं मिली");
-            } else {
-                showError("Error: " + response.status);
-            }
+        const raw = localStorage.getItem("plan_analysis");
+        if (!raw) {
+            showError("Report not received. Pehle plan upload karein.");
             return;
         }
 
-        const data = await response.json();
+        const data = JSON.parse(raw);
+
+        // Check if data has analysis
+        if (!data || !data.analysis) {
+            showError("Report incomplete hai. Dobaara upload karein.");
+            return;
+        }
+
         renderReport(data);
 
     } catch (err) {
-        console.error(err);
-        showError("कुछ गड़बड़ हो गई");
+        console.error("Report load error:", err);
+        showError("Report load nahi ho paayi. Dobaara try karein.");
     }
-});
+}
 
 function showError(msg) {
-    document.getElementById("reportContent").innerHTML = `
+    const el = document.getElementById("reportContent");
+    if (!el) return;
+    el.innerHTML = `
         <div style="text-align:center;padding:60px;">
             <div style="font-size:64px;">⚠️</div>
-            <h2 style="color:#ef4444;">${msg}</h2>
+            <h2 style="color:#ef4444;margin-top:20px;">${msg}</h2>
+            <a href="/plan-upload" style="display:inline-block;margin-top:30px;padding:14px 32px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#000;text-decoration:none;border-radius:10px;font-weight:700;">
+                Naya Plan Upload Karein
+            </a>
         </div>
     `;
 }
 
 function renderReport(data) {
-    const analysis = data.analysis;
-    const planInfo = analysis.plan_info || {};
+    const analysis = data.analysis || {};
+    const uploadInfo = {
+        upload_id: data.upload_id || "N/A",
+        filename: data.filename || data.original_filename || "N/A",
+        uploaded_at: data.uploaded_at || new Date().toISOString()
+    };
 
     let html = "";
 
@@ -57,126 +61,95 @@ function renderReport(data) {
         <div class="om-icon">🕉️</div>
         <h1>VASTU ANALYSIS REPORT</h1>
         <div class="report-meta">
-            <span><b>Report ID:</b> ${data.report_id}</span>
-            <span><b>Date:</b> ${new Date(data.created_at).toLocaleDateString('en-IN')}</span>
+            <span><b>Report ID:</b> ${uploadInfo.upload_id}</span>
+            <span><b>File:</b> ${uploadInfo.filename}</span>
+            <span><b>Date:</b> ${new Date(uploadInfo.uploaded_at).toLocaleDateString('en-IN')}</span>
         </div>
     </div>`;
 
-    // SCORE HERO
-    html += `
-    <div class="score-hero">
-        <div class="score-circle">
-            <div class="score-number">${analysis.overall_score}</div>
-            <div class="score-max">/ 100</div>
-        </div>
-        <div class="score-grade">${analysis.grade}</div>
-        <p class="score-text">आपके घर का वास्तु स्कोर</p>
-    </div>`;
+    // STATS — Jo Data Mil Raha Hai
+    const roomsDetected = analysis.rooms_detected || 0;
+    const mappings = (analysis.room_mappings || []).length;
+    const boundaryArea = analysis.boundary ? Math.round(analysis.boundary.area / 1000) : 0;
 
-    // QUICK STATS
     html += `
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-value">${analysis.total_rooms}</div>
-            <div class="stat-label">कुल Rooms</div>
+            <div class="stat-value">${roomsDetected}</div>
+            <div class="stat-label">�� Rooms Detected</div>
         </div>
         <div class="stat-card correct">
-            <div class="stat-value">${analysis.correct_rooms}</div>
-            <div class="stat-label">✅ सही</div>
+            <div class="stat-value">${mappings}</div>
+            <div class="stat-label">🎯 Rooms Mapped</div>
         </div>
-        <div class="stat-card defect">
-            <div class="stat-value">${analysis.defects}</div>
-            <div class="stat-label">🟡 दोष</div>
-        </div>
-        <div class="stat-card severe">
-            <div class="stat-value">${analysis.severe_defects}</div>
-            <div class="stat-label">🔴 गंभीर</div>
+        <div class="stat-card">
+            <div class="stat-value">${boundaryArea}K</div>
+            <div class="stat-label">📐 Area (px)</div>
         </div>
     </div>`;
 
-    // PLAN INFO
-    if (planInfo.compass_direction || planInfo.total_area) {
+    // GRID OVERLAY
+    if (analysis.grid_overlay) {
         html += `
         <div class="section">
-            <h2>📐 Plan की जानकारी</h2>
-            <div class="info-grid">
-                ${planInfo.compass_direction ? `<div class="info-item"><span>Compass Direction</span><b>${planInfo.compass_direction}</b></div>` : ''}
-                ${planInfo.total_area ? `<div class="info-item"><span>Total Area</span><b>${planInfo.total_area}</b></div>` : ''}
+            <h2>🎯 81 Pad Grid Overlay</h2>
+            <p style="color:#666;">Aapke plan par 9x9 vastu grid lagaya gaya hai</p>
+            <div style="text-align:center;background:#fff;padding:20px;border-radius:12px;margin-top:16px;">
+                <img src="data:image/png;base64,${analysis.grid_overlay}" style="max-width:100%;border-radius:8px;" alt="Grid Overlay">
             </div>
         </div>`;
     }
 
-    // ENTRY ANALYSIS
-    if (analysis.entry_analysis) {
-        const entry = analysis.entry_analysis;
-        const isDefect = entry.status === "defect";
+    // ROOMS LIST
+    if (analysis.rooms && analysis.rooms.length > 0) {
         html += `
         <div class="section">
-            <h2>🚪 मुख्य द्वार (Main Entrance)</h2>
-            <div class="card ${isDefect ? 'defect-card' : 'correct-card'}">
+            <h2>🏠 Detected Rooms</h2>
+            <div class="rooms-grid">`;
+
+        analysis.rooms.forEach((room, i) => {
+            html += `
+            <div class="card">
                 <div class="card-header">
-                    <span class="card-title">${entry.position}</span>
-                    <span class="badge ${isDefect ? 'badge-red' : 'badge-green'}">
-                        ${isDefect ? '🔴 दोष' : '✅ सही'}
-                    </span>
+                    <span class="card-title">Room ${i+1}</span>
                 </div>
-                ${isDefect && entry.shastra ? `
-                <div class="shastra-ref">
-                    <b>📖 ${entry.shastra.source} ${entry.shastra.chapter || ''}:</b>
-                    ${entry.shastra.meaning || ''}
-                </div>` : ''}
-                ${isDefect && entry.remedies ? `
-                <div class="remedies-box">
-                    <b>💊 उपाय:</b>
-                    <ul>
-                        ${(entry.remedies.if_bad || []).map(r => `<li>${r}</li>`).join("")}
-                    </ul>
-                    ${entry.remedies.mantra ? `<div class="mantra">🕉️ ${entry.remedies.mantra}</div>` : ''}
-                </div>` : ''}
-            </div>
+                <div class="card-row"><b>Type:</b> ${room.type || "unknown"}</div>
+                <div class="card-row"><b>Area:</b> ${Math.round(room.area || 0)} px²</div>
+                <div class="card-row"><b>Center:</b> (${(room.center || [0,0]).join(", ")})</div>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+    } else {
+        html += `
+        <div class="section">
+            <h2>🏠 Detected Rooms</h2>
+            <p style="color:#f59e0b;padding:20px;background:#fffbeb;border-radius:8px;">
+                ⚠️ Koi room detect nahi hua. Plan clear nahi hai ya YOLO model available nahi hai.
+            </p>
         </div>`;
     }
 
-    // ROOMS ANALYSIS
-    html += `
-    <div class="section">
-        <h2>🏠 Room-by-Room Analysis</h2>
-        <div class="rooms-grid">`;
-
-    analysis.results.forEach(room => {
-        const statusClass = room.status === "correct" ? "correct-card" :
-                           room.status === "defect" ? "defect-card" : "neutral-card";
-        const badgeClass = room.status === "correct" ? "badge-green" :
-                          room.status === "defect" ? "badge-red" : "badge-gray";
-
+    // MAPPINGS
+    if (analysis.room_mappings && analysis.room_mappings.length > 0) {
         html += `
-        <div class="card ${statusClass}">
-            <div class="card-header">
-                <span class="card-title">
-                    ${room.room_icon} ${room.name}
-                    ${room.dimensions ? `<small>(${room.dimensions})</small>` : ''}
-                </span>
-                <span class="badge ${badgeClass}">${room.verdict}</span>
-            </div>
-            <div class="card-row"><b>Direction:</b> ${room.direction} — ${room.room_hindi}</div>
-            <div class="card-row"><b>Best:</b> ${room.best_directions.join(', ')} | <b>Avoid:</b> ${room.bad_directions.join(', ')}</div>
-            ${room.status === "defect" && room.shastra ? `
-            <div class="shastra-ref">
-                <b>📖 ${room.shastra.source}:</b>
-                ${room.shastra.meaning || ''}
-            </div>` : ''}
-            ${room.status === "defect" && room.remedies ? `
-            <div class="remedies-box">
-                <b>💊 उपाय:</b>
-                <ul>
-                    ${(room.remedies.if_bad || []).map(r => `<li>${r}</li>`).join("")}
-                </ul>
-                ${room.remedies.mantra ? `<div class="mantra">🕉️ ${room.remedies.mantra}</div>` : ''}
-            </div>` : ''}
-        </div>`;
-    });
+        <div class="section">
+            <h2>📊 Room → Vastu Position Mapping</h2>
+            <div class="rooms-grid">`;
 
-    html += `</div></div>`;
+        analysis.room_mappings.forEach(m => {
+            html += `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">${m.room_type || "Room"} <span style="background:#f59e0b;color:#000;padding:2px 8px;border-radius:4px;font-size:12px;">${m.zone}</span></span>
+                </div>
+                <div class="card-row"><b>Pad:</b> #${m.pada}</div>
+                <div class="card-row"><b>Position:</b> Row ${m.row}, Col ${m.col}</div>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+    }
 
     // CTA
     html += `
