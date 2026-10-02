@@ -103,10 +103,6 @@ if FRONTEND.exists():
     def serve_report(report_id: str):
         return FileResponse(FRONTEND / "report.html")
 
-    @app.get("/upload", include_in_schema=False)
-    def serve_upload_page():
-        return FileResponse(FRONTEND / "upload.html")
-
 else:
     @app.get("/", tags=["Root"])
     def root():
