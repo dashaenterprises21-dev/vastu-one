@@ -1,0 +1,185 @@
+{
+  "version": "1.0",
+  "description": "Non-demolition remedies - fix defects without breaking",
+  "remedies": {
+    "toilet_NE": {
+      "defect": "Toilet in North-East",
+      "severity": "high",
+      "problem": "Water element in NE causes mental stress, financial loss",
+      "remedies": [
+        {
+          "type": "element",
+          "action": "Place sea salt in small bowl",
+          "cost": "₹50",
+          "time": "1 day"
+        },
+        {
+          "type": "color",
+          "action": "Paint toilet walls light yellow",
+          "cost": "₹2000",
+          "time": "2 days"
+        },
+        {
+          "type": "metal",
+          "action": "Place copper wire around toilet",
+          "cost": "₹500",
+          "time": "1 hour"
+        },
+        {
+          "type": "plant",
+          "action": "Keep tulsi plant outside",
+          "cost": "₹100",
+          "time": "1 day"
+        },
+        {
+          "type": "pooja",
+          "action": "Varuna devta puja + Om Varunaya Namaha",
+          "cost": "₹500",
+          "time": "1 day"
+        }
+      ],
+      "mantra": "Om Varunaya Namaha"
+    },
+    "kitchen_SE": {
+      "defect": "Kitchen in South-East",
+      "severity": "low",
+      "problem": "Correct as per Vastu - SE is best for kitchen",
+      "remedies": [],
+      "mantra": "Om Agnaye Namaha"
+    },
+    "kitchen_NE": {
+      "defect": "Kitchen in North-East",
+      "severity": "high",
+      "problem": "Fire in NE causes agni dosh, health issues",
+      "remedies": [
+        {
+          "type": "color",
+          "action": "Paint kitchen walls light green",
+          "cost": "₹3000",
+          "time": "3 days"
+        },
+        {
+          "type": "element",
+          "action": "Place blue color mat at entrance",
+          "cost": "₹300",
+          "time": "1 day"
+        },
+        {
+          "type": "mirror",
+          "action": "Place mirror to reflect stove",
+          "cost": "₹500",
+          "time": "1 hour"
+        },
+        {
+          "type": "pooja",
+          "action": "Agni devta puja + havan",
+          "cost": "₹1500",
+          "time": "1 day"
+        }
+      ],
+      "mantra": "Om Agnaye Namaha"
+    },
+    "brahma_blocked": {
+      "defect": "Brahma sthan blocked (center)",
+      "severity": "high",
+      "problem": "Heavy object or toilet in center blocks energy flow",
+      "remedies": [
+        {
+          "type": "action",
+          "action": "Clear center, keep empty",
+          "cost": "₹0",
+          "time": "1 hour"
+        },
+        {
+          "type": "light",
+          "action": "Place bright light in center",
+          "cost": "₹500",
+          "time": "1 hour"
+        },
+        {
+          "type": "crystal",
+          "action": "Place clear quartz crystal",
+          "cost": "₹200",
+          "time": "5 min"
+        },
+        {
+          "type": "pooja",
+          "action": "Brahma puja + Om Brahmane Namaha",
+          "cost": "₹1000",
+          "time": "1 day"
+        }
+      ],
+      "mantra": "Om Brahmane Namaha"
+    },
+    "entrance_wrong": {
+      "defect": "Wrong entrance pada",
+      "severity": "high",
+      "problem": "Entrance in wrong pada causes financial and health issues",
+      "remedies": [
+        {
+          "type": "action",
+          "action": "Virtual entry - create alternate path",
+          "cost": "₹2000",
+          "time": "1 day"
+        },
+        {
+          "type": "mirror",
+          "action": "Place mirror to reflect entry",
+          "cost": "₹1000",
+          "time": "1 hour"
+        },
+        {
+          "type": "light",
+          "action": "Place bright light at entrance",
+          "cost": "₹500",
+          "time": "1 hour"
+        },
+        {
+          "type": "metal",
+          "action": "Place copper strip below door",
+          "cost": "₹300",
+          "time": "1 hour"
+        },
+        {
+          "type": "pooja",
+          "action": "Ganesh puja + Vastu Purush puja",
+          "cost": "₹2000",
+          "time": "1 day"
+        }
+      ],
+      "mantra": "Om Gan Ganpataye Namaha"
+    },
+    "aya_lt_vyaya": {
+      "defect": "Aya < Vyaya (Income < Loss)",
+      "severity": "medium",
+      "problem": "Building dimensions cause financial loss",
+      "remedies": [
+        {
+          "type": "action",
+          "action": "Add partition to change dimensions",
+          "cost": "₹5000",
+          "time": "1 week"
+        },
+        {
+          "type": "element",
+          "action": "Place water fountain in North",
+          "cost": "₹1500",
+          "time": "1 day"
+        },
+        {
+          "type": "metal",
+          "action": "Place Kuber yantra",
+          "cost": "₹500",
+          "time": "1 hour"
+        },
+        {
+          "type": "pooja",
+          "action": "Kuber puja + Laxmi puja",
+          "cost": "₹2000",
+          "time": "1 day"
+        }
+      ],
+      "mantra": "Om Shreem Hreem Shreem Kamale Kamalalaye Praseed Praseed"
+    }
+  }
+}
