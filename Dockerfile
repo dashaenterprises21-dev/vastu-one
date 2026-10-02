@@ -2,6 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install system dependencies including Tesseract
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     fonts-noto \
@@ -12,6 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxext6 \
     libxrender1 \
     libgomp1 \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    tesseract-ocr-hin \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -21,7 +25,7 @@ RUN pip install --no-cache-dir \
     torch torchvision \
     --index-url https://download.pytorch.org/whl/cpu
 
-# STEP 2: Install rest of requirements (ultralytics will use existing torch)
+# STEP 2: Install rest of requirements (ultralytics + easyocr will use existing torch)
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN playwright install chromium && playwright install-deps chromium
