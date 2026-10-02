@@ -8,6 +8,7 @@ from api.config import API_TITLE, API_DESCRIPTION, API_VERSION
 from api.routes import vastu_routes, devata_routes, pdf_routes, report_routes, upload_routes, auth_routes, user_routes, payment_routes, chakra_routes, plan_analyze_routes
 from api.dependencies import get_all_devatas, get_elements_data
 from api.models.schemas import HealthOut
+from database.db import init_db
 
 app = FastAPI(title=API_TITLE, description=API_DESCRIPTION, version=API_VERSION)
 
@@ -18,6 +19,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Startup event — database tables create
+@app.on_event("startup")
+def startup_event():
+    init_db()
+    print("[INFO] Vastu One API started")
 
 # API Routes
 app.include_router(vastu_routes.router)
@@ -36,12 +43,10 @@ BASE = Path(__file__).resolve().parent.parent
 FRONTEND = BASE / "frontend"
 
 if FRONTEND.exists():
-    # Static folder mount (CSS, JS, images)
     static_dir = FRONTEND / "static"
     if static_dir.exists():
         app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-    # All HTML pages
     @app.get("/", include_in_schema=False)
     def frontend_home():
         return FileResponse(FRONTEND / "index.html")

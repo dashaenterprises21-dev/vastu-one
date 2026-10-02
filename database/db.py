@@ -1,6 +1,6 @@
 """
 Vastu One - Database Setup
-SQLite (local) + PostgreSQL (Railway)
+SQLite (local) + PostgreSQL (Supabase/Railway)
 """
 
 import os
@@ -12,18 +12,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "vastu_one.db"
 
-# Priority 1: ENV variable (Railway)
-# Priority 2: SQLite (local fallback)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
     DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-# Fix Railway's postgres:// → postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Engine config
+# Force psycopg2 driver
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
         DATABASE_URL,
@@ -31,7 +31,6 @@ if DATABASE_URL.startswith("sqlite"):
         echo=False,
     )
 else:
-    # PostgreSQL
     engine = create_engine(
         DATABASE_URL,
         pool_pre_ping=True,
@@ -45,7 +44,6 @@ Base = declarative_base()
 
 
 def get_db():
-    """Dependency for FastAPI routes"""
     db = SessionLocal()
     try:
         yield db
@@ -54,7 +52,6 @@ def get_db():
 
 
 def init_db():
-    """Create all tables"""
-    from database import models  # Import to register models
+    from database import models
     Base.metadata.create_all(bind=engine)
     print(f"[INFO] Database initialized: {DATABASE_URL[:30]}...")
