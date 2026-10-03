@@ -1,0 +1,88 @@
+﻿"""Create mahavastu_techniques.json"""
+import json
+from pathlib import Path
+
+data = {
+    "version": "1.0",
+    "source": "MahaVastu by Khushdeep Bansal",
+    "total_techniques": 16,
+    "techniques": {
+        "space_surgery": {
+            "name": "Space Surgery",
+            "hindi": "स्पेस सर्जरी",
+            "description": "Metal strip ko floor mein insert karke zone ki energy block karo",
+            "metals_by_zone": {
+                "NE": "Copper",
+                "N": "Brass",
+                "NW": "Aluminium",
+                "W": "Stainless Steel",
+                "SW": "Iron",
+                "S": "Copper",
+                "SE": "Brass",
+                "E": "Copper"
+            },
+            "width_inch": 4,
+            "depth_inch": 1,
+            "when_to_use": ["wrong_entrance", "cut_corner", "washroom_block", "toilet_block"],
+            "marma_zones": ["NE", "SW", "CENTER"],
+            "not_allowed_in": ["NE", "SW", "CENTER"],
+            "materials": ["Copper", "Brass", "Aluminium", "Stainless Steel", "Iron"]
+        },
+        "elemental_tape": {
+            "name": "Elemental Tape",
+            "hindi": "एलिमेंटल टेप",
+            "description": "3-4 inch wide tape se zone block karo (temporary)",
+            "width_inch": 4,
+            "when_to_use": ["washroom_block", "entrance_block", "temporary_remedy"],
+            "allowed_in_marma": True
+        },
+        "amplifier_pyramid": {
+            "name": "Amplifier Technique (Pyramids)",
+            "hindi": "पिरामिड विधि",
+            "description": "Pyramids ko floor pe place karke energy amplify karo",
+            "count_by_size": {
+                "small": 9,
+                "medium": 81,
+                "large": 729
+            },
+            "materials": ["Copper", "Crystal", "Panchdhatu"],
+            "not_valid": ["Iron", "Aluminium", "Plastic"],
+            "placement": {
+                "Brahmasthan": {"count": 9, "material": "Copper"},
+                "Cut_Corner": {"count": 9, "material": "Panchdhatu"},
+                "Vithi_Shool": {"count": 9, "material": "Copper"},
+                "Dik_Dosh": {"count": 81, "material": "Panchdhatu"}
+            }
+        },
+        "space_programming": {
+            "name": "Space Programming",
+            "hindi": "स्पेस प्रोग्रामिंग",
+            "description": "Paintings ya 3D objects ko specific zones mein hang karo",
+            "remedies": ["Paintings", "Yantras", "3D objects", "Symbols"]
+        },
+        "enlightening": {
+            "name": "Enlightening Technique",
+            "hindi": "प्रकाश विधि",
+            "description": "Bulbs ko problematic areas mein place karo",
+            "remedies": ["LED bulbs", "Candles", "Diyas"]
+        },
+        "marma_technique": {
+            "name": "Marma Technique",
+            "hindi": "मर्म विधि",
+            "description": "Vastu Purush ke Marma Sthan (joints) super sensitive hain",
+            "marma_points": {
+                "head": {"zone": "NE", "effect": "Brain issues"},
+                "navel": {"zone": "CENTER", "effect": "Overall health"},
+                "legs": {"zone": "SW", "effect": "Accidents"},
+                "joints": {"zones": ["E", "S", "W", "N"], "effect": "Disease"}
+            },
+            "remedy": "Temporary tape only",
+            "not_allowed": ["Space Surgery", "Pyramids"],
+            "reason": "Marma points puncture se serious issues"
+        }
+    }
+}
+
+with open('data/mahavastu_techniques.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+print('mahavastu_techniques.json created!')

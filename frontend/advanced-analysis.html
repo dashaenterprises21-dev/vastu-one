@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Analysis - VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/advanced-analysis.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>Advanced Analysis</p>
+            </div>
+        </a>
+        <nav class="nav">
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/plan-upload" class="nav-link">Plan Upload</a>
+            <a href="/advanced-analysis" class="nav-link active">Advanced</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container main">
+    <section class="hero">
+        <h1>🔬 Advanced Vastu Analysis</h1>
+        <p>32 Entrance Padas • Ayadi Shadvarga • 3-Tier Remedies • Pooja • Plot Layout</p>
+    </section>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('entrance')">🚪 Entrance (32 Padas)</button>
+        <button class="tab-btn" onclick="showTab('ayadi')">📐 Ayadi Shadvarga</button>
+        <button class="tab-btn" onclick="showTab('plot')">🏗️ Plot Layout</button>
+        <button class="tab-btn" onclick="showTab('remedies')">💊 Remedies</button>
+        <button class="tab-btn" onclick="showTab('pooja')">🕉️ Pooja Plan</button>
+    </div>
+
+    <div id="tab-content"></div>
+</main>
+
+<footer class="footer">
+    <p>VASTU ONE - India Ka No.1 Vastu Engine</p>
+</footer>
+
+<script src="/static/advanced-analysis.js"></script>
+</body>
+</html>

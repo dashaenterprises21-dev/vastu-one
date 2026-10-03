@@ -1,4 +1,5 @@
-"""
+﻿"""Update remedy_engine_v2.py with 5-tier + MahaVastu"""
+content = '''"""
 Vastu One - Advanced Remedy Engine v3
 5-Tier: Simple + Space Surgery + Pyramids + Pooja + Demolition
 MahaVastu techniques integrated
@@ -162,6 +163,11 @@ if __name__ == "__main__":
     result = engine.get_5_tier_remedy("toilet_NE", "NE")
     print(json.dumps(result, indent=2, ensure_ascii=False))
     
-    print("\n=== MARMA REMEDY ===")
+    print("\\n=== MARMA REMEDY ===")
     marma = engine.get_marma_remedy("legs")
     print(json.dumps(marma, indent=2, ensure_ascii=False))
+'''
+
+with open('engine/remedy_engine_v2.py', 'w', encoding='utf-8') as f:
+    f.write(content)
+print('remedy_engine_v2.py updated to 5-tier!')

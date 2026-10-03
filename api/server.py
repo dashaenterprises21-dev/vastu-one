@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 
 from api.config import API_TITLE, API_DESCRIPTION, API_VERSION
-from api.routes import vastu_routes, devata_routes, pdf_routes, report_routes, upload_routes, auth_routes, user_routes, payment_routes, chakra_routes, plan_analyze_routes
+from api.routes import vastu_routes, devata_routes, advanced_routes, pdf_routes, report_routes, upload_routes, auth_routes, user_routes, payment_routes, chakra_routes, plan_analyze_routes
 from api.dependencies import get_all_devatas, get_elements_data
 from api.models.schemas import HealthOut
 from database.db import init_db
@@ -28,6 +28,7 @@ def startup_event():
 
 # API Routes
 app.include_router(vastu_routes.router)
+app.include_router(advanced_routes.router)
 app.include_router(devata_routes.router)
 app.include_router(pdf_routes.router)
 app.include_router(report_routes.router)
@@ -90,6 +91,10 @@ if FRONTEND.exists():
     @app.get("/plan-report", include_in_schema=False)
     def plan_report_page():
         return FileResponse(FRONTEND / "plan-report.html")
+
+    @app.get("/advanced-analysis", include_in_schema=False)
+    def advanced_analysis_page():
+        return FileResponse(FRONTEND / "advanced-analysis.html")
 
     @app.get("/chakra-form", include_in_schema=False)
     def chakra_form_page():
