@@ -119,8 +119,7 @@ class FinalScoreOut(BaseModel):
     total_score: float
     grade: str
     breakdown: Dict[str, float]
-    weights: Dict[str, float]
-
+    weights: Optional[Dict[str, float]] = None
 
 class AnalyzeResponse(BaseModel):
     devata_audit: DevataAuditOut

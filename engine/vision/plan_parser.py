@@ -54,18 +54,21 @@ MODEL_PATH = Path(__file__).resolve().parent.parent.parent / "models" / "best.pt
 
 # OCR keywords → room type mapping
 OCR_KEYWORDS = {
-    "bedroom": ["bed room", "bedroom", "master bedroom", "bed"],
-    "kitchen": ["kitchen", "kitchenette", "cook"],
-    "toilet": ["toilet", "w.c", "wc", "bathroom", "bath", "washroom", "c.toilet", "c toilet"],
-    "living": ["living", "hall", "drawing", "lounge", "sitting", "drg"],
-    "dining": ["dining", "dining hall", "dining room"],
-    "store": ["store", "storage", "store room"],
-    "balcony": ["balcony", "sitout", "sit out", "verandah", "varandah"],
-    "stair": ["stair", "staircase", "steps", "up"],
-    "entrance": ["entry", "entrance", "main door", "foyer"],
+    "bedroom": ["bed room", "bedroom", "master bedroom", "bed", "br"],
+    "kitchen": ["kitchen", "kitchenette", "cook", "kitch"],
+    "toilet": ["toilet", "w.c", "wc", "bathroom", "bath", "washroom", "c.toilet", "c toilet", "c.toil", "ctoilet", "toil"],
+    "living": ["living", "hall", "drawing", "lounge", "sitting", "drg", "drg/living", "drawing room"],
+    "dining": ["dining", "dining hall", "dining room", "din"],
+    "store": ["store", "storage", "store room", "sto"],
+    "balcony": ["balcony", "sitout", "sit out", "verandah", "varandah", "sit-out", "bal"],
+    "stair": ["stair", "staircase", "steps", "up", "stair case"],
+    "entrance": ["entry", "entrance", "main door", "foyer", "main entry"],
     "parking": ["parking", "garage", "car"],
     "puja": ["puja", "pooja", "temple", "mandir"],
     "study": ["study", "office", "work"],
+    "wardrobe": ["wardrobe", "wrd"],
+    "window": ["window", "win", "w"],
+    "door": ["door", "dr"],
 }
 
 
@@ -274,8 +277,40 @@ class PlanParser:
 
             rooms.append(ocr_room)
 
+        # If OCR rooms < 5, use YOLO fallback
+        if len(rooms) < 5 and self.detections:
+            print(f"[INFO] OCR found only {len(rooms)} rooms — using YOLO fallback")
+            yolo_rooms = {}
+            for d in self.detections:
+                rt = d["room_type"]
+                if rt in ["wall", "window", "door", "opening", "railing", "unknown"]:
+                    continue
+                if rt not in yolo_rooms:
+                    yolo_rooms[rt] = {
+                        "room_type": rt,
+                        "hindi": d.get("hindi", "अज्ञात"),
+                        "icon": d.get("icon", "🏠"),
+                        "source": "yolo",
+                        "confidence": d["confidence"],
+                        "bbox": d["bbox"],
+                        "center": d["center"],
+                        "label": d["class_name"],
+                        "area": d["area"],
+                        "objects": [d],
+                        "objects_count": 1,
+                    }
+                else:
+                    yolo_rooms[rt]["objects"].append(d)
+                    yolo_rooms[rt]["objects_count"] += 1
+
+            # Merge OCR rooms with YOLO rooms
+            ocr_types = set(r["room_type"] for r in rooms)
+            for rt, yolo_room in yolo_rooms.items():
+                if rt not in ocr_types:
+                    rooms.append(yolo_room)
+
         self.rooms_detected = rooms
-        print(f"[INFO] Fused {len(rooms)} rooms")
+        print(f"[INFO] Fused {len(rooms)} rooms (OCR + YOLO fallback)")
         return rooms
 
     # ═══ BOUNDARY + GRID ═══
@@ -299,6 +334,7 @@ class PlanParser:
         }
 
     def overlay_81_grid(self):
+        """Overlay 9x9 Vastu grid — ONLY on plan boundary (cropped)"""
         img = self.plan_image
         if img is None:
             return None
@@ -308,39 +344,73 @@ class PlanParser:
             return None
 
         x, y, w, h = boundary["bbox"]
-        overlay = img.copy()
-        cell_w = w / 9
-        cell_h = h / 9
+        
+        # Add padding (20px) around boundary
+        padding = 20
+        x1 = max(0, x - padding)
+        y1 = max(0, y - padding)
+        x2 = min(img.shape[1], x + w + padding)
+        y2 = min(img.shape[0], y + h + padding)
+        
+        # Crop image to plan boundary
+        cropped = img[y1:y2, x1:x2].copy()
+        
+        # Reset coordinates for cropped image
+        cw = cropped.shape[1]
+        ch = cropped.shape[0]
+        
+        overlay = cropped.copy()
+        cell_w = cw / 9
+        cell_h = ch / 9
 
         grid_cells = []
         for row in range(9):
             for col in range(9):
-                cx = int(x + col * cell_w)
-                cy = int(y + row * cell_h)
-                cw = int(cell_w)
-                ch = int(cell_h)
-                cv2.rectangle(overlay, (cx, cy), (cx + cw, cy + ch), (0, 255, 100), 1)
+                cx = int(col * cell_w)
+                cy = int(row * cell_h)
+                cwi = int(cell_w)
+                chi = int(cell_h)
+
+                cv2.rectangle(overlay, (cx, cy), (cx + cwi, cy + chi), (0, 255, 100), 1)
+
                 zone = self._get_zone(row, col)
                 grid_cells.append({
-                    "row": row, "col": col, "pada": row * 9 + col + 1,
-                    "bbox": [cx, cy, cw, ch], "zone": zone,
+                    "row": row,
+                    "col": col,
+                    "pada": row * 9 + col + 1,
+                    "bbox": [cx, cy, cwi, chi],
+                    "zone": zone,
                 })
 
-        # Draw OCR labels (orange)
+        # Draw OCR labels (orange) — adjust coordinates
         for ocr in self.ocr_results:
-            x1, y1, x2, y2 = ocr["bbox"]
-            cv2.rectangle(overlay, (x1, y1), (x2, y2), (255, 100, 0), 2)
-            cv2.putText(overlay, ocr["text"][:20], (x1, y1-5),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 100, 0), 1)
+            bx1, by1, bx2, by2 = ocr["bbox"]
+            # Shift coordinates for cropped image
+            bx1 = bx1 - x1
+            by1 = by1 - y1
+            bx2 = bx2 - x1
+            by2 = by2 - y1
+            # Only draw if inside cropped area
+            if 0 <= bx1 < cw and 0 <= by1 < ch:
+                cv2.rectangle(overlay, (bx1, by1), (bx2, by2), (255, 100, 0), 2)
+                cv2.putText(overlay, ocr["text"][:20], (bx1, by1 - 5),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 100, 0), 1)
 
-        # Draw YOLO detections (cyan)
+        # Draw YOLO detections (cyan) — adjust coordinates
         for det in self.detections:
             if det["room_type"] in ["wall", "window", "door", "unknown"]:
                 continue
-            x1, y1, x2, y2 = det["bbox"]
-            cv2.rectangle(overlay, (x1, y1), (x2, y2), (0, 200, 255), 2)
+            bx1, by1, bx2, by2 = det["bbox"]
+            bx1 = bx1 - x1
+            by1 = by1 - y1
+            bx2 = bx2 - x1
+            by2 = by2 - y1
+            if 0 <= bx1 < cw and 0 <= by1 < ch:
+                cv2.rectangle(overlay, (bx1, by1), (bx2, by2), (0, 200, 255), 2)
+                cv2.putText(overlay, det["class_name"], (bx1, by1 - 5),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 200, 255), 1)
 
-        result = cv2.addWeighted(overlay, 0.7, img, 0.3, 0)
+        result = cv2.addWeighted(overlay, 0.7, cropped, 0.3, 0)
         self.grid_81 = grid_cells
         return result
 

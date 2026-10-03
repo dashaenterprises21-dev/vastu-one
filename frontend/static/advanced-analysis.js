@@ -1,527 +1,330 @@
-// VASTU ONE - Advanced Analysis JS
+// VASTU ONE - Advanced Studio
 
-const API = '';
+let selectedFile = null;
+let analysisResult = null;
+let currentZoom = 1;
+let panX = 0, panY = 0;
+let isDragging = false;
+let startX = 0, startY = 0;
 
-const TABS = {
-    entrance: renderEntranceTab,
-    ayadi: renderAyadiTab,
-    plot: renderPlotTab,
-    remedies: renderRemediesTab,
-    pooja: renderPoojaTab
-};
+const planInput = document.getElementById("planInput");
+const uploadZone = document.getElementById("uploadZone");
 
-function showTab(tabName) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById('tab-content').innerHTML = TABS[tabName]();
+if (uploadZone) {
+    uploadZone.addEventListener("click", () => planInput.click());
+    uploadZone.addEventListener("dragover", (e) => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
+    uploadZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove("dragover");
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+    });
 }
 
-// ═══ ENTRANCE ═══
-function renderEntranceTab() {
-    return `
-    <div class="card">
-        <h2>🚪 32 Entrance Padas Audit</h2>
-        <p>Apne ghar ka main entrance check karein</p>
-        <div class="form-group">
-            <label>Direction (दिशा)</label>
-            <select id="ent-direction">
-                <option value="East">East (पूर्व) - E1 to E8</option>
-                <option value="South">South (दक्षिण) - S1 to S8</option>
-                <option value="West">West (पश्चिम) - W1 to W8</option>
-                <option value="North">North (उत्तर) - N1 to N8</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Pada (1-8)</label>
-            <input type="number" id="ent-pada" min="1" max="8" value="3">
-        </div>
-        <div class="form-group">
-            <label>Exact Degree (optional)</label>
-            <input type="number" id="ent-degree" step="0.1" placeholder="95.5">
-        </div>
-        <button class="btn-primary" onclick="auditEntrance()">Audit Entrance</button>
-        <div id="ent-result"></div>
-    </div>
-
-    <div class="card">
-        <h2>📋 32 Padas — Full Reference</h2>
-        <p>Har pada ka code, direction, degree range, aur verdict</p>
-
-        <h3>🌅 EAST (पूर्व) — 67.5° to 157.5°</h3>
-        <div class="pada-grid">
-            <div class="pada-card avoid">
-                <div class="pada-code">E1</div>
-                <div class="pada-name">Shikhi (शिखी)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 67.5° - 78.75°</div>
-                <div class="pada-verdict verdict-bad">❌ Loss of wealth</div>
-            </div>
-            <div class="pada-card medium">
-                <div class="pada-code">E2</div>
-                <div class="pada-name">Parjanya (पर्जन्य)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 78.75° - 90°</div>
-                <div class="pada-verdict verdict-med">⚠️ Health issues</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">E3</div>
-                <div class="pada-name">Jayanta (जयन्त)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 90° - 101.25°</div>
-                <div class="pada-verdict verdict-best">✅ BEST - Victory</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">E4</div>
-                <div class="pada-name">Indra (इन्द्र)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 101.25° - 112.5°</div>
-                <div class="pada-verdict verdict-best">✅ Power, wealth</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">E5</div>
-                <div class="pada-name">Surya (सूर्य)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 112.5° - 123.75°</div>
-                <div class="pada-verdict verdict-best">✅ Fame, vitality</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">E6</div>
-                <div class="pada-name">Satya (सत्य)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 123.75° - 135°</div>
-                <div class="pada-verdict verdict-best">✅ Truth, success</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">E7</div>
-                <div class="pada-name">Bhusha (भूष)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 135° - 146.25°</div>
-                <div class="pada-verdict verdict-bad">❌ Financial loss</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">E8</div>
-                <div class="pada-name">Akasha (आकाश)</div>
-                <div class="pada-direction">📍 East</div>
-                <div class="pada-degree">🧭 146.25° - 157.5°</div>
-                <div class="pada-verdict verdict-bad">❌ Loss of children</div>
-            </div>
-        </div>
-
-        <h3>🌞 SOUTH (दक्षिण) — 157.5° to 247.5°</h3>
-        <div class="pada-grid">
-            <div class="pada-card avoid">
-                <div class="pada-code">S1</div>
-                <div class="pada-name">Anila (अनिल)</div>
-                <div class="pada-direction">�� South</div>
-                <div class="pada-degree">🧭 157.5° - 168.75°</div>
-                <div class="pada-verdict verdict-bad">❌ Fear, quarrel</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">S2</div>
-                <div class="pada-name">Pusha (पूषा)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 168.75° - 180°</div>
-                <div class="pada-verdict verdict-best">✅ BEST - Nourishment</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">S3</div>
-                <div class="pada-name">Vitatha (वितथ)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 180° - 191.25°</div>
-                <div class="pada-verdict verdict-bad">❌ Obstacles</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">S4</div>
-                <div class="pada-name">Grihakshata (गृहक्षत)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 191.25° - 202.5°</div>
-                <div class="pada-verdict verdict-best">✅ BEST - Wealth</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">S5</div>
-                <div class="pada-name">Yama (यम)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 202.5° - 213.75°</div>
-                <div class="pada-verdict verdict-bad">❌ Worst - Death</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">S6</div>
-                <div class="pada-name">Gandharva (गन्धर्व)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 213.75° - 225°</div>
-                <div class="pada-verdict verdict-best">✅ Luxury, comfort</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">S7</div>
-                <div class="pada-name">Bhrungaraja (भृंगराज)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 225° - 236.25°</div>
-                <div class="pada-verdict verdict-bad">❌ Fear, anxiety</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">S8</div>
-                <div class="pada-name">Mriga (मृग)</div>
-                <div class="pada-direction">📍 South</div>
-                <div class="pada-degree">🧭 236.25° - 247.5°</div>
-                <div class="pada-verdict verdict-bad">❌ Accidents</div>
-            </div>
-        </div>
-
-        <h3>🌇 WEST (पश्चिम) — 247.5° to 337.5°</h3>
-        <div class="pada-grid">
-            <div class="pada-card avoid">
-                <div class="pada-code">W1</div>
-                <div class="pada-name">Pitara (पितर)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 247.5° - 258.75°</div>
-                <div class="pada-verdict verdict-bad">❌ Ancestral issues</div>
-            </div>
-            <div class="pada-card medium">
-                <div class="pada-code">W2</div>
-                <div class="pada-name">Dauvarika (दौवारिक)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 258.75° - 270°</div>
-                <div class="pada-verdict verdict-med">⚠️ Medium</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">W3</div>
-                <div class="pada-name">Sugriva (सुग्रीव)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 270° - 281.25°</div>
-                <div class="pada-verdict verdict-best">✅ BEST - Money</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">W4</div>
-                <div class="pada-name">Pushpadanta (पुष्पदन्त)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 281.25° - 292.5°</div>
-                <div class="pada-verdict verdict-best">✅ Finance, income</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">W5</div>
-                <div class="pada-name">Varuna (वरुण)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 292.5° - 303.75°</div>
-                <div class="pada-verdict verdict-best">✅ Rain, purification</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">W6</div>
-                <div class="pada-name">Asura (असुर)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 303.75° - 315°</div>
-                <div class="pada-verdict verdict-bad">❌ Negativity</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">W7</div>
-                <div class="pada-name">Shesha (शेष)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 315° - 326.25°</div>
-                <div class="pada-verdict verdict-best">✅ Savings</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">W8</div>
-                <div class="pada-name">Rajayakshma (राजयक्ष्मा)</div>
-                <div class="pada-direction">📍 West</div>
-                <div class="pada-degree">🧭 326.25° - 337.5°</div>
-                <div class="pada-verdict verdict-bad">❌ Disease</div>
-            </div>
-        </div>
-
-        <h3>🌄 NORTH (उत्तर) — 337.5° to 67.5°</h3>
-        <div class="pada-grid">
-            <div class="pada-card avoid">
-                <div class="pada-code">N1</div>
-                <div class="pada-name">Roga (रोग)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 337.5° - 348.75°</div>
-                <div class="pada-verdict verdict-bad">❌ Disease</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">N2</div>
-                <div class="pada-name">Ahi (अहि)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 348.75° - 0°</div>
-                <div class="pada-verdict verdict-bad">❌ Fear, anxiety</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">N3</div>
-                <div class="pada-name">Mukhya (मुख्य)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 0° - 11.25°</div>
-                <div class="pada-verdict verdict-best">✅ Career, success</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">N4</div>
-                <div class="pada-name">Bhallataka (भल्लाटक)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 11.25° - 22.5°</div>
-                <div class="pada-verdict verdict-best">✅ BEST - Growth</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">N5</div>
-                <div class="pada-name">Soma (सोम)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 22.5° - 33.75°</div>
-                <div class="pada-verdict verdict-best">✅ Wealth, prosperity</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">N6</div>
-                <div class="pada-name">Sarpa (सर्प)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 33.75° - 45°</div>
-                <div class="pada-verdict verdict-bad">❌ Fear</div>
-            </div>
-            <div class="pada-card best">
-                <div class="pada-code">N7</div>
-                <div class="pada-name">Aditi (अदिति)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 45° - 56.25°</div>
-                <div class="pada-verdict verdict-best">✅ Creativity, children</div>
-            </div>
-            <div class="pada-card avoid">
-                <div class="pada-code">N8</div>
-                <div class="pada-name">Diti (दिति)</div>
-                <div class="pada-direction">📍 North</div>
-                <div class="pada-degree">🧭 56.25° - 67.5°</div>
-                <div class="pada-verdict verdict-bad">❌ Obstacles</div>
-            </div>
-        </div>
-    </div>`;
+if (planInput) {
+    planInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
+    });
 }
 
-async function auditEntrance() {
-    const direction = document.getElementById('ent-direction').value;
-    const pada = parseInt(document.getElementById('ent-pada').value);
-    const degree = document.getElementById('ent-degree').value;
+function handleFile(file) {
+    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp", "application/pdf"];
+    if (!allowed.includes(file.type)) {
+        alert("Sirf PNG, JPG, PDF files allowed hain");
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        alert("File 10 MB se chhoti honi chahiye");
+        return;
+    }
+    selectedFile = file;
 
-    const body = { direction, pada };
-    if (degree) body.degree = parseFloat(degree);
+    const isPDF = file.type === "application/pdf";
+    const preview = document.getElementById("previewImage");
+
+    if (isPDF) {
+        preview.style.display = "none";
+        let pdfBox = document.getElementById("pdfPreviewBox");
+        if (!pdfBox) {
+            pdfBox = document.createElement("div");
+            pdfBox.id = "pdfPreviewBox";
+            pdfBox.style.cssText = "padding:60px;text-align:center;background:#15192B;border-radius:12px;";
+            pdfBox.innerHTML = '<div style="font-size:64px;">📄</div><p style="margin-top:16px;font-size:18px;">PDF File Ready</p>';
+            preview.parentElement.appendChild(pdfBox);
+        }
+        pdfBox.style.display = "block";
+    } else {
+        preview.style.display = "block";
+        const reader = new FileReader();
+        reader.onload = (e) => { preview.src = e.target.result; };
+        reader.readAsDataURL(file);
+    }
+
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = formatSize(file.size);
+    document.getElementById("uploadSection").style.display = "none";
+    document.getElementById("previewSection").style.display = "block";
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+function removeFile() {
+    selectedFile = null;
+    planInput.value = "";
+    document.getElementById("previewSection").style.display = "none";
+    document.getElementById("uploadSection").style.display = "block";
+    document.getElementById("resultsSection").style.display = "none";
+}
+
+function startOver() {
+    removeFile();
+    analysisResult = null;
+}
+
+async function analyzePlan() {
+    if (!selectedFile) return;
+    document.getElementById("previewSection").style.display = "none";
+    document.getElementById("loadingSection").style.display = "block";
+    animateSteps();
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
 
     try {
-        const res = await fetch(`${API}/api/advanced/entrance/audit`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
+        const response = await fetch("/api/upload/plan", { method: "POST", body: formData });
+        if (!response.ok) {
+            const err = await response.text();
+            throw new Error("Analysis failed: " + response.status);
+        }
+        const data = await response.json();
+        analysisResult = data;
+        localStorage.setItem("plan_analysis", JSON.stringify(data));
+        await new Promise(r => setTimeout(r, 1500));
+        renderResults(data);
+    } catch (err) {
+        alert("Error: " + err.message);
+        document.getElementById("loadingSection").style.display = "none";
+        document.getElementById("previewSection").style.display = "block";
+    }
+}
+
+function animateSteps() {
+    const steps = ["ps1", "ps2", "ps3", "ps4", "ps5", "ps6"];
+    steps.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove("active", "done");
+    });
+    steps.forEach((id, i) => {
+        setTimeout(() => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (i > 0) {
+                const prev = document.getElementById(steps[i-1]);
+                if (prev) { prev.classList.remove("active"); prev.classList.add("done"); }
+            }
+            el.classList.add("active");
+        }, i * 800);
+    });
+}
+
+function renderResults(data) {
+    document.getElementById("loadingSection").style.display = "none";
+    document.getElementById("resultsSection").style.display = "block";
+    const a = data.analysis || {};
+
+    // SCORE
+    if (a.final_score) {
+        const score = a.final_score.total_score || 0;
+        document.getElementById("scoreNumber").textContent = score;
+        document.getElementById("scoreGrade").textContent = a.final_score.grade || "-";
+        const bd = a.final_score.breakdown || {};
+        let bdHtml = "";
+        for (const [k, v] of Object.entries(bd)) {
+            bdHtml += '<div class="bd-item"><span>' + k.replace(/_/g, " ") + '</span><b>' + v + '</b></div>';
+        }
+        document.getElementById("scoreBreakdown").innerHTML = bdHtml;
+    }
+
+    // STATS
+    document.getElementById("statRooms").textContent = a.rooms_detected || 0;
+    document.getElementById("statDosh").textContent = a.defect_count || 0;
+    document.getElementById("statHigh").textContent = a.high_severity_count || 0;
+    document.getElementById("statMedium").textContent = a.medium_severity_count || 0;
+
+    // GRID OVERLAY
+    if (a.grid_overlay) {
+        document.getElementById("gridOverlayImage").src = "data:image/png;base64," + a.grid_overlay;
+    }
+
+    // DOSH
+    if (a.defects && a.defects.length > 0) {
+        document.getElementById("doshBlock").style.display = "block";
+        document.getElementById("doshCount").textContent = "(" + a.defects.length + ")";
+        let dh = "";
+        a.defects.forEach(d => {
+            const sevClass = d.severity === "high" ? "sev-high" : (d.severity === "medium" ? "sev-medium" : "sev-low");
+            const sevLabel = d.severity === "high" ? "HIGH" : (d.severity === "medium" ? "MEDIUM" : "LOW");
+            dh += '<div class="defect-card ' + sevClass + '">';
+            dh += '<div class="defect-header"><span class="defect-room">' + (d.room_hindi || d.room_type) + '</span><span class="defect-sev ' + sevClass + '">' + sevLabel + '</span></div>';
+            dh += '<div class="defect-zone">Zone: ' + d.zone + ' | Pada #' + (d.pada || 0) + '</div>';
+            dh += '<div class="defect-problem"><b>Problem:</b> ' + (d.reason || "") + '</div>';
+            dh += '<div class="defect-shastra"><b>Shastra:</b> ' + (d.shastra || "") + '</div>';
+            dh += '<div class="defect-fix"><b>Fix:</b> ' + (d.best_directions || []).join(", ") + ' mein shift karein</div>';
+            dh += '</div>';
         });
-        const data = await res.json();
-        document.getElementById('ent-result').innerHTML = `
-            <div class="result-box ${data.data.status}">
-                <h3>${data.data.verdict}</h3>
-                <p><b>Pada:</b> ${data.data.name} (${data.data.hindi})</p>
-                <p><b>Effect:</b> ${data.data.effect}</p>
-                <p><b>Shastra:</b> ${data.data.shastra}</p>
-                ${data.data.remedy ? `<p><b>Remedy:</b> ${data.data.remedy.pooja || 'Multiple remedies available'}</p>` : ''}
-            </div>`;
-    } catch (e) {
-        document.getElementById('ent-result').innerHTML = `<p class="error">Error: ${e.message}</p>`;
+        document.getElementById("defectsList").innerHTML = dh;
     }
-}
 
-async function listAllPadas() {
-    const res = await fetch(`${API}/api/advanced/entrance/all`);
-    const data = await res.json();
-    let html = '<div class="grid">';
-    for (const p of data.padas) {
-        html += `<div class="mini-card ${p.best ? 'best' : 'avoid'}">
-            <b>${p.direction} #${p.pada}</b><br>
-            ${p.name} (${p.hindi})<br>
-            <small>${p.effect}</small>
-        </div>`;
+    // REMEDIES
+    if (a.remedies && a.remedies.length > 0) {
+        document.getElementById("remediesBlock").style.display = "block";
+        let rh = "";
+        a.remedies.forEach(r => {
+            rh += '<div class="remedy-card">';
+            rh += '<h3>' + r.defect + '</h3>';
+            rh += '<p class="remedy-problem">' + r.problem + '</p>';
+            if (r.tier_1_simple && r.tier_1_simple.remedies) {
+                rh += '<div class="tier"><h4>🟢 Tier 1: Simple Fixes</h4><ul>';
+                r.tier_1_simple.remedies.forEach(x => { rh += '<li>' + x.action + ' - ' + (x.cost || "") + '</li>'; });
+                rh += '</ul></div>';
+            }
+            if (r.tier_2_space_surgery && r.tier_2_space_surgery.allowed) {
+                rh += '<div class="tier"><h4>🔵 Tier 2: Space Surgery</h4><p>' + r.tier_2_space_surgery.instructions + '</p></div>';
+            }
+            if (r.tier_3_pyramids) {
+                rh += '<div class="tier"><h4>🟣 Tier 3: Pyramids</h4><p>' + r.tier_3_pyramids.placement + ' - ' + r.tier_3_pyramids.cost_estimate + '</p></div>';
+            }
+            if (r.tier_4_pooja && r.tier_4_pooja.remedies) {
+                rh += '<div class="tier"><h4>🟡 Tier 4: Pooja & Mantra</h4><ul>';
+                r.tier_4_pooja.remedies.forEach(x => { rh += '<li>' + x.action + ' - ' + (x.cost || "") + '</li>'; });
+                rh += '</ul></div>';
+            }
+            rh += '<div class="mantra-box"><b>Mantra:</b> ' + r.mantra + '</div>';
+            rh += '<div class="total-cost">Total: ' + r.total_cost_estimate + '</div>';
+            rh += '</div>';
+        });
+        document.getElementById("remediesList").innerHTML = rh;
     }
-    html += '</div>';
-    document.getElementById('all-padas').innerHTML = html;
-}
 
-// ═══ AYADI ═══
-function renderAyadiTab() {
-    return `
-    <div class="card">
-        <h2>📐 Ayadi Shadvarga Calculator</h2>
-        <p>Building dimensions se fate calculate karein</p>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Length (ft)</label>
-                <input type="number" id="ay-length" value="40" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Breadth (ft)</label>
-                <input type="number" id="ay-breadth" value="30" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Height (ft)</label>
-                <input type="number" id="ay-height" value="10" step="0.1">
-            </div>
-        </div>
-        <button class="btn-primary" onclick="calculateAyadi()">Calculate Ayadi</button>
-        <div id="ay-result"></div>
-    </div>`;
-}
-
-async function calculateAyadi() {
-    const body = {
-        length: parseFloat(document.getElementById('ay-length').value),
-        breadth: parseFloat(document.getElementById('ay-breadth').value),
-        height: parseFloat(document.getElementById('ay-height').value)
-    };
-    const res = await fetch(`${API}/api/advanced/ayadi/calculate`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    const d = data.data;
-    document.getElementById('ay-result').innerHTML = `
-        <div class="result-box ${d.grade}">
-            <h3>${d.verdict}</h3>
-            <div class="stats">
-                <div class="stat"><b>${d.aya}</b><br>Aya</div>
-                <div class="stat"><b>${d.vyaya}</b><br>Vyaya</div>
-                <div class="stat"><b>${d.rksa}</b><br>Rksa</div>
-                <div class="stat"><b>${d.yoni}</b><br>Yoni</div>
-                <div class="stat"><b>${d.vara}</b><br>Vara</div>
-                <div class="stat"><b>${d.tithi}</b><br>Tithi</div>
-            </div>
-        </div>`;
-}
-
-// ═══ PLOT ═══
-function renderPlotTab() {
-    return `
-    <div class="card">
-        <h2>🏗️ Plot Layout Generator</h2>
-        <p>Khali plot ka Vastu layout (authority norms ke saath)</p>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Plot Length (ft)</label>
-                <input type="number" id="pl-length" value="40">
-            </div>
-            <div class="form-group">
-                <label>Plot Breadth (ft)</label>
-                <input type="number" id="pl-breadth" value="60">
-            </div>
-            <div class="form-group">
-                <label>Facing</label>
-                <select id="pl-facing">
-                    <option value="North">North</option>
-                    <option value="East">East</option>
-                    <option value="South">South</option>
-                    <option value="West">West</option>
-                </select>
-            </div>
-        </div>
-        <button class="btn-primary" onclick="generatePlot()">Generate Layout</button>
-        <div id="pl-result"></div>
-    </div>`;
-}
-
-async function generatePlot() {
-    const body = {
-        plot_length: parseFloat(document.getElementById('pl-length').value),
-        plot_breadth: parseFloat(document.getElementById('pl-breadth').value),
-        facing_direction: document.getElementById('pl-facing').value
-    };
-    const res = await fetch(`${API}/api/advanced/plot/layout`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    const d = data.data;
-    let rooms = '<div class="grid">';
-    for (const r of d.vastu_rooms) {
-        rooms += `<div class="mini-card"><b>${r.name}</b><br><small>${r.hindi}</small><br><span class="zone">${r.zone}</span></div>`;
+    // POOJA
+    if (a.pooja_plan && a.pooja_plan.plan && a.pooja_plan.plan.length > 0) {
+        document.getElementById("poojaBlock").style.display = "block";
+        let ph = "";
+        a.pooja_plan.plan.forEach(p => {
+            ph += '<div class="pooja-card">';
+            ph += '<h3>' + p.pooja + '</h3>';
+            ph += '<div class="pooja-mantra">' + p.mantra + '</div>';
+            ph += '<div class="pooja-detail"><b>Count:</b> ' + p.count + '</div>';
+            ph += '<div class="pooja-detail"><b>Direction:</b> ' + p.direction + '</div>';
+            ph += '<div class="pooja-detail"><b>Timing:</b> ' + p.timing + '</div>';
+            ph += '<div class="pooja-cost">' + p.cost + '</div>';
+            ph += '</div>';
+        });
+        document.getElementById("poojaList").innerHTML = ph;
+        document.getElementById("poojaTotal").textContent = "Total: " + a.pooja_plan.total_cost;
     }
-    rooms += '</div>';
-    document.getElementById('pl-result').innerHTML = `
-        <div class="result-box good">
-            <h3>Plot Layout Ready</h3>
-            <div class="stats">
-                <div class="stat"><b>${d.plot_dimensions.area_sqft}</b><br>Plot sqft</div>
-                <div class="stat"><b>${d.authority_norms.ground_coverage_percent}%</b><br>Coverage</div>
-                <div class="stat"><b>${d.authority_norms.far_percent}%</b><br>FAR</div>
-                <div class="stat"><b>${d.authority_norms.max_storeys}</b><br>Storeys</div>
-            </div>
-            <h4>Rooms Placed:</h4>
-            ${rooms}
-        </div>`;
-}
 
-// ═══ REMEDIES ═══
-function renderRemediesTab() {
-    return `
-    <div class="card">
-        <h2>💊 3-Tier Remedies</h2>
-        <p>Defect select karein — Non-Demolition, Pooja, Demolition</p>
-        <div id="defects-list">Loading...</div>
-    </div>`;
-}
-
-async function loadDefects() {
-    const res = await fetch(`${API}/api/advanced/remedies/all`);
-    const data = await res.json();
-    let html = '<div class="grid">';
-    for (const d of data.defects) {
-        html += `<div class="mini-card clickable" onclick="loadRemedy('${d.key}')">
-            <b>${d.defect}</b><br>
-            <span class="severity ${d.severity}">${d.severity}</span>
-        </div>`;
+    // ENTRANCE
+    if (a.entrance_audit) {
+        document.getElementById("entranceBlock").style.display = "block";
+        const e = a.entrance_audit;
+        const cls = e.status === "correct" ? "correct" : "defect";
+        let eh = '<div class="entrance-card ' + cls + '">';
+        eh += '<div class="entrance-name">' + e.name + ' (' + e.hindi + ')</div>';
+        eh += '<div class="entrance-dir">Direction: ' + e.direction + ' | Pada #' + e.pada + '</div>';
+        eh += '<div class="entrance-effect">' + e.effect + '</div>';
+        eh += '<div class="entrance-shastra">Shastra: ' + e.shastra + '</div>';
+        eh += '</div>';
+        document.getElementById("entranceCard").innerHTML = eh;
     }
-    html += '</div><div id="remedy-detail"></div>';
-    document.getElementById('defects-list').innerHTML = html;
-}
 
-async function loadRemedy(key) {
-    const res = await fetch(`${API}/api/advanced/remedies/${key}`);
-    const data = await res.json();
-    const d = data.data;
-    let html = `<div class="result-box">
-        <h3>${d.defect}</h3>
-        <p><b>Problem:</b> ${d.problem}</p>
-        <h4>🟢 Tier 1 (Non-Demolition)</h4>
-        <ul>${d.tier_1_non_demolition.remedies.map(r => `<li>${r.action} — ${r.cost}</li>`).join('')}</ul>
-        <h4>🟡 Tier 2 (Pooja)</h4>
-        <ul>${d.tier_2_pooja.remedies.map(r => `<li>${r.action} — ${r.cost}</li>`).join('')}</ul>
-        <h4>🔴 Tier 3 (Demolition)</h4>
-        <ul>${d.tier_3_demolition.remedies.length ? d.tier_3_demolition.remedies.map(r => `<li>${r.action}</li>`).join('') : '<li>Zaroorat nahi</li>'}</ul>
-        <p><b>Total Cost:</b> ${d.total_cost_estimate}</p>
-        <p><b>Mantra:</b> ${d.mantra}</p>
-    </div>`;
-    document.getElementById('remedy-detail').innerHTML = html;
-}
-
-// ═══ POOJA ═══
-function renderPoojaTab() {
-    return `
-    <div class="card">
-        <h2>🕉️ Pooja & Mantra</h2>
-        <div id="pooja-list">Loading...</div>
-    </div>`;
-}
-
-async function loadPoojas() {
-    const res = await fetch(`${API}/api/advanced/pooja/all`);
-    const data = await res.json();
-    let html = '<div class="grid">';
-    for (const p of data.poojas) {
-        html += `<div class="mini-card">
-            <b>${p.hindi}</b><br>
-            <small>${p.purpose}</small><br>
-            <span class="cost">${p.cost}</span>
-        </div>`;
+    // AYADI
+    if (a.ayadi) {
+        document.getElementById("ayadiBlock").style.display = "block";
+        const ay = a.ayadi;
+        let ah = "";
+        ah += '<div class="ayadi-item"><b>' + ay.aya + '</b><span>Aya</span></div>';
+        ah += '<div class="ayadi-item"><b>' + ay.vyaya + '</b><span>Vyaya</span></div>';
+        ah += '<div class="ayadi-item"><b>' + ay.rksa + '</b><span>Rksa</span></div>';
+        ah += '<div class="ayadi-item"><b>' + ay.yoni + '</b><span>Yoni</span></div>';
+        ah += '<div class="ayadi-item"><b>' + ay.vara + '</b><span>Vara</span></div>';
+        ah += '<div class="ayadi-item"><b>' + ay.tithi + '</b><span>Tithi</span></div>';
+        document.getElementById("ayadiGrid").innerHTML = ah;
+        document.getElementById("ayadiVerdict").textContent = ay.verdict;
     }
-    html += '</div>';
-    document.getElementById('pooja-list').innerHTML = html;
+
+    document.getElementById("resultsSection").scrollIntoView({ behavior: "smooth" });
 }
 
-// ═══ INIT ═══
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('tab-content').innerHTML = renderEntranceTab();
+// ZOOM
+function zoomIn() { currentZoom = Math.min(currentZoom + 0.2, 5); applyTransform(); }
+function zoomOut() { currentZoom = Math.max(currentZoom - 0.2, 0.5); applyTransform(); }
+function resetZoom() { currentZoom = 1; panX = 0; panY = 0; applyTransform(); }
+function applyTransform() {
+    const img = document.getElementById("gridOverlayImage");
+    const info = document.getElementById("zoomInfo");
+    if (!img) return;
+    img.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + currentZoom + ")";
+    if (info) info.textContent = Math.round(currentZoom * 100) + "%";
+}
+
+document.addEventListener("wheel", (e) => {
+    if (e.target.id === "gridOverlayImage") {
+        e.preventDefault();
+        if (e.deltaY < 0) zoomIn(); else zoomOut();
+    }
+}, { passive: false });
+
+document.addEventListener("mousedown", (e) => {
+    if (e.target.id === "gridOverlayImage") { isDragging = true; startX = e.clientX - panX; startY = e.clientY - panY; }
 });
+document.addEventListener("mousemove", (e) => {
+    if (isDragging) { panX = e.clientX - startX; panY = e.clientY - startY; applyTransform(); }
+});
+document.addEventListener("mouseup", () => { isDragging = false; });
 
-// Load on tab switch
-const origShowTab = showTab;
-window.showTab = function(tabName) {
-    origShowTab(tabName);
-    if (tabName === 'remedies') loadDefects();
-    if (tabName === 'pooja') loadPoojas();
-};
+async function downloadPDF() {
+    if (!analysisResult) { alert("Pehle analysis karein"); return; }
+    
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = "PDF Generate Ho Rahi Hai...";
+    
+    try {
+        // Step 1: PDF generate karo
+        const response = await fetch("/api/pdf/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                plan: [],
+                report_id: analysisResult.upload_id || "report"
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error("PDF generate failed: " + response.status);
+        }
+        
+        const data = await response.json();
+        
+        if (data.filename) {
+            // Step 2: Download karo
+            window.open("/api/pdf/download/" + data.filename, "_blank");
+            btn.textContent = "Download PDF";
+            btn.disabled = false;
+        } else {
+            throw new Error("PDF filename nahi mila");
+        }
+        
+    } catch (err) {
+        alert("PDF Error: " + err.message);
+        btn.textContent = "Download PDF";
+        btn.disabled = false;
+    }
+}
