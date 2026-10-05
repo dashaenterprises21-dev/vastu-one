@@ -1,0 +1,34 @@
+﻿{
+  "version": "1.0",
+  "description": "Safe Occult Remedies - Non-harmful only",
+  "safe_remedies": {
+    "guggal": {"hindi": "गुग्गल", "use": "daily", "purpose": "negative_energy_removal", "method": "Burn 1 piece daily evening", "cost": "₹50/month"},
+    "camphor": {"hindi": "कपूर", "use": "daily", "purpose": "aura_cleansing", "method": "Light 1 piece in main door", "cost": "₹30/month"},
+    "loban": {"hindi": "लोबान", "use": "weekly", "purpose": "space_purification", "method": "Burn with guggal", "cost": "₹50/month"},
+    "alum": {"hindi": "फिटकरी", "use": "weekly", "purpose": "aura_cleansing", "method": "Dissolve in water, sprinkle in corners", "cost": "₹20/month"},
+    "sea_salt": {"hindi": "समुद्री नमक", "use": "daily", "purpose": "grounding", "method": "Bowl in SW corner", "cost": "₹50/month"},
+    "mango_leaves": {"hindi": "आम के पत्ते", "use": "15_days", "purpose": "protection", "method": "51 leaves + black thread bandwar on main gate", "cost": "₹20/15 days"},
+    "rock_salt": {"hindi": "सेंधा नमक", "use": "weekly", "purpose": "negative_energy_removal", "method": "Bowl in corners, replace weekly", "cost": "₹30/month"}
+  },
+  "expert_guidance": {
+    "kavach": {"hindi": "कवच", "purpose": "protection", "note": "Expert se banwana chahiye", "cost": "₹500-5000"},
+    "yantra": {"hindi": "यंत्र", "purpose": "directional_balance", "note": "Correct yantra + correct direction + correct pran pratishtha", "cost": "₹200-2000"},
+    "gemstones": {"hindi": "रत्न", "purpose": "planetary_balance", "note": "Astro consultation ke baad hi pehno", "cost": "₹1000-100000"},
+    "rudraksha": {"hindi": "रुद्राक्ष", "purpose": "spiritual_protection", "note": "Mukhi ke hisaab se", "cost": "₹100-10000"}
+  },
+  "avoid": [
+    "black_magic",
+    "tantric_curses",
+    "animal_sacrifice",
+    "unknown_tantric_items",
+    "random_yantras",
+    "fake_gemstones",
+    "unsolicited_kavach"
+  ],
+  "daily_practice": {
+    "morning": ["camphor", "loban"],
+    "evening": ["guggal", "camphor"],
+    "weekly": ["alum", "rock_salt"],
+    "15_days": ["mango_leaves"]
+  }
+}

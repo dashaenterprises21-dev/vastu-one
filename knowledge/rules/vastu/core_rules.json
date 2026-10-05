@@ -1,0 +1,142 @@
+﻿{
+  "version": "1.0.0",
+  "total_rules": 10,
+  "note": "Seed rules - full registry populated over Weeks 2-4. Target: 500+ rules.",
+  "rules": [
+    {
+      "rule_id": "VST-SOIL-001",
+      "category": "land",
+      "topic": "soil_colour",
+      "assertion": "White soil with sweet taste is Brahmin-class - best for construction",
+      "condition": {"soil_colour": "white", "taste": "sweet"},
+      "source": {
+        "grantha_id": "brihat_samhita",
+        "chapter": "53",
+        "verse": "11-13",
+        "translation": "The soil which is white, sweet-smelling and sweet in taste is called Brahmin soil"
+      },
+      "evidence_level": "A",
+      "reliability_score": 0.95,
+      "tradition": "Northern",
+      "confidence": 0.95,
+      "impact": {"severity": "informational", "affected_areas": ["wealth", "peace"], "guna_impact": "Sattva"}
+    },
+    {
+      "rule_id": "VST-WATER-UG-NE",
+      "category": "home",
+      "topic": "underground_tank",
+      "assertion": "Underground water tank in North-East augments Soma corner",
+      "condition": {"feature": "underground_tank", "direction": "NE"},
+      "source": {"grantha_id": "vishvakarma_prakash", "chapter": "5", "verse": "24"},
+      "evidence_level": "A",
+      "reliability_score": 0.92,
+      "tradition": "Northern",
+      "confidence": 0.93,
+      "impact": {"severity": "informational", "affected_areas": ["wealth"], "guna_impact": "Sattva"}
+    },
+    {
+      "rule_id": "VST-WATER-SEPTIC-NE",
+      "category": "home",
+      "topic": "septic_tank",
+      "assertion": "Septic tank in North-East poisons the Sattvic zone",
+      "condition": {"feature": "septic_tank", "direction": "NE"},
+      "source": {"grantha_id": "vishvakarma_prakash", "chapter": "5", "verse": "41"},
+      "evidence_level": "A",
+      "reliability_score": 0.92,
+      "tradition": "Northern",
+      "confidence": 0.94,
+      "impact": {"severity": "critical", "affected_areas": ["health", "wealth"], "guna_impact": "Tamas"}
+    },
+    {
+      "rule_id": "VST-BOREWELL-SW",
+      "category": "home",
+      "topic": "borewell",
+      "assertion": "Borewell in South-West disturbs Pitru corner",
+      "condition": {"feature": "borewell", "direction": "SW"},
+      "source": {"grantha_id": "maha_vastu"},
+      "evidence_level": "B",
+      "reliability_score": 0.78,
+      "tradition": "Modern",
+      "confidence": 0.85,
+      "impact": {"severity": "critical", "affected_areas": ["health"], "guna_impact": "Tamas"}
+    },
+    {
+      "rule_id": "VST-MUHURT-SHILANYAS-001",
+      "category": "timing",
+      "topic": "foundation_muhurt",
+      "assertion": "Shilanyas in Tithi Dwitiya, Tritiya, Panchami is auspicious",
+      "condition": {"event": "shilanyas", "tithi": "in_auspicious_list"},
+      "source": {"grantha_id": "brihat_samhita", "chapter": "53"},
+      "evidence_level": "A",
+      "reliability_score": 0.90,
+      "tradition": "Universal",
+      "confidence": 0.90,
+      "impact": {"severity": "informational", "affected_areas": ["peace", "wealth"], "guna_impact": "Sattva"}
+    },
+    {
+      "rule_id": "VST-COLOUR-NE-WHITE",
+      "category": "remedy",
+      "topic": "colour_ne",
+      "assertion": "White / light yellow in North-East preserves Sattvic energy",
+      "condition": {"direction": "NE", "colour": "white|cream|light_yellow"},
+      "source": {"grantha_id": "samaranganasutradhara"},
+      "evidence_level": "B",
+      "reliability_score": 0.82,
+      "tradition": "Northern",
+      "confidence": 0.85,
+      "impact": {"severity": "informational", "affected_areas": ["peace", "spiritual"], "guna_impact": "Sattva"}
+    },
+    {
+      "rule_id": "VST-COLOUR-SE-BLUE",
+      "category": "remedy",
+      "topic": "colour_se",
+      "assertion": "Blue in South-East conflicts with Agni element",
+      "condition": {"direction": "SE", "colour": "blue|black|dark_green"},
+      "source": {"grantha_id": "vishvakarma_prakash", "chapter": "Colour"},
+      "evidence_level": "B",
+      "reliability_score": 0.80,
+      "tradition": "Northern",
+      "confidence": 0.82,
+      "impact": {"severity": "medium", "affected_areas": ["wealth"], "guna_impact": "Tamas"}
+    },
+    {
+      "rule_id": "VST-LAND-BONES",
+      "category": "land",
+      "topic": "objects_found",
+      "assertion": "Bones found during digging indicate death energy - purification mandatory",
+      "condition": {"object_found": "bones"},
+      "source": {"grantha_id": "brihat_samhita", "chapter": "53", "verse": "98-102"},
+      "evidence_level": "A",
+      "reliability_score": 0.88,
+      "tradition": "Northern",
+      "confidence": 0.90,
+      "impact": {"severity": "critical", "affected_areas": ["health", "peace"], "guna_impact": "Tamas"}
+    },
+    {
+      "rule_id": "VST-LAND-COINS",
+      "category": "land",
+      "topic": "objects_found",
+      "assertion": "Coins found during digging indicate prosperity",
+      "condition": {"object_found": "coins"},
+      "source": {"grantha_id": "vishvakarma_prakash"},
+      "evidence_level": "B",
+      "reliability_score": 0.78,
+      "tradition": "Northern",
+      "confidence": 0.80,
+      "impact": {"severity": "informational", "affected_areas": ["wealth"], "guna_impact": "Sattva"}
+    },
+    {
+      "rule_id": "VST-SLEEPING-SLEEPING",
+      "category": "land",
+      "topic": "sleeping_stage",
+      "assertion": "Sleeping land requires Vastu Pujan before construction",
+      "condition": {"sleeping_stage": "sleeping"},
+      "source": {"grantha_id": "vishvakarma_prakash"},
+      "evidence_level": "B",
+      "reliability_score": 0.82,
+      "tradition": "Northern",
+      "confidence": 0.85,
+      "impact": {"severity": "high", "affected_areas": ["peace"], "guna_impact": "Tamas"}
+    }
+  ]
+}

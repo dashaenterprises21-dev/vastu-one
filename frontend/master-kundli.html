@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Master Kundli Report — Vastu One</title>
+<link rel="stylesheet" href="/static/premium.css">
+<style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { overflow-x: hidden; }
+    
+    .master-section { margin-bottom: 56px; }
+    .master-header {
+        font-family: var(--font-display);
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 28px;
+        padding-bottom: 18px;
+        border-bottom: 3px solid var(--border-gold);
+        letter-spacing: -0.02em;
+    }
+    .master-header .gold {
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .master-basic-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+    .master-basic-card {
+        background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(255,153,51,0.04) 100%);
+        border: 1.5px solid var(--border-gold);
+        border-radius: 18px;
+        padding: 24px;
+    }
+    .master-basic-label {
+        font-size: 13px;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .master-basic-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1.25;
+        word-break: break-word;
+    }
+    .master-basic-value.hindi {
+        font-family: var(--font-hindi);
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .master-basic-sub {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 6px;
+    }
+    
+    /* Predictions */
+    .pred-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    .pred-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 18px;
+        padding: 24px;
+        transition: var(--transition);
+    }
+    .pred-card:hover { border-color: var(--border-gold); transform: translateY(-4px); }
+    .pred-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .pred-area { font-size: 18px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .pred-score { font-size: 28px; font-weight: 800; color: var(--gold); }
+    .pred-bar { height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; margin-bottom: 14px; }
+    .pred-fill { height: 100%; background: var(--grad-gold); border-radius: 5px; }
+    .pred-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+    .pred-dasha { font-size: 14px; color: var(--gold); margin-top: 8px; font-weight: 600; }
+    
+    /* Transit */
+    .transit-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+    }
+    .transit-card {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 60px 1fr auto;
+        gap: 12px;
+        align-items: center;
+    }
+    .transit-planet { font-family: var(--font-hindi); font-size: 18px; font-weight: 800; color: var(--gold); }
+    .transit-info { font-size: 13px; color: var(--text-secondary); }
+    .transit-info strong { color: var(--text-primary); font-size: 15px; display: block; }
+    .transit-badge { font-size: 11px; padding: 4px 10px; border-radius: 100px; font-weight: 800; text-transform: uppercase; }
+    .transit-badge.same { background: rgba(16,185,129,0.2); color: var(--success); }
+    .transit-badge.diff { background: rgba(245,158,11,0.2); color: var(--warning); }
+    
+    /* Sadesati */
+    .sadesati-box {
+        padding: 24px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        margin-bottom: 20px;
+    }
+    .sadesati-status {
+        padding: 16px;
+        border-radius: 14px;
+        font-size: 18px;
+        font-weight: 800;
+        text-align: center;
+        margin-top: 16px;
+    }
+    .sadesati-status.active { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .sadesati-status.safe { background: rgba(16,185,129,0.15); color: var(--success); }
+    
+    /* Remedies */
+    .remedy-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+    .remedy-tab {
+        padding: 12px 22px;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid var(--border-subtle);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: var(--font-sans);
+    }
+    .remedy-tab.active { background: var(--grad-gold); color: #0a0a0f; border-color: var(--gold); }
+    .remedy-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .remedy-item {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 18px;
+    }
+    .remedy-planet { font-family: var(--font-hindi); font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+    .remedy-detail { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+    .remedy-detail strong { color: var(--text-primary); }
+    
+    /* Yogas/Doshas */
+    .yoga-card, .dosha-card {
+        padding: 24px;
+        border-radius: 18px;
+        margin-bottom: 18px;
+        border-left: 6px solid;
+    }
+    .yoga-card { border-color: var(--success); background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.02) 100%); }
+    .dosha-card { border-color: var(--danger); background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0.02) 100%); }
+    .dosha-card.medium { border-color: var(--warning); background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.02) 100%); }
+    .yoga-name, .dosha-name { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; }
+    .yoga-name .hindi, .dosha-name .hindi { font-family: var(--font-hindi); color: var(--gold); margin-left: 10px; font-size: 20px; }
+    .yoga-desc, .dosha-desc { font-size: 16px; color: var(--text-secondary); line-height: 1.7; }
+    .yoga-strength, .dosha-severity { display: inline-block; font-size: 13px; padding: 6px 14px; border-radius: 100px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 14px; }
+    .yoga-strength { background: rgba(16,185,129,0.25); color: #34d399; }
+    .dosha-severity.high { background: rgba(239,68,68,0.25); color: #f87171; }
+    .dosha-severity.medium { background: rgba(245,158,11,0.25); color: #fbbf24; }
+    .dosha-remedy { margin-top: 16px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 14px; font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+    .dosha-remedy strong { color: var(--gold); }
+    
+    .loading-master { display: none; text-align: center; padding: 100px 20px; }
+    .loading-master.show { display: block; }
+    .loading-master .spinner {
+        width: 80px; height: 80px;
+        border: 5px solid rgba(212,175,55,0.15);
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .print-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 16px 28px;
+        background: var(--grad-gold);
+        color: #0a0a0f;
+        border: none;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: var(--shadow-gold-lg);
+        z-index: 100;
+        font-family: var(--font-sans);
+    }
+    .print-btn:hover { transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+        .master-header { font-size: 26px; }
+        .master-basic-value { font-size: 22px; }
+        .transit-card { grid-template-columns: 50px 1fr; }
+        .print-btn { bottom: 20px; right: 20px; padding: 14px 20px; font-size: 14px; }
+    }
+    /* ═══ PREMIUM PRINT CSS ═══ */
+    @media print {
+        @page {
+            size: A4;
+            margin: 15mm 12mm;
+            background: white;
+        }
+        
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+        
+        body {
+            background: white !important;
+            color: #1a1a2e !important;
+            font-size: 11pt !important;
+        }
+        
+        .ux-header, .ux-nav, .ux-footer, .print-btn, #inputCard, .loading-master {
+            display: none !important;
+        }
+        
+        .ux-container {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .ux-hero {
+            text-align: center;
+            padding: 20px 0 !important;
+            border-bottom: 3px solid #d4af37 !important;
+            margin-bottom: 20px !important;
+        }
+        .ux-hero-badge {
+            background: #d4af37 !important;
+            color: #fff !important;
+            padding: 6px 16px !important;
+            border-radius: 100px !important;
+            font-size: 10pt !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .ux-hero h1 {
+            font-size: 28pt !important;
+            color: #1a1a2e !important;
+            margin: 12px 0 !important;
+            background: none !important;
+            -webkit-text-fill-color: #1a1a2e !important;
+        }
+        .ux-hero h1 .gold {
+            color: #d4af37 !important;
+            -webkit-text-fill-color: #d4af37 !important;
+        }
+        .ux-hero p {
+            color: #555 !important;
+            font-size: 11pt !important;
+        }
+        
+        .master-section {
+            margin-bottom: 30px !important;
+            page-break-inside: avoid;
+        }
+        
+        .master-header {
+            font-size: 20pt !important;
+            color: #1a1a2e !important;
+            border-bottom: 2.5px solid #d4af37 !important;
+            padding-bottom: 10px !important;
+            margin-bottom: 16px !important;
+            page-break-after: avoid;
+        }
+        .master-header .gold {
+            color: #d4af37 !important;
+            -webkit-text-fill-color: #d4af37 !important;
+            background: none !important;
+        }
+        
+        .master-basic-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 12px !important;
+        }
+        .master-basic-card {
+            background: #faf6ea !important;
+            border: 1.5px solid #d4af37 !important;
+            border-radius: 10px !important;
+            padding: 12px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .master-basic-label {
+            font-size: 8pt !important;
+            color: #8b7355 !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .master-basic-value {
+            font-size: 14pt !important;
+            color: #1a1a2e !important;
+            font-weight: 800 !important;
+            background: none !important;
+            -webkit-text-fill-color: #1a1a2e !important;
+        }
+        .master-basic-value.hindi {
+            color: #b8941f !important;
+            -webkit-text-fill-color: #b8941f !important;
+            background: none !important;
+        }
+        .master-basic-sub {
+            font-size: 9pt !important;
+            color: #666 !important;
+        }
+        
+        .pred-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .pred-card {
+            background: #faf6ea !important;
+            border: 1.5px solid #e8e0d0 !important;
+            border-radius: 10px !important;
+            padding: 14px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .pred-area {
+            font-size: 12pt !important;
+            color: #1a1a2e !important;
+            font-weight: 800 !important;
+        }
+        .pred-score {
+            font-size: 16pt !important;
+            color: #b8941f !important;
+            font-weight: 800 !important;
+        }
+        .pred-bar {
+            height: 6px !important;
+            background: #e8e0d0 !important;
+            border-radius: 3px !important;
+            overflow: hidden !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .pred-fill {
+            height: 100% !important;
+            background: linear-gradient(90deg, #d4af37, #f4d03f) !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .pred-text {
+            font-size: 9pt !important;
+            color: #444 !important;
+            line-height: 1.6 !important;
+        }
+        .pred-dasha {
+            font-size: 9pt !important;
+            color: #b8941f !important;
+            font-weight: 700 !important;
+            margin-top: 6px !important;
+        }
+        
+        .yoga-card, .dosha-card {
+            padding: 14px !important;
+            border-radius: 10px !important;
+            margin-bottom: 10px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .yoga-card {
+            background: #f0f9f4 !important;
+            border-left: 5px solid #10b981 !important;
+        }
+        .dosha-card {
+            background: #fef2f2 !important;
+            border-left: 5px solid #ef4444 !important;
+        }
+        .dosha-card.medium {
+            background: #fffbeb !important;
+            border-left-color: #f59e0b !important;
+        }
+        .yoga-name, .dosha-name {
+            font-size: 13pt !important;
+            color: #1a1a2e !important;
+            font-weight: 800 !important;
+            margin-bottom: 6px !important;
+        }
+        .yoga-name .hindi, .dosha-name .hindi {
+            color: #b8941f !important;
+            font-size: 11pt !important;
+        }
+        .yoga-desc, .dosha-desc {
+            font-size: 10pt !important;
+            color: #444 !important;
+            line-height: 1.6 !important;
+        }
+        .yoga-strength {
+            background: #d1fae5 !important;
+            color: #065f46 !important;
+            font-size: 8pt !important;
+            padding: 4px 10px !important;
+            border-radius: 100px !important;
+            font-weight: 800 !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .dosha-severity.high {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .dosha-severity.medium {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .dosha-remedy {
+            background: #f8f4e8 !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            font-size: 9pt !important;
+            color: #444 !important;
+            margin-top: 8px !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .dosha-remedy strong {
+            color: #b8941f !important;
+        }
+        
+        .transit-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 10px !important;
+        }
+        .transit-card {
+            background: #faf6ea !important;
+            border: 1px solid #e8e0d0 !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .transit-planet {
+            font-size: 12pt !important;
+            color: #b8941f !important;
+            font-weight: 800 !important;
+        }
+        .transit-info {
+            font-size: 9pt !important;
+            color: #555 !important;
+        }
+        .transit-info strong {
+            font-size: 11pt !important;
+            color: #1a1a2e !important;
+        }
+        .transit-badge.same {
+            background: #d1fae5 !important;
+            color: #065f46 !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .transit-badge.diff {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        
+        .sadesati-box {
+            background: #faf6ea !important;
+            border: 1.5px solid #d4af37 !important;
+            border-radius: 10px !important;
+            padding: 14px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .sadesati-status.active {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .sadesati-status.safe {
+            background: #d1fae5 !important;
+            color: #065f46 !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+        
+        .remedy-tabs {
+            display: none !important;
+        }
+        .remedy-content {
+            display: block !important;
+        }
+        .remedy-content::before {
+            content: "💎 Gemstones | 🕉️ Mantras | 🙏 Daan | 🔱 Pooja | 🔯 Yantra";
+            display: block;
+            font-size: 10pt;
+            color: #b8941f;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e8e0d0;
+        }
+        .remedy-item {
+            background: #faf6ea !important;
+            border: 1px solid #e8e0d0 !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            margin-bottom: 8px !important;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+        }
+        .remedy-planet {
+            font-size: 12pt !important;
+            color: #b8941f !important;
+            font-weight: 800 !important;
+        }
+        .remedy-detail {
+            font-size: 9pt !important;
+            color: #444 !important;
+        }
+        .remedy-detail strong {
+            color: #1a1a2e !important;
+        }
+        
+        /* Hide tabs and show all */
+        .remedy-tab {
+            display: none !important;
+        }
+        
+        /* Add page footer */
+        .master-section::after {
+            content: "";
+            display: block;
+            height: 1px;
+            background: #e8e0d0;
+            margin-top: 20px;
+        }
+        
+        /* Branding at top */
+        .ux-header::before {
+            content: "VASTU ONE — Master Kundli Report";
+            display: block;
+            text-align: center;
+            font-size: 10pt;
+            color: #b8941f;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            padding: 10px 0;
+            border-bottom: 1px solid #d4af37;
+            margin-bottom: 20px;
+        }
+        .ux-header {
+            display: block !important;
+            background: white !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+        .ux-header .ux-logo, .ux-nav {
+            display: none !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header class="ux-header">
+<div class="ux-header-inner">
+<a href="/" class="ux-logo">
+<div class="ux-logo-mark">📜</div>
+<div class="ux-logo-text">
+<h1>VASTU ONE</h1>
+<p>Master Kundli Report</p>
+</div>
+</a>
+<nav class="ux-nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/vastu-integration.html">Vastu Integration</a>
+<a href="/advanced-kundli.html">Advanced Kundli</a>
+<a href="/master-kundli.html" class="active">Master Report</a>
+<a href="/packages.html">Packages</a>
+</nav>
+</div>
+</header>
+
+<div class="ux-container">
+
+<section class="ux-hero">
+<div class="ux-hero-badge">Swiss Ephemeris • Complete Master Report</div>
+<h1>Master <span class="gold">Kundli Report</span></h1>
+<p>50+ Yogas • 20+ Doshas • Predictions • Remedies • Transit • Sadesati • 16 Vargas</p>
+</section>
+
+<div class="ux-card ux-animate" id="inputCard">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Tithi</label>
+<input type="date" class="ux-input" id="dob" value="1990-05-04">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Samay</label>
+<input type="time" class="ux-input" id="tob" value="21:35">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Sthan</label>
+<input type="text" class="ux-input" id="place" value="Bhandara, Maharashtra">
+</div>
+</div>
+<button class="ux-btn ux-btn-block" id="analyzeBtn" onclick="analyzeMaster()" style="margin-top:24px;font-size:18px;padding:20px;">
+<span>📜</span> Complete Master Report Dekhein
+</button>
+<div class="ux-error" id="error"></div>
+</div>
+
+<div class="loading-master" id="loading">
+<div class="spinner"></div>
+<p style="color:var(--text-secondary);font-size:18px;">Complete master report ban rahi hai...</p>
+</div>
+
+<div id="result" style="display:none;">
+
+<div class="master-section">
+<div class="master-header"><span class="gold">Basic</span> Details</div>
+<div class="master-basic-grid" id="basicGrid"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Life <span class="gold">Predictions</span></div>
+<div class="pred-grid" id="predGrid"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Yogas <span class="gold">(<span id="yogaCount">0</span>)</span></div>
+<div id="yogasContent"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Doshas <span class="gold">(<span id="doshaCount">0</span>)</span></div>
+<div id="doshasContent"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Current <span class="gold">Transit (Gochar)</span></div>
+<div class="transit-grid" id="transitGrid"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Sadesati <span class="gold">Status</span></div>
+<div id="sadesatiContent"></div>
+</div>
+
+<div class="master-section">
+<div class="master-header">Complete <span class="gold">Remedies</span></div>
+<div class="remedy-tabs" id="remedyTabs"></div>
+<div class="remedy-content" id="remedyContent"></div>
+</div>
+
+</div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ Print / PDF</button>
+
+<footer class="ux-footer">
+<p>🕉️ Vastu One — Master Kundli Report V3 (Swiss Ephemeris)</p>
+<p style="margin-top:8px;font-size:12px;color:var(--text-muted);">50+ Yogas • 20+ Doshas • Predictions • Remedies • Transit • Sadesati</p>
+</footer>
+
+<script>
+var API_BASE = 'http://localhost:8001';
+var currentRemedies = {};
+var currentRemedyTab = 'gemstones';
+
+async function analyzeMaster() {
+    var dob = document.getElementById('dob').value;
+    var tob = document.getElementById('tob').value || '12:00';
+    var place = document.getElementById('place').value || 'Unknown';
+
+    if (!dob) { showError('Kripya janm tithi daalein'); return; }
+
+    var btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('error').classList.remove('show');
+    document.getElementById('result').style.display = 'none';
+
+    try {
+        var response = await fetch(API_BASE + '/api/master/full-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dob: dob, tob: tob, place: place })
+        });
+        if (!response.ok) throw new Error('API error: ' + response.status);
+        var data = await response.json();
+
+        renderBasic(data.basic || {}, data.lagna || {});
+        renderPredictions(data.predictions || {});
+        renderYogas(data.yogas || []);
+        renderDoshas(data.doshas || []);
+        renderTransit(data.transit || {});
+        renderSadesati(data.sadesati || {});
+        renderRemedies(data.remedies || {});
+
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('inputCard').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+        showError('Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+function basicCard(label, value, sub, isHindi) {
+    var vClass = isHindi ? 'master-basic-value hindi' : 'master-basic-value';
+    return '<div class="master-basic-card"><div class="master-basic-label">' + label + '</div>' +
+        '<div class="' + vClass + '">' + (value || '-') + '</div>' +
+        '<div class="master-basic-sub">' + (sub || '') + '</div></div>';
+}
+
+function renderBasic(basic, lagna) {
+    document.getElementById('basicGrid').innerHTML =
+        basicCard('Lagna', lagna.lagna_hindi, lagna.lagna_rashi + ' • ' + lagna.lagna_nakshatra, true) +
+        basicCard('Lagna Lord', lagna.lagna_lord, lagna.lagna_element + ' element') +
+        basicCard('Lagna Degree', lagna.lagna_degree + '°', 'Pada ' + lagna.lagna_pada) +
+        basicCard('Ayanamsa', lagna.ayanamsa, lagna.ayanamsa_value + '°') +
+        basicCard('Tithi', basic.tithi + ' (' + basic.paksha + ')', 'Vaar: ' + basic.vaar_hindi) +
+        basicCard('Nakshatra', basic.nakshatra_hindi, 'Lord: ' + basic.nakshatra_lord) +
+        basicCard('Yoga', basic.yoga, 'Karana: ' + basic.karana) +
+        basicCard('Rashi', basic.rashi_hindi, basic.rashi);
+}
+
+function renderPredictions(pred) {
+    var areas = ['career', 'marriage', 'health', 'wealth', 'children'];
+    var html = '';
+    for (var i = 0; i < areas.length; i++) {
+        var area = areas[i];
+        var d = pred[area] || {};
+        html += '<div class="pred-card">' +
+            '<div class="pred-header"><span class="pred-area">' + area + '</span><span class="pred-score">' + (d.score || 0) + '/100</span></div>' +
+            '<div class="pred-bar"><div class="pred-fill" style="width:' + (d.score || 0) + '%"></div></div>' +
+            '<div class="pred-text">' + (d.prediction || '') + '</div>' +
+            '<div class="pred-dasha">' + (d.dasha_effect || '') + '</div>' +
+            '</div>';
+    }
+    document.getElementById('predGrid').innerHTML = html;
+}
+
+function renderYogas(yogas) {
+    document.getElementById('yogaCount').textContent = yogas.length;
+    var el = document.getElementById('yogasContent');
+    if (!yogas.length) { el.innerHTML = '<p style="color:var(--text-secondary);font-size:16px;">Koi vishesh yoga nahi mila</p>'; return; }
+    var html = '';
+    for (var i = 0; i < yogas.length; i++) {
+        var y = yogas[i];
+        html += '<div class="yoga-card">' +
+            '<div class="yoga-name">' + y.name + '<span class="hindi">' + y.hindi + '</span></div>' +
+            '<div class="yoga-desc">' + y.description + '</div>' +
+            '<span class="yoga-strength">' + y.strength + ' Strength</span>' +
+            '</div>';
+    }
+    el.innerHTML = html;
+}
+
+function renderDoshas(doshas) {
+    document.getElementById('doshaCount').textContent = doshas.length;
+    var el = document.getElementById('doshasContent');
+    if (!doshas.length) { el.innerHTML = '<p style="color:var(--text-secondary);font-size:16px;">Koi dosha nahi mila</p>'; return; }
+    var html = '';
+    for (var i = 0; i < doshas.length; i++) {
+        var d = doshas[i];
+        var sevClass = (d.severity || '').toLowerCase();
+        html += '<div class="dosha-card ' + sevClass + '">' +
+            '<div class="dosha-name">' + d.name + '<span class="hindi">' + d.hindi + '</span></div>' +
+            '<div class="dosha-desc">' + d.description + '</div>' +
+            '<span class="dosha-severity ' + sevClass + '">' + d.severity + '</span>' +
+            '<div class="dosha-remedy"><strong>Upay:</strong> ' + d.remedy + '</div>' +
+            '</div>';
+    }
+    el.innerHTML = html;
+}
+
+function renderTransit(transit) {
+    var transits = transit.transits || {};
+    var html = '';
+    for (var key in transits) {
+        var t = transits[key];
+        var cls = t.same_rashi ? 'same' : 'diff';
+        var label = t.same_rashi ? 'Same' : 'Different';
+        html += '<div class="transit-card">' +
+            '<div class="transit-planet">' + t.hindi + '</div>' +
+            '<div class="transit-info"><strong>' + t.transit_rashi_hindi + '</strong>Natal: ' + t.natal_rashi + '</div>' +
+            '<span class="transit-badge ' + cls + '">' + label + '</span>' +
+            '</div>';
+    }
+    document.getElementById('transitGrid').innerHTML = html;
+}
+
+function renderSadesati(s) {
+    var statusClass = s.currently_in_sadesati ? 'active' : 'safe';
+    var statusText = s.currently_in_sadesati ? '⚠️ Currently in Sadesati' : '✅ Currently NOT in Sadesati';
+    var html = '<div class="sadesati-box">' +
+        '<div class="master-basic-label">Chandra Rashi</div>' +
+        '<div class="master-basic-value">' + (s.chandra_rashi || '') + '</div>' +
+        '<div class="master-basic-sub" style="margin-top:10px;">Sadesati Rashis: ' + (s.sadesati_rashis || []).join(' • ') + '</div>' +
+        '<div class="sadesati-status ' + statusClass + '">' + statusText + '</div>' +
+        '</div>';
+    document.getElementById('sadesatiContent').innerHTML = html;
+}
+
+function renderRemedies(r) {
+    currentRemedies = r;
+    var tabs = [
+        {key: 'gemstones', label: '💎 Gemstones'},
+        {key: 'mantras', label: '🕉️ Mantras'},
+        {key: 'daan', label: '🙏 Daan'},
+        {key: 'pooja', label: '🔱 Pooja'},
+        {key: 'yantra', label: '🔯 Yantra'}
+    ];
+    var html = '';
+    for (var i = 0; i < tabs.length; i++) {
+        var cls = tabs[i].key === 'gemstones' ? 'active' : '';
+        html += '<button class="remedy-tab ' + cls + '" onclick="showRemedyTab(\'' + tabs[i].key + '\', this)">' + tabs[i].label + '</button>';
+    }
+    document.getElementById('remedyTabs').innerHTML = html;
+    showRemedyTab('gemstones');
+}
+
+function showRemedyTab(key, el) {
+    if (el) {
+        var tabs = document.querySelectorAll('.remedy-tab');
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+        el.classList.add('active');
+    }
+    var items = currentRemedies[key] || [];
+    var el2 = document.getElementById('remedyContent');
+    if (!items.length) { el2.innerHTML = '<p style="color:var(--text-secondary);">Koi ' + key + ' nahi</p>'; return; }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (key === 'gemstones') {
+            html += '<div class="remedy-item"><div class="remedy-planet">' + item.planet + '</div><div class="remedy-detail"><strong>' + item.gemstone + '</strong><br>' + item.metal + ' • ' + item.day + '<br><em style="color:var(--text-tertiary);font-size:12px;">' + item.note + '</em></div></div>';
+        } else if (key === 'mantras') {
+            html += '<div class="remedy-item"><div class="remedy-planet">' + item.planet + '</div><div class="remedy-detail" style="font-family:var(--font-hindi);color:var(--gold);font-size:16px;">' + item.mantra + '</div><div class="remedy-detail">' + item.count + ' • ' + item.day + '</div></div>';
+        } else if (key === 'daan') {
+            html += '<div class="remedy-item"><div class="remedy-planet">' + item.planet + '</div><div class="remedy-detail">' + item.item + '<br><strong>' + item.day + '</strong></div></div>';
+        } else if (key === 'pooja') {
+            html += '<div class="remedy-item"><div class="remedy-planet">' + item.name + '</div><div class="remedy-detail">' + item.purpose + '<br><strong>' + item.frequency + '</strong></div></div>';
+        } else if (key === 'yantra') {
+            html += '<div class="remedy-item"><div class="remedy-planet">' + item.name + '</div><div class="remedy-detail">' + item.purpose + '<br><strong>' + item.placement + '</strong></div></div>';
+        }
+    }
+    el2.innerHTML = html;
+}
+
+function showError(msg) {
+    var el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('show');
+}
+
+window.addEventListener('load', function() { setTimeout(analyzeMaster, 500); });
+</script>
+</body>
+</html>

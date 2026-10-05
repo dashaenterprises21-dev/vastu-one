@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vastu Analysis Report - VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/plan-report.css">
+</head>
+<body>
+
+<!-- Background Effects -->
+<div class="bg-gradient"></div>
+<div class="bg-mesh"></div>
+<div class="bg-noise"></div>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div class="logo-text">
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button class="btn-glass" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+                Print PDF
+            </button>
+            <a href="/plan-upload" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Naya Plan
+            </a>
+        </div>
+    </div>
+</header>
+
+<main class="container main" id="reportContent">
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Premium report load ho rahi hai...</p>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One" class="footer-logo">
+            <div>
+                <h3>VASTU ONE</h3>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </div>
+        <div class="footer-shastras">
+            <p>बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+            <p class="footer-copy">© 2026 Vastu One. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/plan-report.js"></script>
+</body>
+</html>

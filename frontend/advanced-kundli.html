@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Advanced Kundli V3 — Complete Report</title>
+<link rel="stylesheet" href="/static/premium.css">
+<style>
+    /* ═══ RESPONSIVE BASE ═══ */
+    * { -webkit-tap-highlight-color: transparent; }
+    html { font-size: 16px; }
+    body { overflow-x: hidden; }
+
+    /* ═══ SECTION ═══ */
+    .rpt-section { margin-bottom: 56px; padding: 0 4px; }
+    .rpt-header {
+        font-family: var(--font-display);
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 28px;
+        padding-bottom: 18px;
+        border-bottom: 3px solid var(--border-gold);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+    .rpt-header .gold {
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* ═══ BASIC GRID ═══ */
+    .rpt-basic-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+    .rpt-basic-card {
+        background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(255,153,51,0.04) 100%);
+        border: 1.5px solid var(--border-gold);
+        border-radius: 18px;
+        padding: 24px;
+        transition: var(--transition);
+    }
+    .rpt-basic-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-gold);
+    }
+    .rpt-basic-label {
+        font-size: 13px;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .rpt-basic-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1.25;
+        word-break: break-word;
+    }
+    .rpt-basic-value.hindi {
+        font-family: var(--font-hindi);
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .rpt-basic-sub {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 6px;
+        line-height: 1.5;
+    }
+
+    /* ═══ CHARTS ═══ */
+    .rpt-charts-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+    .rpt-chart-wrapper {
+        background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+        border: 1.5px solid var(--border-gold);
+        border-radius: 24px;
+        padding: 28px;
+    }
+    .rpt-chart-title {
+        font-family: var(--font-display);
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--gold);
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    .rpt-north-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 3px;
+        aspect-ratio: 1;
+        background: var(--border-gold);
+        border: 3px solid var(--gold);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+    .rpt-north-cell {
+        background: var(--bg-primary);
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 75px;
+    }
+    .rpt-north-cell.center {
+        background: rgba(212,175,55,0.1);
+        grid-column: span 2;
+        grid-row: span 2;
+        font-family: var(--font-hindi);
+        color: var(--gold);
+        font-size: 18px;
+        font-weight: 800;
+    }
+    .rpt-north-cell.lagna { border: 2px solid var(--gold); }
+    .rpt-north-rashi {
+        font-family: var(--font-hindi);
+        font-size: 15px;
+        color: var(--gold);
+        font-weight: 800;
+        margin-bottom: 2px;
+    }
+    .rpt-north-bhav {
+        font-size: 11px;
+        color: var(--text-tertiary);
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+    .rpt-north-planets {
+        font-family: var(--font-hindi);
+        font-size: 16px;
+        color: var(--success);
+        font-weight: 800;
+        line-height: 1.4;
+    }
+    .rpt-south-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 3px;
+        aspect-ratio: 1;
+        background: var(--border-gold);
+        border: 3px solid var(--gold);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+    .rpt-south-cell {
+        background: var(--bg-primary);
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 75px;
+    }
+    .rpt-south-cell.center {
+        background: rgba(212,175,55,0.1);
+        grid-column: span 2;
+        grid-row: span 2;
+        font-family: var(--font-hindi);
+        color: var(--gold);
+        font-size: 18px;
+        font-weight: 800;
+    }
+    .rpt-south-cell.lagna { box-shadow: inset 0 0 0 3px var(--gold); }
+    .rpt-south-rashi {
+        font-family: var(--font-hindi);
+        font-size: 15px;
+        color: var(--gold);
+        font-weight: 800;
+        margin-bottom: 2px;
+    }
+    .rpt-south-bhav {
+        font-size: 11px;
+        color: var(--text-tertiary);
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+    .rpt-south-planets {
+        font-family: var(--font-hindi);
+        font-size: 16px;
+        color: var(--success);
+        font-weight: 800;
+        line-height: 1.4;
+    }
+    .rpt-south-lagna-badge {
+        font-size: 10px;
+        background: var(--gold);
+        color: #0a0a0f;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-weight: 800;
+        margin-top: 4px;
+    }
+
+    /* ═══ PLANET CARDS ═══ */
+    .rpt-planet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 24px;
+    }
+    .rpt-planet-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+        border: 1.5px solid var(--border-default);
+        border-radius: 18px;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+    }
+    .rpt-planet-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 6px;
+        height: 100%;
+        background: var(--gold);
+    }
+    .rpt-planet-card.retro::before { background: #9b59b6; }
+    .rpt-planet-card:hover {
+        border-color: var(--border-gold);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-gold);
+    }
+    .rpt-planet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1.5px solid var(--border-subtle);
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .rpt-planet-name {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-primary);
+    }
+    .rpt-planet-hindi {
+        font-family: var(--font-hindi);
+        font-size: 20px;
+        color: var(--gold);
+        margin-left: 10px;
+    }
+    .rpt-planet-badge {
+        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    .rpt-planet-badge.direct { background: rgba(16,185,129,0.25); color: #34d399; }
+    .rpt-planet-badge.retro { background: rgba(155,89,182,0.3); color: #c39bd3; }
+    .rpt-planet-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+    .rpt-planet-field { display: flex; flex-direction: column; }
+    .rpt-planet-field-label {
+        font-size: 11px;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+    .rpt-planet-field-value {
+        font-size: 16px;
+        color: var(--text-primary);
+        font-weight: 700;
+        line-height: 1.4;
+    }
+    .rpt-planet-field-value.gold {
+        color: var(--gold);
+        font-size: 18px;
+    }
+    .rpt-planet-mantra {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1.5px solid var(--border-subtle);
+        font-family: var(--font-hindi);
+        font-size: 18px;
+        color: var(--gold);
+        text-align: center;
+        font-weight: 700;
+        line-height: 1.5;
+    }
+    .rpt-planet-gem {
+        margin-top: 10px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    /* ═══ BHAVA CARDS ═══ */
+    .rpt-bhava-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+    }
+    .rpt-bhava-card {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 16px;
+        padding: 22px;
+        transition: var(--transition);
+    }
+    .rpt-bhava-card:hover {
+        border-color: var(--border-gold);
+        background: rgba(212,175,55,0.06);
+    }
+    .rpt-bhava-number {
+        font-size: 12px;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+    .rpt-bhava-name {
+        font-family: var(--font-hindi);
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+    .rpt-bhava-meaning {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    .rpt-bhava-occupants {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    .rpt-occupant-tag {
+        font-family: var(--font-hindi);
+        font-size: 14px;
+        padding: 5px 12px;
+        background: rgba(212,175,55,0.2);
+        color: var(--gold);
+        border-radius: 100px;
+        font-weight: 800;
+    }
+
+    /* ═══ VARGA ═══ */
+    .rpt-varga-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 28px;
+    }
+    .rpt-varga-btn {
+        padding: 14px 24px;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid var(--border-subtle);
+        border-radius: 14px;
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: var(--transition);
+        font-family: var(--font-sans);
+    }
+    .rpt-varga-btn:hover {
+        border-color: var(--gold);
+        background: rgba(212,175,55,0.1);
+        transform: translateY(-2px);
+    }
+    .rpt-varga-btn.active {
+        background: var(--grad-gold);
+        color: #0a0a0f;
+        border-color: var(--gold);
+        box-shadow: var(--shadow-gold);
+    }
+    .rpt-varga-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    .rpt-varga-planet {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        transition: var(--transition);
+    }
+    .rpt-varga-planet:hover {
+        border-color: var(--border-gold);
+        transform: translateY(-3px);
+    }
+    .rpt-varga-planet-name {
+        font-family: var(--font-hindi);
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--gold);
+        margin-bottom: 6px;
+    }
+    .rpt-varga-planet-rashi {
+        font-family: var(--font-hindi);
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+    }
+    .rpt-varga-planet-lord {
+        font-size: 12px;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+    }
+
+    /* ═══ DASHA ═══ */
+    .rpt-dasha-highlight {
+        background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0.05) 100%);
+        border: 2.5px solid rgba(16,185,129,0.5);
+        border-radius: 22px;
+        padding: 32px;
+        margin-bottom: 32px;
+    }
+    .rpt-dasha-label {
+        font-size: 13px;
+        color: #34d399;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+    .rpt-dasha-value {
+        font-family: var(--font-hindi);
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    .rpt-dasha-period {
+        font-size: 16px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+    .rpt-dasha-block {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 20px;
+        border-left: 5px solid var(--gold);
+    }
+    .rpt-dasha-maha-title {
+        font-family: var(--font-hindi);
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--gold);
+        margin-bottom: 8px;
+    }
+    .rpt-dasha-maha-period {
+        font-size: 15px;
+        color: var(--text-tertiary);
+        margin-bottom: 20px;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+    .rpt-dasha-antar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+    }
+    .rpt-dasha-antar {
+        background: rgba(255,255,255,0.04);
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        border-left: 3px solid var(--border-gold);
+        line-height: 1.6;
+    }
+    .rpt-dasha-antar.current {
+        background: rgba(16,185,129,0.15);
+        color: #34d399;
+        font-weight: 700;
+        border-left-color: var(--success);
+    }
+    .rpt-dasha-antar-name {
+        font-family: var(--font-hindi);
+        font-weight: 800;
+        color: var(--gold);
+        font-size: 17px;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    /* ═══ ASHTAKAVARGA ═══ */
+    .rpt-ashtak-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 8px;
+        margin-bottom: 28px;
+    }
+    .rpt-ashtak-cell {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        transition: var(--transition);
+        border: 2.5px solid transparent;
+    }
+    .rpt-ashtak-cell:hover {
+        transform: scale(1.12);
+        border-color: var(--gold);
+    }
+    .rpt-ashtak-label {
+        font-size: 11px;
+        opacity: 0.85;
+        font-weight: 800;
+        margin-top: 2px;
+    }
+
+    /* ═══ SHADBALA ═══ */
+    .rpt-shadbala-card {
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 18px;
+        transition: var(--transition);
+    }
+    .rpt-shadbala-card:hover { border-color: var(--border-gold); }
+    .rpt-shadbala-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .rpt-shadbala-planet {
+        font-family: var(--font-hindi);
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-primary);
+    }
+    .rpt-shadbala-rank {
+        font-size: 14px;
+        color: var(--gold);
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        margin-left: 10px;
+    }
+    .rpt-shadbala-total {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gold);
+    }
+    .rpt-shadbala-bar {
+        height: 12px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+    .rpt-shadbala-fill {
+        height: 100%;
+        background: var(--grad-gold);
+        border-radius: 6px;
+    }
+    .rpt-shadbala-breakdown {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        font-size: 13px;
+    }
+    .rpt-shadbala-item { display: flex; flex-direction: column; }
+    .rpt-shadbala-item-label {
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        font-size: 11px;
+    }
+    .rpt-shadbala-item-value {
+        color: var(--text-primary);
+        font-weight: 800;
+        font-size: 15px;
+        margin-top: 3px;
+    }
+
+    /* ═══ YOGA/DOSHA ═══ */
+    .rpt-yoga-card {
+        padding: 24px;
+        border-radius: 18px;
+        border-left: 6px solid var(--success);
+        background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.02) 100%);
+        margin-bottom: 18px;
+    }
+    .rpt-dosha-card {
+        padding: 24px;
+        border-radius: 18px;
+        border-left: 6px solid var(--danger);
+        background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0.02) 100%);
+        margin-bottom: 18px;
+    }
+    .rpt-dosha-card.medium {
+        border-left-color: var(--warning);
+        background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.02) 100%);
+    }
+    .rpt-yoga-name, .rpt-dosha-name {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    .rpt-yoga-name .hindi, .rpt-dosha-name .hindi {
+        font-family: var(--font-hindi);
+        color: var(--gold);
+        margin-left: 10px;
+        font-size: 20px;
+    }
+    .rpt-yoga-desc, .rpt-dosha-desc {
+        font-size: 16px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+    }
+    .rpt-yoga-strength, .rpt-dosha-severity {
+        display: inline-block;
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-top: 14px;
+    }
+    .rpt-yoga-strength { background: rgba(16,185,129,0.25); color: #34d399; }
+    .rpt-dosha-severity.high { background: rgba(239,68,68,0.25); color: #f87171; }
+    .rpt-dosha-severity.medium { background: rgba(245,158,11,0.25); color: #fbbf24; }
+    .rpt-dosha-remedy {
+        margin-top: 16px;
+        padding: 16px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 14px;
+        font-size: 15px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+    }
+    .rpt-dosha-remedy strong { color: var(--gold); font-weight: 800; }
+
+    /* ═══ LOADING ═══ */
+    .rpt-loading {
+        display: none;
+        text-align: center;
+        padding: 100px 20px;
+    }
+    .rpt-loading.show { display: block; }
+    .rpt-spinner {
+        width: 80px;
+        height: 80px;
+        border: 5px solid rgba(212,175,55,0.15);
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: rpt-spin 1s linear infinite;
+        margin: 0 auto 24px;
+    }
+    @keyframes rpt-spin { to { transform: rotate(360deg); } }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 1024px) {
+        .rpt-charts-grid { grid-template-columns: 1fr; }
+        .rpt-ashtak-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .rpt-header { font-size: 26px; margin-bottom: 20px; }
+        .rpt-section { margin-bottom: 40px; }
+        .rpt-basic-value { font-size: 22px; }
+        .rpt-chart-title { font-size: 22px; }
+        .rpt-planet-grid { grid-template-columns: 1fr; }
+        .rpt-planet-name { font-size: 20px; }
+        .rpt-planet-hindi { font-size: 17px; }
+        .rpt-planet-fields { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .rpt-dasha-value { font-size: 24px; }
+        .rpt-dasha-maha-title { font-size: 20px; }
+        .rpt-shadbala-breakdown { grid-template-columns: 1fr 1fr; }
+        .rpt-varga-btn { padding: 12px 18px; font-size: 14px; }
+        .rpt-yoga-name, .rpt-dosha-name { font-size: 18px; }
+        .rpt-yoga-desc, .rpt-dosha-desc { font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+        .rpt-header { font-size: 22px; }
+        .rpt-basic-grid { grid-template-columns: 1fr; }
+        .rpt-bhava-grid { grid-template-columns: 1fr; }
+        .rpt-planet-fields { grid-template-columns: 1fr; }
+        .rpt-ashtak-grid { grid-template-columns: repeat(4, 1fr); }
+        .rpt-north-rashi, .rpt-south-rashi { font-size: 12px; }
+        .rpt-north-planets, .rpt-south-planets { font-size: 13px; }
+        .rpt-north-cell, .rpt-south-cell { min-height: 60px; padding: 4px 2px; }
+        .rpt-varga-selector { gap: 6px; }
+        .rpt-varga-btn { padding: 10px 14px; font-size: 13px; }
+        .rpt-dasha-highlight { padding: 20px; }
+        .rpt-dasha-value { font-size: 20px; }
+    }
+</style>
+</head>
+<body>
+
+<header class="ux-header">
+<div class="ux-header-inner">
+<a href="/" class="ux-logo">
+<div class="ux-logo-mark">📜</div>
+<div class="ux-logo-text">
+<h1>VASTU ONE</h1>
+<p>Advanced Kundli V3</p>
+</div>
+</a>
+<nav class="ux-nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/vastu-integration.html">Vastu Integration</a>
+<a href="/advanced-kundli.html" class="active">Advanced Kundli</a>
+<a href="/numerology-analysis.html">Numerology</a>
+<a href="/packages.html">Packages</a>
+</nav>
+</div>
+</header>
+
+<div class="ux-container">
+
+<section class="ux-hero">
+<div class="ux-hero-badge">Swiss Ephemeris • Complete Vedic Report</div>
+<h1>Advanced <span class="gold">Kundli V3</span></h1>
+<p>Exact Positions • North/South Charts • 16 Vargas • 5-Level Dasha • Ashtakavarga • Shadbala • Yogas • Doshas</p>
+</section>
+
+<div class="ux-card ux-animate" id="inputCard">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Tithi</label>
+<input type="date" class="ux-input" id="dob" value="1990-05-04">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Samay</label>
+<input type="time" class="ux-input" id="tob" value="21:35">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Sthan</label>
+<input type="text" class="ux-input" id="place" value="Bhandara, Maharashtra">
+</div>
+</div>
+<button class="ux-btn ux-btn-block" id="analyzeBtn" onclick="analyzeKundli()" style="margin-top:24px;font-size:18px;padding:20px;">
+<span>📜</span> Complete Kundli Dekhein
+</button>
+<div class="ux-error" id="error"></div>
+</div>
+
+<div class="rpt-loading" id="loading">
+<div class="rpt-spinner"></div>
+<p style="color:var(--text-secondary);font-size:18px;">Complete kundli ban rahi hai...</p>
+</div>
+
+<div id="result" style="display:none;">
+
+<div class="rpt-section">
+<div class="rpt-header"><span class="gold">Basic</span> Details</div>
+<div class="rpt-basic-grid" id="basicGrid"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Visual <span class="gold">Charts</span></div>
+<div class="rpt-charts-grid">
+<div class="rpt-chart-wrapper">
+<div class="rpt-chart-title">North Indian Chart</div>
+<div class="rpt-north-grid" id="northChart"></div>
+</div>
+<div class="rpt-chart-wrapper">
+<div class="rpt-chart-title">South Indian Chart</div>
+<div class="rpt-south-grid" id="southChart"></div>
+</div>
+</div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Exact <span class="gold">Planetary Positions</span></div>
+<div class="rpt-planet-grid" id="positionsGrid"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Bhava <span class="gold">Chalit</span></div>
+<div class="rpt-bhava-grid" id="bhavaGrid"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Shodashvarga <span class="gold">(16 Charts)</span></div>
+<div class="rpt-varga-selector" id="vargaSelector"></div>
+<div class="rpt-varga-content" id="vargaContent"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Vimshottari <span class="gold">Dasha (5-Level)</span></div>
+<div id="dashaContent"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Ashtakavarga</div>
+<div id="ashtakContent"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Shadbala <span class="gold">(6-Fold Strength)</span></div>
+<div id="shadbalaContent"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Yogas <span class="gold">(Auspicious Combinations)</span></div>
+<div id="yogasContent"></div>
+</div>
+
+<div class="rpt-section">
+<div class="rpt-header">Doshas <span class="gold">(Challenges)</span></div>
+<div id="doshasContent"></div>
+</div>
+
+</div>
+
+</div>
+
+<footer class="ux-footer">
+<p>🕉️ Vastu One — Advanced Kundli V3 (Swiss Ephemeris 2.10.03)</p>
+<p style="margin-top:8px;font-size:12px;color:var(--text-muted);">Complete Vedic Report • 16 Vargas • 5-Level Dasha • Yogas • Doshas</p>
+</footer>
+
+<script>
+var API_BASE = 'http://localhost:8001';
+var currentVargaData = {};
+var vargaNamesGlobal = [];
+
+async function analyzeKundli() {
+    var dob = document.getElementById('dob').value;
+    var tob = document.getElementById('tob').value || '12:00';
+    var place = document.getElementById('place').value || 'Unknown';
+
+    if (!dob) { showError('Kripya janm tithi daalein'); return; }
+
+    var btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('error').classList.remove('show');
+    document.getElementById('result').style.display = 'none';
+
+    try {
+        var response = await fetch(API_BASE + '/api/astro-v3/full-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dob: dob, tob: tob, place: place })
+        });
+        if (!response.ok) throw new Error('API error: ' + response.status);
+        var data = await response.json();
+
+        renderBasic(data.basic || {}, data.lagna || {});
+        renderNorthChart(data.lagna || {}, data.positions || {});
+        renderSouthChart(data.lagna || {}, data.positions || {});
+        renderPositions(data.positions || {});
+        renderBhava(data.bhava_chalit || {}, data.positions || {});
+        renderShodashvarga(data.shodashvarga || {});
+        renderDasha(data.dasha || {});
+        renderAshtakavarga(data.ashtakavarga || {});
+        renderShadbala(data.shadbala || {});
+        renderYogas(data.yogas || []);
+        renderDoshas(data.doshas || []);
+
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('inputCard').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+        showError('Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+function basicCard(label, value, sub, isHindi) {
+    var vClass = isHindi ? 'rpt-basic-value hindi' : 'rpt-basic-value';
+    return '<div class="rpt-basic-card"><div class="rpt-basic-label">' + label + '</div>' +
+        '<div class="' + vClass + '">' + (value || '-') + '</div>' +
+        '<div class="rpt-basic-sub">' + (sub || '') + '</div></div>';
+}
+
+function renderBasic(basic, lagna) {
+    document.getElementById('basicGrid').innerHTML =
+        basicCard('Lagna', lagna.lagna_hindi, lagna.lagna_rashi + ' • ' + lagna.lagna_nakshatra, true) +
+        basicCard('Lagna Lord', lagna.lagna_lord, lagna.lagna_element + ' element') +
+        basicCard('Lagna Degree', lagna.lagna_degree + '°', 'Pada ' + lagna.lagna_pada) +
+        basicCard('Ayanamsa', lagna.ayanamsa, lagna.ayanamsa_value + '°') +
+        basicCard('Tithi', basic.tithi + ' (' + basic.paksha + ')', 'Vaar: ' + basic.vaar_hindi) +
+        basicCard('Nakshatra', basic.nakshatra_hindi, 'Lord: ' + basic.nakshatra_lord) +
+        basicCard('Yoga', basic.yoga, 'Karana: ' + basic.karana) +
+        basicCard('Rashi', basic.rashi_hindi, basic.rashi);
+}
+
+function renderNorthChart(lagna, positions) {
+    var lagnaRashi = lagna.lagna_rashi || 'Mesh';
+    var rashis = ['Mesh','Vrishabh','Mithun','Kark','Simha','Kanya','Tula','Vrishchik','Dhanu','Makar','Kumbh','Meen'];
+    var rashiHindiMap = {Mesh:'मेष',Vrishabh:'वृषभ',Mithun:'मिथुन',Kark:'कर्क',Simha:'सिंह',Kanya:'कन्या',Tula:'तुला',Vrishchik:'वृश्चिक',Dhanu:'धनु',Makar:'मकर',Kumbh:'कुंभ',Meen:'मीन'};
+    var lagnaIdx = rashis.indexOf(lagnaRashi);
+
+    var gridHouses = {1:[0,1],2:[0,0],3:[1,0],4:[2,0],5:[3,0],6:[3,1],7:[3,2],8:[3,3],9:[2,3],10:[1,3],11:[0,3],12:[0,2]};
+    var cells = {};
+    for (var bhav = 1; bhav <= 12; bhav++) {
+        var pos = gridHouses[bhav];
+        cells[pos[0] + ',' + pos[1]] = bhav;
+    }
+
+    var html = '';
+    for (var row = 0; row < 4; row++) {
+        for (var col = 0; col < 4; col++) {
+            var key = row + ',' + col;
+            var isCenter = (row === 1 || row === 2) && (col === 1 || col === 2);
+            if (isCenter) {
+                if (row === 1 && col === 1) {
+                    html += '<div class="rpt-north-cell center">ब्रह्म</div>';
+                }
+                continue;
+            }
+            var bhav = cells[key];
+            if (bhav) {
+                var rashiIdx = (lagnaIdx + bhav - 1) % 12;
+                var rashiName = rashis[rashiIdx];
+                var planets = '';
+                for (var p in positions) {
+                    if (positions[p].rashi === rashiName) {
+                        planets += positions[p].hindi + '<br>';
+                    }
+                }
+                var isLagna = bhav === 1;
+                html += '<div class="rpt-north-cell' + (isLagna ? ' lagna' : '') + '">' +
+                    '<div class="rpt-north-rashi">' + rashiHindiMap[rashiName] + '</div>' +
+                    '<div class="rpt-north-bhav">B' + bhav + (isLagna ? ' • Lagna' : '') + '</div>' +
+                    '<div class="rpt-north-planets">' + planets + '</div>' +
+                    '</div>';
+            }
+        }
+    }
+    document.getElementById('northChart').innerHTML = html;
+}
+
+function renderSouthChart(lagna, positions) {
+    var lagnaRashi = lagna.lagna_rashi || 'Mesh';
+    var rashis = ['Mesh','Vrishabh','Mithun','Kark','Simha','Kanya','Tula','Vrishchik','Dhanu','Makar','Kumbh','Meen'];
+    var rashiHindiMap = {Mesh:'मेष',Vrishabh:'वृषभ',Mithun:'मिथुन',Kark:'कर्क',Simha:'सिंह',Kanya:'कन्या',Tula:'तुला',Vrishchik:'वृश्चिक',Dhanu:'धनु',Makar:'मकर',Kumbh:'कुंभ',Meen:'मीन'};
+    var lagnaIdx = rashis.indexOf(lagnaRashi);
+
+    var layout = [
+        ['Meen', 'Mesh', 'Vrishabh', 'Mithun'],
+        ['Kumbh', null, null, 'Kark'],
+        ['Makar', null, null, 'Simha'],
+        ['Dhanu', 'Vrishchik', 'Tula', 'Kanya']
+    ];
+
+    var html = '';
+    for (var row = 0; row < 4; row++) {
+        for (var col = 0; col < 4; col++) {
+            var rashi = layout[row][col];
+            var isCenter = (row === 1 || row === 2) && (col === 1 || col === 2);
+            if (isCenter) {
+                if (row === 1 && col === 1) {
+                    html += '<div class="rpt-south-cell center">कुंडली</div>';
+                }
+                continue;
+            }
+            var idx = rashis.indexOf(rashi);
+            var bhav = ((idx - lagnaIdx + 12) % 12) + 1;
+            var planets = '';
+            for (var p in positions) {
+                if (positions[p].rashi === rashi) {
+                    planets += positions[p].hindi + '<br>';
+                }
+            }
+            var isLagna = bhav === 1;
+            html += '<div class="rpt-south-cell' + (isLagna ? ' lagna' : '') + '">' +
+                '<div class="rpt-south-rashi">' + rashiHindiMap[rashi] + '</div>' +
+                '<div class="rpt-south-bhav">B' + bhav + '</div>' +
+                '<div class="rpt-south-planets">' + planets + '</div>' +
+                (isLagna ? '<div class="rpt-south-lagna-badge">LAGNA</div>' : '') +
+                '</div>';
+        }
+    }
+    document.getElementById('southChart').innerHTML = html;
+}
+
+function renderPositions(positions) {
+    var html = '';
+    for (var key in positions) {
+        var p = positions[key];
+        var isRetro = p.retrograde;
+        var statusClass = isRetro ? 'retro' : 'direct';
+        var statusText = isRetro ? 'Retrograde' : 'Direct';
+        html += '<div class="rpt-planet-card ' + statusClass + '">' +
+            '<div class="rpt-planet-header">' +
+            '<div><span class="rpt-planet-name">' + p.planet + '</span><span class="rpt-planet-hindi">' + p.hindi + '</span></div>' +
+            '<span class="rpt-planet-badge ' + statusClass + '">' + statusText + '</span>' +
+            '</div>' +
+            '<div class="rpt-planet-fields">' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Rashi</span><span class="rpt-planet-field-value">' + p.rashi_hindi + '</span></div>' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Degree</span><span class="rpt-planet-field-value gold">' + p.degree + '°</span></div>' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Nakshatra</span><span class="rpt-planet-field-value">' + p.nakshatra + '</span></div>' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Pada</span><span class="rpt-planet-field-value">' + p.pada + '</span></div>' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Bhav</span><span class="rpt-planet-field-value">' + (p.bhav || '-') + '</span></div>' +
+            '<div class="rpt-planet-field"><span class="rpt-planet-field-label">Nak Lord</span><span class="rpt-planet-field-value">' + p.nakshatra_lord + '</span></div>' +
+            '</div>' +
+            '<div class="rpt-planet-mantra">' + p.mantra + '</div>' +
+            '<div class="rpt-planet-gem">💎 ' + p.gemstone + ' • ' + p.metal + ' • ' + p.day + '</div>' +
+            '</div>';
+    }
+    document.getElementById('positionsGrid').innerHTML = html;
+}
+
+function renderBhava(bhava, positions) {
+    var html = '';
+    for (var key in bhava) {
+        var b = bhava[key];
+        var occupants = [];
+        for (var p in positions) {
+            if (parseInt(positions[p].bhav) === b.bhav) {
+                occupants.push(positions[p].hindi);
+            }
+        }
+        var occHtml = '';
+        for (var i = 0; i < occupants.length; i++) {
+            occHtml += '<span class="rpt-occupant-tag">' + occupants[i] + '</span>';
+        }
+        html += '<div class="rpt-bhava-card">' +
+            '<div class="rpt-bhava-number">Bhav ' + b.bhav + '</div>' +
+            '<div class="rpt-bhava-name">' + b.hindi + '</div>' +
+            '<div class="rpt-bhava-meaning">' + b.meaning + '</div>' +
+            '<div class="rpt-bhava-occupants">' + occHtml + '</div>' +
+            '</div>';
+    }
+    document.getElementById('bhavaGrid').innerHTML = html;
+}
+
+function renderShodashvarga(vargas) {
+    currentVargaData = vargas;
+    var vargaNames = Object.keys(vargas);
+    vargaNamesGlobal = vargaNames;
+    var html = '';
+    for (var i = 0; i < vargaNames.length; i++) {
+        var cls = i === 0 ? 'active' : '';
+        html += '<button class="rpt-varga-btn ' + cls + '" onclick="showVargaByIndex(' + i + ')">' + vargaNames[i] + '</button>';
+    }
+    document.getElementById('vargaSelector').innerHTML = html;
+    if (vargaNames.length > 0) showVargaByIndex(0);
+}
+
+function showVargaByIndex(idx) {
+    var btns = document.querySelectorAll('.rpt-varga-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    if (btns[idx]) btns[idx].classList.add('active');
+    if (!vargaNamesGlobal[idx]) return;
+    var vargaName = vargaNamesGlobal[idx];
+    var chart = currentVargaData[vargaName] || {};
+    var html = '';
+    for (var key in chart) {
+        var p = chart[key];
+        html += '<div class="rpt-varga-planet">' +
+            '<div class="rpt-varga-planet-name">' + key + '</div>' +
+            '<div class="rpt-varga-planet-rashi">' + p.hindi + '</div>' +
+            '<div class="rpt-varga-planet-lord">Lord: ' + p.lord + '</div>' +
+            '</div>';
+    }
+    document.getElementById('vargaContent').innerHTML = html;
+}
+
+function renderDasha(dasha) {
+    var mahadashas = dasha.mahadashas || [];
+    var cmd = dasha.current_mahadasha || {};
+    var cad = dasha.current_antardasha || {};
+    var cpd = dasha.current_pratyantardasha || {};
+    var today = new Date().toISOString().split('T')[0];
+
+    var html = '<div class="rpt-dasha-highlight">' +
+        '<div class="rpt-dasha-label">Current Dasha Period</div>' +
+        '<div class="rpt-dasha-value">' + (cmd.hindi || '') + ' MD → ' + (cad.hindi || '') + ' AD → ' + (cpd.hindi || '') + ' PD</div>' +
+        '<div class="rpt-dasha-period">Moon Nakshatra: ' + (dasha.moon_nakshatra || '') + ' (Lord: ' + (dasha.moon_nakshatra_lord || '') + ') • Cycle: ' + (dasha.total_cycle_years || 120) + ' years</div>' +
+        '</div>';
+
+    var limit = Math.min(mahadashas.length, 6);
+    for (var i = 0; i < limit; i++) {
+        var md = mahadashas[i];
+        html += '<div class="rpt-dasha-block">' +
+            '<div class="rpt-dasha-maha-title">' + md.hindi + ' Mahadasha</div>' +
+            '<div class="rpt-dasha-maha-period">' + md.start_date + ' → ' + md.end_date + ' • Age ' + md.start_age + '-' + md.end_age + ' • ' + md.duration_years + ' years</div>' +
+            '<div class="rpt-dasha-antar-grid">';
+        var antars = md.antardashas || [];
+        for (var j = 0; j < antars.length; j++) {
+            var ad = antars[j];
+            var isCurrent = (ad.start_date <= today && ad.end_date >= today);
+            html += '<div class="rpt-dasha-antar' + (isCurrent ? ' current' : '') + '">' +
+                '<span class="rpt-dasha-antar-name">' + ad.hindi + '</span>' +
+                ad.start_date + ' → ' + ad.end_date + '</div>';
+        }
+        html += '</div></div>';
+    }
+    document.getElementById('dashaContent').innerHTML = html;
+}
+
+function renderAshtakavarga(av) {
+    var sarva = av.sarvashtakavarga || {};
+    var scores = sarva.scores || [];
+    var max = 1;
+    for (var i = 0; i < scores.length; i++) if (scores[i] > max) max = scores[i];
+    var html = '<div class="rpt-ashtak-grid">';
+    for (var i = 0; i < scores.length; i++) {
+        var s = scores[i];
+        var intensity = s / max;
+        var color = 'rgba(212,175,55,' + (0.3 + intensity * 0.7) + ')';
+        html += '<div class="rpt-ashtak-cell" style="background:' + color + ';" title="Bhav ' + (i+1) + ': ' + s + '">' + s + '<span class="rpt-ashtak-label">B' + (i+1) + '</span></div>';
+    }
+    html += '</div>';
+    html += '<div class="rpt-basic-grid">' +
+        '<div class="rpt-basic-card"><div class="rpt-basic-label">Total</div><div class="rpt-basic-value">' + sarva.total + '</div></div>' +
+        '<div class="rpt-basic-card"><div class="rpt-basic-label">Max Bhav</div><div class="rpt-basic-value">' + sarva.max_bhav + '</div></div>' +
+        '<div class="rpt-basic-card"><div class="rpt-basic-label">Min Bhav</div><div class="rpt-basic-value">' + sarva.min_bhav + '</div></div>' +
+        '<div class="rpt-basic-card"><div class="rpt-basic-label">Average</div><div class="rpt-basic-value">' + sarva.average + '</div></div>' +
+        '</div>';
+    document.getElementById('ashtakContent').innerHTML = html;
+}
+
+function renderShadbala(sb) {
+    var arr = [];
+    for (var key in sb) arr.push(sb[key]);
+    arr.sort(function(a, b) { return b.total - a.total; });
+    var max = 1;
+    for (var i = 0; i < arr.length; i++) if (arr[i].total > max) max = arr[i].total;
+    var html = '';
+    for (var i = 0; i < arr.length; i++) {
+        var s = arr[i];
+        html += '<div class="rpt-shadbala-card">' +
+            '<div class="rpt-shadbala-header">' +
+            '<div><span class="rpt-shadbala-planet">' + s.hindi + '</span> <span class="rpt-shadbala-rank">RANK ' + s.rank + '</span></div>' +
+            '<div class="rpt-shadbala-total">' + s.total + '</div>' +
+            '</div>' +
+            '<div class="rpt-shadbala-bar"><div class="rpt-shadbala-fill" style="width:' + (s.total / max * 100) + '%"></div></div>' +
+            '<div class="rpt-shadbala-breakdown">' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Sthana</span><span class="rpt-shadbala-item-value">' + s.sthana_bala + '</span></div>' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Dig</span><span class="rpt-shadbala-item-value">' + s.dig_bala + '</span></div>' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Kala</span><span class="rpt-shadbala-item-value">' + s.kala_bala + '</span></div>' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Chesta</span><span class="rpt-shadbala-item-value">' + s.chesta_bala + '</span></div>' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Naisargika</span><span class="rpt-shadbala-item-value">' + s.naisargika_bala + '</span></div>' +
+            '<div class="rpt-shadbala-item"><span class="rpt-shadbala-item-label">Drik</span><span class="rpt-shadbala-item-value">' + s.drik_bala + '</span></div>' +
+            '</div></div>';
+    }
+    document.getElementById('shadbalaContent').innerHTML = html;
+}
+
+function renderYogas(yogas) {
+    var el = document.getElementById('yogasContent');
+    if (!yogas || !yogas.length) {
+        el.innerHTML = '<p style="color:var(--text-secondary);font-size:16px;">Is chart mein koi vishesh yoga nahi mila</p>';
+        return;
+    }
+    var html = '';
+    for (var i = 0; i < yogas.length; i++) {
+        var y = yogas[i];
+        html += '<div class="rpt-yoga-card">' +
+            '<div class="rpt-yoga-name">' + y.name + '<span class="hindi">' + y.hindi + '</span></div>' +
+            '<div class="rpt-yoga-desc">' + y.description + '</div>' +
+            '<span class="rpt-yoga-strength">' + y.strength + ' Strength</span>' +
+            '</div>';
+    }
+    el.innerHTML = html;
+}
+
+function renderDoshas(doshas) {
+    var el = document.getElementById('doshasContent');
+    if (!doshas || !doshas.length) {
+        el.innerHTML = '<p style="color:var(--text-secondary);font-size:16px;">Is chart mein koi dosha nahi mila</p>';
+        return;
+    }
+    var html = '';
+    for (var i = 0; i < doshas.length; i++) {
+        var d = doshas[i];
+        var sevClass = (d.severity || '').toLowerCase();
+        html += '<div class="rpt-dosha-card ' + sevClass + '">' +
+            '<div class="rpt-dosha-name">' + d.name + '<span class="hindi">' + d.hindi + '</span></div>' +
+            '<div class="rpt-dosha-desc">' + d.description + '</div>' +
+            '<span class="rpt-dosha-severity ' + sevClass + '">' + d.severity + '</span>' +
+            '<div class="rpt-dosha-remedy"><strong>Upay:</strong> ' + d.remedy + '</div>' +
+            '</div>';
+    }
+    el.innerHTML = html;
+}
+
+function showError(msg) {
+    var el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('show');
+}
+
+window.addEventListener('load', function() { setTimeout(analyzeKundli, 500); });
+</script>
+</body>
+</html>

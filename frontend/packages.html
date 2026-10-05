@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packages - Vastu One</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; color: #333; }
+.header { background: rgba(255,255,255,0.95); padding: 20px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+.header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo h1 { color: #f5576c; font-size: 28px; }
+.nav a { color: #f5576c; text-decoration: none; margin-left: 20px; font-weight: 600; }
+.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+h2 { color: white; text-align: center; font-size: 42px; margin-bottom: 10px; }
+.subtitle { color: white; text-align: center; margin-bottom: 40px; opacity: 0.9; }
+.packages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
+.package-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transition: all 0.3s; position: relative; }
+.package-card:hover { transform: translateY(-10px); }
+.package-card.featured { transform: scale(1.05); border: 3px solid #f5576c; }
+.badge { position: absolute; top: -15px; right: 20px; background: #f5576c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.package-card h3 { font-size: 28px; margin-bottom: 5px; }
+.package-card .hindi { color: #999; font-size: 16px; margin-bottom: 15px; }
+.price { font-size: 42px; font-weight: 700; color: #f5576c; margin: 15px 0; }
+.price small { font-size: 16px; color: #999; }
+.features { list-style: none; margin: 20px 0; }
+.features li { padding: 8px 0; color: #555; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+.btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-top: 15px; }
+.delivery { color: #999; font-size: 12px; margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-inner">
+<div class="logo"><h1>PACKAGES</h1></div>
+<nav class="nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/numerology-analysis.html">Numerology</a>
+</nav>
+</div>
+</header>
+
+<div class="container">
+<h2>Choose Your Package</h2>
+<p class="subtitle">Bronze se Platinum tak - apni zaroorat ke hisaab se chunein</p>
+<div class="packages-grid" id="packagesGrid"></div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function loadPackages() {
+try {
+const res = await fetch(API_BASE + '/api/packages/list');
+const data = await res.json();
+renderPackages(data.packages || {});
+} catch (err) { console.error(err); }
+}
+
+function renderPackages(packages) {
+const featured = ['gold'];
+document.getElementById('packagesGrid').innerHTML = Object.entries(packages).map(([key, pkg]) => {
+const isFeatured = featured.includes(key);
+return '<div class="package-card ' + (isFeatured ? 'featured' : '') + '">' +
+(isFeatured ? '<div class="badge">POPULAR</div>' : '') +
+'<h3 style="color:' + pkg.color + '">' + pkg.name + '</h3>' +
+'<div class="hindi">' + (pkg.hindi || '') + '</div>' +
+'<div class="price">' + pkg.price_display + '<small>/report</small></div>' +
+'<ul class="features">' + (pkg.features || []).map(f => '<li>' + f + '</li>').join('') + '</ul>' +
+'<button class="btn" onclick="selectPackage('' + key + '')">Select ' + pkg.name + '</button>' +
+'<div class="delivery">' + (pkg.delivery || '') + '</div>' +
+'</div>';
+}).join('');
+}
+
+function selectPackage(name) {
+alert('Aapne ' + name.toUpperCase() + ' package select kiya hai.');
+}
+
+window.addEventListener('load', loadPackages);
+</script>
+
+</body>
+</html>

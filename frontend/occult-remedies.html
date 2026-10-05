@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safe Occult Remedies - Vastu One</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; }
+.header { background: rgba(255,255,255,0.95); padding: 20px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+.header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo h1 { color: #667eea; font-size: 28px; }
+.nav a { color: #667eea; text-decoration: none; margin-left: 20px; font-weight: 600; }
+.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 30px; }
+h2 { color: #667eea; margin-bottom: 20px; font-size: 32px; }
+.subtitle { color: #666; margin-bottom: 30px; }
+.remedy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.remedy-card { background: #f8f9ff; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea; }
+.remedy-card h4 { color: #667eea; margin-bottom: 8px; font-size: 18px; }
+.remedy-card .hindi { color: #764ba2; font-size: 14px; margin-bottom: 10px; }
+.remedy-card .method { color: #333; font-size: 14px; margin-bottom: 8px; }
+.remedy-card .cost { color: #999; font-size: 13px; }
+.schedule { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+.schedule-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.schedule-card h5 { color: #667eea; margin-bottom: 10px; text-transform: uppercase; font-size: 12px; }
+.schedule-card ul { list-style: none; }
+.schedule-card li { padding: 5px 0; color: #666; font-size: 14px; }
+.avoid { background: #fff3cd; padding: 20px; border-radius: 12px; border-left: 4px solid #f39c12; }
+.avoid h4 { color: #856404; margin-bottom: 10px; }
+.avoid ul { list-style: none; }
+.avoid li { padding: 5px 0; color: #856404; }
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-inner">
+<div class="logo"><h1>SAFE OCCULT REMEDIES</h1></div>
+<nav class="nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/numerology-analysis.html">Numerology</a>
+<a href="/marma-points.html">Marma</a>
+</nav>
+</div>
+</header>
+
+<div class="container">
+<div class="card">
+<h2>Safe Occult Remedies</h2>
+<p class="subtitle">Sirf safe, non-harmful remedies</p>
+<div class="remedy-grid" id="remedyGrid"></div>
+</div>
+
+<div class="card">
+<h2>Daily Schedule</h2>
+<div class="schedule" id="scheduleGrid"></div>
+</div>
+
+<div class="card">
+<h2>Expert Guidance</h2>
+<div class="remedy-grid" id="expertGrid"></div>
+</div>
+
+<div class="card">
+<div class="avoid">
+<h4>STRICTLY AVOID</h4>
+<ul id="avoidList"></ul>
+</div>
+</div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function loadOccult() {
+try {
+const [remediesRes, scheduleRes, avoidRes] = await Promise.all([
+fetch(API_BASE + '/api/occult/full-report').then(r => r.json()),
+fetch(API_BASE + '/api/occult/daily-schedule').then(r => r.json()),
+fetch(API_BASE + '/api/occult/avoid-list').then(r => r.json())
+]);
+renderRemedies(remediesRes.safe_remedies || {});
+renderSchedule(scheduleRes);
+renderExpert(remediesRes.expert_guidance || {});
+renderAvoid(avoidRes.avoid || []);
+} catch (err) { console.error(err); }
+}
+
+function renderRemedies(remedies) {
+document.getElementById('remedyGrid').innerHTML = Object.entries(remedies).map(([name, info]) =>
+'<div class="remedy-card"><h4>' + name.toUpperCase() + '</h4><div class="hindi">' + (info.hindi || '') + '</div><div class="method">' + (info.method || '') + '</div><div class="cost">' + (info.cost || '') + '</div></div>'
+).join('');
+}
+
+function renderSchedule(schedule) {
+document.getElementById('scheduleGrid').innerHTML = Object.entries(schedule).map(([freq, items]) =>
+'<div class="schedule-card"><h5>' + freq + '</h5><ul>' + items.map(i => '<li>' + i.hindi + '</li>').join('') + '</ul></div>'
+).join('');
+}
+
+function renderExpert(items) {
+document.getElementById('expertGrid').innerHTML = Object.entries(items).map(([name, info]) =>
+'<div class="remedy-card"><h4>' + name.toUpperCase() + '</h4><div class="hindi">' + (info.hindi || '') + '</div><div class="method">' + (info.note || '') + '</div><div class="cost">' + (info.cost || '') + '</div></div>'
+).join('');
+}
+
+function renderAvoid(items) {
+document.getElementById('avoidList').innerHTML = items.map(i => '<li>AVOID: ' + i.replace(/_/g, ' ').toUpperCase() + '</li>').join('');
+}
+
+window.addEventListener('load', loadOccult);
+</script>
+
+</body>
+</html>

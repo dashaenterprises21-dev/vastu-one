@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marma Points - Vastu One</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); min-height: 100vh; color: #333; }
+        .header { background: rgba(255,255,255,0.95); padding: 20px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo h1 { color: #4facfe; font-size: 28px; }
+        .logo p { color: #666; font-size: 12px; }
+        .nav a { color: #4facfe; text-decoration: none; margin-left: 20px; font-weight: 600; }
+        .nav a:hover { color: #00f2fe; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h2 { color: #4facfe; margin-bottom: 20px; font-size: 32px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        .grid-81 { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; margin: 20px 0; aspect-ratio: 1; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .pad { background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: all 0.3s; aspect-ratio: 1; }
+        .pad:hover { transform: scale(1.1); z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .pad.critical { background: #9b59b6; color: white; }
+        .pad.high { background: #e74c3c; color: white; }
+        .pad.medium { background: #f39c12; color: white; }
+        .pad.normal { background: #ecf0f1; color: #999; }
+        .legend { display: flex; gap: 20px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .dot { width: 16px; height: 16px; border-radius: 4px; }
+        .dot.critical { background: #9b59b6; }
+        .dot.high { background: #e74c3c; }
+        .dot.medium { background: #f39c12; }
+        .dot.normal { background: #ecf0f1; border: 1px solid #ddd; }
+        .info-panel { background: #f8f9ff; padding: 20px; border-radius: 12px; margin-top: 20px; display: none; }
+        .info-panel.show { display: block; }
+        .info-panel h3 { color: #4facfe; margin-bottom: 10px; }
+        .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .info-label { color: #666; font-weight: 600; }
+        .info-value { color: #333; }
+        .marma-list { max-height: 400px; overflow-y: auto; margin-top: 20px; }
+        .marma-item { padding: 15px; background: #f8f9ff; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #4facfe; }
+        .marma-item h4 { color: #4facfe; margin-bottom: 5px; }
+        .marma-item .hindi { color: #666; font-size: 14px; }
+        .marma-item .remedy { color: #999; font-size: 13px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <h1>MARMA POINTS</h1>
+            <p>81-Pad Grid - Exact Vital Points</p>
+        </div>
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/astro-analysis.html">Astro</a>
+            <a href="/numerology-analysis.html">Numerology</a>
+            <a href="/occult-remedies.html">Occult</a>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>81-Pad Marma Grid</h2>
+        <p class="subtitle">Kisi bhi pad par click karein - uska marma, importance aur remedy dekhein</p>
+
+        <div class="legend">
+            <div class="legend-item"><span class="dot critical"></span> Critical (Brahmasthan)</div>
+            <div class="legend-item"><span class="dot high"></span> High Priority</div>
+            <div class="legend-item"><span class="dot medium"></span> Medium Priority</div>
+            <div class="legend-item"><span class="dot normal"></span> Normal Pad</div>
+        </div>
+
+        <div class="grid-81" id="grid81"></div>
+        <div class="info-panel" id="infoPanel"></div>
+
+        <h3 style="color:#4facfe;margin-top:30px;">Sabhi Marma Points</h3>
+        <div class="marma-list" id="marmaList"></div>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function loadMarma() {
+    try {
+        const res = await fetch(API_BASE + '/api/marma/all');
+        const data = await res.json();
+        renderGrid(data);
+        renderList(data);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function renderGrid(marmaList) {
+    const grid = document.getElementById('grid81');
+    grid.innerHTML = '';
+    const map = {};
+    marmaList.forEach(m => { map[m.row + ',' + m.col] = m; });
+    for (let row = 1; row <= 9; row++) {
+        for (let col = 1; col <= 9; col++) {
+            const pad = document.createElement('div');
+            const marma = map[row + ',' + col];
+            const importance = marma ? marma.importance.toLowerCase() : 'normal';
+            pad.className = 'pad ' + importance;
+            pad.textContent = marma ? marma.name.split(' ')[0] : '';
+            pad.title = marma ? marma.name + ' (' + marma.importance + ')' : 'Pad ' + row + ',' + col;
+            pad.onclick = () => showInfo(row, col, marma);
+            grid.appendChild(pad);
+        }
+    }
+}
+
+function showInfo(row, col, marma) {
+    const panel = document.getElementById('infoPanel');
+    if (!marma) {
+        panel.innerHTML = '<h3>Pad (' + row + ', ' + col + ')</h3><p>Normal pad - no specific marma</p>';
+        panel.classList.add('show');
+        return;
+    }
+    panel.innerHTML = '<h3>' + marma.name + ' (' + (marma.hindi || '') + ')</h3>' +
+        '<div class="info-row"><span class="info-label">Position:</span><span class="info-value">Row ' + row + ', Col ' + col + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Type:</span><span class="info-value">' + marma.type + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Element:</span><span class="info-value">' + (marma.element || '-') + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Importance:</span><span class="info-value">' + marma.importance + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Remedy:</span><span class="info-value">' + (marma.remedy || '-') + '</span></div>';
+    panel.classList.add('show');
+}
+
+function renderList(marmaList) {
+    const list = document.getElementById('marmaList');
+    list.innerHTML = marmaList.map(m =>
+        '<div class="marma-item"><h4>' + m.name + ' (' + (m.hindi || '') + ')</h4>' +
+        '<div class="hindi">Row ' + m.row + ', Col ' + m.col + ' - ' + m.type + '</div>' +
+        '<div class="remedy">' + (m.remedy || 'No remedy') + '</div></div>'
+    ).join('');
+}
+
+window.addEventListener('load', loadMarma);
+</script>
+
+</body>
+</html>

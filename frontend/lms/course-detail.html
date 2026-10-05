@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Detail — VASTU ONE LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html" class="active">LMS</a>
+        </div>
+        <div class="flex gap-3" style="align-items: center;">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
+
+    <!-- BACK -->
+    <a href="/lms/courses.html" class="btn btn-ghost btn-sm mb-5" style="display: inline-flex;">← Back to Courses</a>
+
+    <!-- COURSE HEADER -->
+    <div class="card mb-6">
+        <div class="flex-between" style="align-items: flex-start;">
+            <div style="flex: 1;">
+                <h1 id="course-title">Loading...</h1>
+                <p class="text-muted mt-2" id="course-description"></p>
+                <div class="flex gap-4 mt-3 text-sm" id="course-meta"></div>
+            </div>
+            <div class="flex gap-2">
+                <a href="/lms/my-learning.html" class="btn btn-secondary btn-sm">Student View</a>
+                <button class="btn btn-primary btn-sm" onclick="openModuleModal()">+ New Module</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODULES -->
+    <div id="modules-list">
+        <div class="text-muted text-sm">Loading modules...</div>
+    </div>
+
+</main>
+
+<!-- MODULE MODAL -->
+<div class="modal-backdrop hidden" id="module-modal">
+    <div class="modal">
+        <div class="flex-between mb-5">
+            <h3 class="card-title">New Module</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeModuleModal()">✕</button>
+        </div>
+        
+        <form onsubmit="handleModuleSubmit(event)">
+            <div class="form-group">
+                <label class="form-label">Module Title *</label>
+                <input type="text" class="form-input" id="module-title" required
+                       placeholder="Module 1: Vastu Shastra Foundations">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="module-desc" rows="2"
+                          placeholder="Introduction, History, Vastu Purush, Mandala"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Order Index</label>
+                <input type="number" class="form-input" id="module-order" value="0" min="0">
+            </div>
+            
+            <div class="flex gap-3 mt-5">
+                <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeModuleModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="flex: 2;">Create Module</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- LESSON MODAL -->
+<div class="modal-backdrop hidden" id="lesson-modal">
+    <div class="modal" style="max-width: 600px;">
+        <div class="flex-between mb-5">
+            <h3 class="card-title">New Lesson</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeLessonModal()">✕</button>
+        </div>
+        
+        <form onsubmit="handleLessonSubmit(event)">
+            <input type="hidden" id="lesson-module-id">
+            
+            <div class="form-group">
+                <label class="form-label">Lesson Title *</label>
+                <input type="text" class="form-input" id="lesson-title" required
+                       placeholder="Lesson 1.1: Introduction">
+            </div>
+            
+            <div class="grid grid-2" style="gap: var(--space-4);">
+                <div class="form-group">
+                    <label class="form-label">Content Type</label>
+                    <select class="form-select" id="lesson-type">
+                        <option value="video">Video</option>
+                        <option value="pdf">PDF</option>
+                        <option value="text">Text</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (min)</label>
+                    <input type="number" class="form-input" id="lesson-duration" value="25" min="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Content URL</label>
+                <input type="url" class="form-input" id="lesson-url"
+                       placeholder="https://example.com/lesson.mp4">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Order Index</label>
+                <input type="number" class="form-input" id="lesson-order" value="0" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label class="flex gap-2" style="align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="lesson-preview" style="width: 18px; height: 18px;">
+                    <span>Free preview lesson</span>
+                </label>
+            </div>
+            
+            <div class="flex gap-3 mt-5">
+                <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeLessonModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="flex: 2;">Create Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/static/api.js"></script>
+<script>
+let courseId = null;
+let course = null;
+let modules = [];
+let lessonsByModule = {};
+
+async function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) { console.error(err); }
+}
+
+async function loadCourse() {
+    try {
+        course = await VastuAPI.API.lms.getCourse(courseId);
+        document.getElementById('course-title').textContent = course.title;
+        document.getElementById('course-description').textContent = course.description || '';
+        document.getElementById('course-meta').innerHTML = `
+            <span>📚 ${course.duration_weeks} weeks</span>
+            <span>🌐 ${course.language.toUpperCase()}</span>
+            <span>💰 ${course.price_inr.toLocaleString('en-IN')}</span>
+            <span class="badge ${course.is_published ? 'badge-success' : 'badge-info'}">${course.is_published ? 'PUBLISHED' : 'DRAFT'}</span>
+        `;
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load course: ' + err.message, 'error');
+    }
+}
+
+async function loadModules() {
+    try {
+        VastuAPI.UI.loading(true);
+        modules = await VastuAPI.API.lms.listModules(courseId);
+        
+        // Load lessons for each module
+        lessonsByModule = {};
+        for (const m of modules) {
+            try {
+                lessonsByModule[m.id] = await VastuAPI.API.lms.listLessons(m.id);
+            } catch {
+                lessonsByModule[m.id] = [];
+            }
+        }
+        
+        renderModules();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load modules: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderModules() {
+    const el = document.getElementById('modules-list');
+    
+    if (!modules.length) {
+        el.innerHTML = `
+            <div class="card text-center" style="padding: var(--space-7);">
+                <div style="font-size: 48px; margin-bottom: var(--space-4);">📚</div>
+                <h3 class="mb-3">No modules yet</h3>
+                <p class="text-muted mb-5">Add your first module to structure the course</p>
+                <button class="btn btn-primary" onclick="openModuleModal()">+ Add First Module</button>
+            </div>
+        `;
+        return;
+    }
+    
+    el.innerHTML = modules.map((m, idx) => {
+        const lessons = lessonsByModule[m.id] || [];
+        return `
+            <div class="card mb-4">
+                <div class="flex-between mb-4">
+                    <div>
+                        <div class="flex gap-2" style="align-items: center;">
+                            <div class="badge badge-gold">Module ${idx + 1}</div>
+                            <h3 style="margin: 0;">${escapeHtml(m.title)}</h3>
+                        </div>
+                        ${m.description ? `<p class="text-muted text-sm mt-2">${escapeHtml(m.description)}</p>` : ''}
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="openLessonModal('${m.id}')">+ Add Lesson</button>
+                </div>
+                
+                ${lessons.length ? `
+                    <div style="border-top: 1px solid rgba(248, 247, 242, 0.08); padding-top: var(--space-4);">
+                        ${lessons.map((l, lIdx) => `
+                            <div class="flex-between" style="padding: var(--space-3) 0; border-bottom: 0.5px solid rgba(248,247,242,0.05);">
+                                <div style="flex: 1;">
+                                    <div class="flex gap-2" style="align-items: center;">
+                                        <span class="text-faint text-xs">${lIdx + 1}.</span>
+                                        <span style="font-weight: 500;">${escapeHtml(l.title)}</span>
+                                        ${l.is_preview ? '<span class="badge badge-info" style="font-size: 9px;">PREVIEW</span>' : ''}
+                                    </div>
+                                    <div class="text-faint text-xs mt-1">
+                                        📹 ${l.content_type} • ⏱ ${l.duration_minutes} min
+                                    </div>
+                                </div>
+                                <div class="text-faint text-xs">${l.content_url ? '🔗 Linked' : 'No URL'}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div class="text-faint text-sm" style="padding: var(--space-3) 0;">No lessons yet. Click "+ Add Lesson" to add.</div>
+                `}
+            </div>
+        `;
+    }).join('');
+}
+
+function openModuleModal() {
+    document.getElementById('module-title').value = '';
+    document.getElementById('module-desc').value = '';
+    document.getElementById('module-order').value = modules.length;
+    document.getElementById('module-modal').classList.remove('hidden');
+}
+
+function closeModuleModal() {
+    document.getElementById('module-modal').classList.add('hidden');
+}
+
+async function handleModuleSubmit(e) {
+    e.preventDefault();
+    const payload = {
+        title: document.getElementById('module-title').value,
+        description: document.getElementById('module-desc').value || null,
+        order_index: parseInt(document.getElementById('module-order').value),
+    };
+    
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.lms.createModule(courseId, payload);
+        VastuAPI.UI.toast('Module created', 'success');
+        closeModuleModal();
+        await loadModules();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function openLessonModal(moduleId) {
+    document.getElementById('lesson-module-id').value = moduleId;
+    document.getElementById('lesson-title').value = '';
+    document.getElementById('lesson-type').value = 'video';
+    document.getElementById('lesson-duration').value = 25;
+    document.getElementById('lesson-url').value = '';
+    document.getElementById('lesson-order').value = 0;
+    document.getElementById('lesson-preview').checked = false;
+    document.getElementById('lesson-modal').classList.remove('hidden');
+}
+
+function closeLessonModal() {
+    document.getElementById('lesson-modal').classList.add('hidden');
+}
+
+async function handleLessonSubmit(e) {
+    e.preventDefault();
+    const moduleId = document.getElementById('lesson-module-id').value;
+    
+    const payload = {
+        title: document.getElementById('lesson-title').value,
+        content_type: document.getElementById('lesson-type').value,
+        content_url: document.getElementById('lesson-url').value || null,
+        duration_minutes: parseInt(document.getElementById('lesson-duration').value),
+        order_index: parseInt(document.getElementById('lesson-order').value),
+        is_preview: document.getElementById('lesson-preview').checked,
+    };
+    
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.lms.createLesson(moduleId, payload);
+        VastuAPI.UI.toast('Lesson created', 'success');
+        closeLessonModal();
+        await loadModules();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModuleModal(); closeLessonModal(); }
+});
+
+async function init() {
+    if (!await requireAuth()) return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    courseId = urlParams.get('course_id');
+    if (!courseId) {
+        window.location.href = '/lms/courses.html';
+        return;
+    }
+    
+    await loadUser();
+    await loadCourse();
+    await loadModules();
+}
+
+init();
+</script>
+</body>
+</html>

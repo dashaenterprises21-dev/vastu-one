@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<meta name="description" content="VASTU ONE â€” Traceable Vastu Intelligence Platform. Every finding has a source. Every recommendation has a reason. Every uncertainty is disclosed.">
+<meta name="keywords" content="Vastu, Vastu Software, Vastu Consultant, Astro Vastu, Vastu Report, Numerology, Vastu Shastra">
+<meta name="author" content="VASTU ONE">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="VASTU ONE â€” Traceable Vastu Intelligence">
+<meta property="og:description" content="Every finding has a source. Every decision, a reason.">
+<meta property="og:url" content="https://vastuone.in">
+<meta property="og:site_name" content="VASTU ONE">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VASTU ONE â€” Traceable Vastu Intelligence">
+<meta name="twitter:description" content="Every finding has a source. Every decision, a reason.">
+
+<title>VASTU ONE â€” Traceable Vastu Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+
+<style>
+/* ==========================================
+   LANDING PAGE SPECIFIC
+   ========================================== */
+
+/* Hero */
+.hero {
+    padding: clamp(60px, 10vw, 120px) 0 clamp(40px, 6vw, 80px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+    animation: slowRotate 60s linear infinite;
+}
+
+@keyframes slowRotate {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+.hero-eyebrow {
+    display: inline-block;
+    padding: 8px 20px;
+    border: var(--border-gold);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--cosmic-gold);
+    text-transform: uppercase;
+    margin-bottom: var(--space-6);
+    font-weight: 600;
+    background: rgba(212, 175, 55, 0.05);
+    animation: fadeInUp 0.6s var(--ease-out);
+}
+
+.hero h1 {
+    font-size: clamp(36px, 7vw, 84px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-6);
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 0.8s var(--ease-out);
+}
+
+.hero h1 .line-2 {
+    color: var(--cosmic-gold);
+    display: block;
+    position: relative;
+}
+
+.hero h1 .line-2::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 4px;
+    background: var(--cosmic-gold);
+    opacity: 0.3;
+    border-radius: var(--radius-full);
+    animation: expandLine 1.2s var(--ease-out) 0.6s forwards;
+}
+
+@keyframes expandLine {
+    to { width: 200px; }
+}
+
+.hero-sub {
+    font-size: clamp(15px, 1.8vw, 19px);
+    color: var(--muted-white);
+    max-width: 720px;
+    margin: 0 auto var(--space-7);
+    line-height: 1.7;
+    animation: fadeInUp 1s var(--ease-out);
+}
+
+.hero-ctas {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 1.2s var(--ease-out);
+}
+
+.hero-ctas .btn {
+    min-width: 200px;
+}
+
+@media (max-width: 640px) {
+    .hero-ctas .btn { min-width: 100%; }
+}
+
+/* Pillars */
+.hero-pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    margin-top: clamp(60px, 10vw, 100px);
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 1.4s var(--ease-out);
+}
+
+@media (max-width: 900px) {
+    .hero-pillars { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .hero-pillars { grid-template-columns: 1fr; }
+}
+
+.pillar {
+    padding: var(--space-5);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, var(--space) 0%, var(--deep-space) 100%);
+    text-align: left;
+    transition: all var(--duration-normal) var(--ease-out);
+}
+
+.pillar:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-gold);
+}
+
+.pillar-icon {
+    font-size: 28px;
+    margin-bottom: var(--space-3);
+}
+
+.pillar h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--starlight);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.pillar p {
+    font-size: 13px;
+    color: var(--muted-white);
+    line-height: 1.55;
+}
+
+/* Sections */
+.section {
+    padding: clamp(60px, 8vw, 100px) 0;
+    border-top: var(--border-subtle);
+}
+
+.section-title {
+    font-size: clamp(28px, 4.5vw, 44px);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+    max-width: 800px;
+    line-height: 1.15;
+}
+
+.section-sub {
+    color: var(--muted-white);
+    margin-bottom: var(--space-7);
+    max-width: 640px;
+    font-size: clamp(14px, 1.5vw, 17px);
+    line-height: 1.7;
+}
+
+/* Feature grid */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+}
+
+@media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .feature-grid { grid-template-columns: 1fr; } }
+
+.feature-card {
+    padding: var(--space-6);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, var(--space) 0%, var(--deep-space) 100%);
+    transition: all var(--duration-normal) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cosmic-gold), transparent);
+    opacity: 0;
+    transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.feature-card:hover::before { opacity: 1; }
+
+.feature-card:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: var(--cosmic-gold);
+    letter-spacing: 2px;
+    margin-bottom: var(--space-4);
+    font-weight: 600;
+}
+
+.feature-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    margin-bottom: var(--space-3);
+    color: var(--starlight);
+}
+
+.feature-card p {
+    color: var(--muted-white);
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+/* Stats strip */
+.stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    padding: var(--space-7) 0;
+    border-top: var(--border-subtle);
+    border-bottom: var(--border-subtle);
+}
+
+@media (max-width: 900px) { .stats-strip { grid-template-columns: repeat(2, 1fr); } }
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--cosmic-gold);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+}
+
+.stat-label {
+    color: var(--muted-white);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+/* Pricing */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    align-items: stretch;
+}
+
+@media (max-width: 900px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        margin: 0 auto;
+    }
+}
+
+.pricing-card {
+    padding: var(--space-6) var(--space-5);
+    border: var(--border-medium);
+    border-radius: var(--radius-xl);
+    background: var(--space);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--duration-normal) var(--ease-out);
+}
+
+.pricing-card.featured {
+    border-color: var(--cosmic-gold);
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.06) 0%, var(--space) 100%);
+    box-shadow: var(--shadow-gold);
+    transform: scale(1.02);
+}
+
+@media (max-width: 900px) {
+    .pricing-card.featured { transform: none; }
+}
+
+.pricing-card:hover {
+    border-color: var(--cosmic-gold);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-gold-lg);
+}
+
+.pricing-card.featured:hover { transform: translateY(-4px) scale(1.02); }
+
+@media (max-width: 900px) {
+    .pricing-card.featured:hover { transform: translateY(-4px); }
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+    padding: 5px 18px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+}
+
+.pricing-tier {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--cosmic-gold);
+    margin-bottom: var(--space-4);
+    font-weight: 700;
+}
+
+.pricing-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 52px);
+    font-weight: 700;
+    color: var(--starlight);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+}
+
+.pricing-period {
+    color: var(--muted-white);
+    font-size: 13px;
+    margin-bottom: var(--space-5);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-5);
+    flex: 1;
+}
+
+.pricing-features li {
+    padding: var(--space-2) 0;
+    color: var(--muted-white);
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    line-height: 1.5;
+}
+
+.pricing-features li::before {
+    content: "âœ“";
+    color: var(--cosmic-gold);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+/* Testimonials */
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+}
+
+@media (max-width: 900px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+.testimonial {
+    padding: var(--space-6);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background: var(--space);
+    position: relative;
+}
+
+.testimonial-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--starlight);
+    line-height: 1.6;
+    margin-bottom: var(--space-5);
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.testimonial-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cosmic-gold), var(--gold-dim));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--void-black);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.testimonial-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--starlight);
+}
+
+.testimonial-role {
+    font-size: 12px;
+    color: var(--muted-white);
+}
+
+/* FAQ */
+.faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-3);
+    background: var(--space);
+    overflow: hidden;
+    transition: border-color var(--duration-normal) var(--ease-out);
+}
+
+.faq-item:hover { border-color: var(--border-gold); }
+
+.faq-question {
+    padding: var(--space-5);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    font-weight: 600;
+    color: var(--starlight);
+    user-select: none;
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.faq-question:hover { color: var(--cosmic-gold); }
+
+.faq-icon {
+    color: var(--cosmic-gold);
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--duration-slow) var(--ease-out);
+    color: var(--muted-white);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.faq-item.open .faq-answer { max-height: 500px; }
+
+.faq-answer-inner {
+    padding: 0 var(--space-5) var(--space-5);
+}
+
+/* Final CTA */
+.final-cta {
+    text-align: center;
+    padding: clamp(80px, 12vw, 140px) 0;
+    background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+    position: relative;
+}
+
+.final-cta h2 {
+    font-size: clamp(32px, 6vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-5);
+    line-height: 1.1;
+}
+
+.final-cta p {
+    color: var(--muted-white);
+    font-size: clamp(15px, 1.8vw, 18px);
+    max-width: 640px;
+    margin: 0 auto var(--space-7);
+    line-height: 1.7;
+}
+
+.final-cta-buttons {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .final-cta-buttons .btn { width: 100%; }
+}
+
+/* Footer */
+footer {
+    border-top: var(--border-subtle);
+    padding: var(--space-8) 0 var(--space-5);
+    color: var(--muted-white);
+    font-size: 13px;
+    margin-top: var(--space-8);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--space-7);
+    margin-bottom: var(--space-7);
+}
+
+@media (max-width: 900px) {
+    .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-6); }
+}
+
+@media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; gap: var(--space-5); }
+}
+
+footer h5 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--starlight);
+    margin-bottom: var(--space-4);
+    font-weight: 700;
+}
+
+footer ul { list-style: none; padding: 0; }
+footer li { padding: 5px 0; }
+
+footer a {
+    color: var(--muted-white);
+    font-size: 13px;
+    transition: color var(--duration-fast);
+}
+
+footer a:hover { color: var(--cosmic-gold); }
+
+.footer-bottom {
+    padding-top: var(--space-5);
+    border-top: var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    font-size: 12px;
+}
+
+.footer-contact {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.footer-contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    border: var(--border-subtle);
+    transition: all var(--duration-fast) var(--ease-out);
+}
+
+.footer-contact a:hover {
+    border-color: var(--cosmic-gold);
+    background: rgba(212, 175, 55, 0.05);
+    color: var(--cosmic-gold);
+}
+
+/* Mobile CTA bar */
+.mobile-cta-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+    background: rgba(5, 6, 15, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: var(--border-subtle);
+    z-index: 99;
+    gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+    .mobile-cta-bar { display: flex; }
+    body { padding-bottom: 80px; }
+    .whatsapp-float { bottom: 90px; right: 16px; }
+}
+
+.mobile-cta-bar .btn { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        
+        <div class="navbar-nav">
+            <a href="#features">Platform</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        
+        <div class="navbar-actions">
+            <a href="/login.html" class="btn btn-ghost btn-sm">Sign In</a>
+            <a href="/login.html?tab=signup" class="btn btn-primary btn-sm">Get Started</a>
+            <button class="navbar-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="navbar-mobile" id="mobile-menu">
+        <a href="#features">Platform</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#faq">FAQ</a>
+        <a href="/login.html">Sign In</a>
+        <a href="/login.html?tab=signup" class="btn btn-primary" style="margin-top: 8px;">Get Started</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-eyebrow">â—† Traceable Vastu Intelligence</div>
+        
+        <h1>
+            Every finding has a source.
+            <span class="line-2">Every decision, a reason.</span>
+        </h1>
+        
+        <p class="hero-sub">
+            VASTU ONE is a secure, AI-powered Vastu intelligence operating system
+            that connects classical knowledge, spatial computation, and expert reasoning
+            into one decision-clarity platform.
+        </p>
+        
+        <div class="hero-ctas">
+            <a href="/login.html?tab=signup" class="btn btn-primary btn-lg">Begin Free Analysis</a>
+            <a href="#features" class="btn btn-secondary btn-lg">Explore the Intelligence</a>
+        </div>
+        
+        <div class="hero-pillars">
+            <div class="pillar">
+                <div class="pillar-icon">ðŸ“–</div>
+                <h4>Source-Traceable</h4>
+                <p>Every rule traced to chapter and verse</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">âš™ï¸</div>
+                <h4>Rule-Driven</h4>
+                <p>54 engines in orchestrated harmony</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">ðŸ”</div>
+                <h4>Expert-Reviewable</h4>
+                <p>Consultant validates before delivery</p>
+            </div>
+            <div class="pillar">
+                <div class="pillar-icon">ðŸ”’</div>
+                <h4>Privacy-First</h4>
+                <p>Multi-tenant isolated by design</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS STRIP -->
+<section class="container">
+    <div class="stats-strip">
+        <div class="stat">
+            <div class="stat-value">54</div>
+            <div class="stat-label">Vastu Engines</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">81</div>
+            <div class="stat-label">Pada Grid</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">45</div>
+            <div class="stat-label">Devata Audit</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">Aâ€“D</div>
+            <div class="stat-label">Evidence Levels</div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section">
+    <div class="container">
+        <h2 class="section-title">Most Vastu software generates reports. VASTU ONE generates decision clarity.</h2>
+        <p class="section-sub">
+            Built on six foundational pillars that separate traceable Vastu intelligence from traditional PDF generators.
+        </p>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-num">01</div>
+                <h3>Property Digital Twin</h3>
+                <p>Upload floor plans. The system reconstructs geometry, verifies orientation, and maps the property against the 81-Pada grid.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">02</div>
+                <h3>Source-Linked Findings</h3>
+                <p>Every finding exposes its rule ID, textual source, evidence level (A/B/C/D), and confidence score.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">03</div>
+                <h3>Three Gunas Profile</h3>
+                <p>Tamas, Rajas, Sattva â€” weighted and explained. The property's character is visible at a glance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">04</div>
+                <h3>Multi-Tradition Aware</h3>
+                <p>Northern, Southern, Modern. Conflicting traditions are surfaced, not silently merged.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">05</div>
+                <h3>Cost-Aware Remedies</h3>
+                <p>Recommendations prioritized by cost, disruption, and impact. No fear-based consulting.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">06</div>
+                <h3>Consultant Operating System</h3>
+                <p>Client management, property vault, report generation, and LMS academy â€” all in one workspace.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section">
+    <div class="container">
+        <h2 class="section-title">Pricing that scales with your practice</h2>
+        <p class="section-sub">
+            From single reports to enterprise portfolios. All plans include source-traceable findings.
+        </p>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Vastu Basic</div>
+                <div class="pricing-price">499</div>
+                <div class="pricing-period">per property</div>
+                <ul class="pricing-features">
+                    <li>Direction analysis (16 zones)</li>
+                    <li>Basic room audit</li>
+                    <li>Entrance analysis</li>
+                    <li>Professional PDF report</li>
+                    <li>1 revision</li>
+                </ul>
+                <a href="/login.html?tab=signup" class="btn btn-secondary btn-block">Get Started</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <div class="pricing-badge">MOST POPULAR</div>
+                <div class="pricing-tier">Vastu Advanced</div>
+                <div class="pricing-price">2,999</div>
+                <div class="pricing-period">per property</div>
+                <ul class="pricing-features">
+                    <li>Everything in Basic</li>
+                    <li>81-Pada grid analysis</li>
+                    <li>45 Devata audit</li>
+                    <li>Soil + Water + Colour engines</li>
+                    <li>Three Gunas profile</li>
+                    <li>Priority remedies</li>
+                    <li>3 revisions</li>
+                </ul>
+                <a href="/login.html?tab=signup" class="btn btn-primary btn-block">Start Now</a>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="pricing-tier">Enterprise</div>
+                <div class="pricing-price">99k+</div>
+                <div class="pricing-period">custom pricing</div>
+                <ul class="pricing-features">
+                    <li>Multi-property portfolio</li>
+                    <li>White-label branding</li>
+                    <li>Full API access</li>
+                    <li>Bulk report generation</li>
+                    <li>Dedicated support</li>
+                    <li>SLA guarantee</li>
+                </ul>
+                <a href="https://wa.me/919890602105?text=Hi%2C%20I%27m%20interested%20in%20VASTU%20ONE%20Enterprise" target="_blank" rel="noopener" class="btn btn-whatsapp btn-block">
+                    ðŸ’¬ Contact on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="section">
+    <div class="container">
+        <h2 class="section-title">Trusted by consultants and architects</h2>
+        <p class="section-sub">
+            What early adopters say about working with VASTU ONE.
+        </p>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial">
+                <div class="testimonial-quote">
+                    "Finally, a Vastu system that shows its work. Every finding has a source, every recommendation has a reason."
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">RK</div>
+                    <div>
+                        <div class="testimonial-name">Rajesh Kumar</div>
+                        <div class="testimonial-role">Vastu Consultant, Nagpur</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial">
+                <div class="testimonial-quote">
+                    "The multi-tradition awareness is a game-changer. I can finally serve clients from different lineages without compromising."
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">PS</div>
+                    <div>
+                        <div class="testimonial-name">Priya Sharma</div>
+                        <div class="testimonial-role">Architect, Mumbai</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial">
+                <div class="testimonial-quote">
+                    "From report generation to student management â€” VASTU ONE is the operating system I've been waiting for."
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">AN</div>
+                    <div>
+                        <div class="testimonial-name">Acharya Nagpure</div>
+                        <div class="testimonial-role">Dasha Enterprises</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+    <div class="container">
+        <h2 class="section-title">Frequently asked questions</h2>
+        <p class="section-sub">
+            Answers to the most common questions about VASTU ONE.
+        </p>
+        
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is VASTU ONE just an AI-generated Vastu report?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        No. VASTU ONE runs 54 deterministic engines against classical sources. AI is only used for explanation â€” never for generating sources or calculations. Every finding is traceable.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How are conflicting traditions handled?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        We don't merge traditions silently. Northern, Southern, and Modern interpretations are kept separate and surfaced explicitly. You choose the tradition for your client.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is my property data private?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Yes. VASTU ONE is multi-tenant isolated. Your data is encrypted at rest and in transit. We run continuous audit logging via Sentinel. No cross-tenant data access is possible.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Does AI generate Sanskrit citations?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Never. Sanskrit citations come only from verified textual sources. AI is used for explanation and personalization â€” not for inventing sources.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can I use VASTU ONE for commercial properties?</span>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Yes. We support residential, commercial, industrial, and land plots. Enterprise tier adds multi-property portfolio management and township analysis.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+    <div class="container">
+        <h2>From belief to traceability.</h2>
+        <p>Explore your property through a system designed to make every important finding understandable, reviewable, and actionable.</p>
+        
+        <div class="final-cta-buttons">
+            <a href="/login.html?tab=signup" class="btn btn-primary btn-lg">Begin Free Analysis</a>
+            <a href="https://wa.me/919890602105?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20VASTU%20ONE" target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg">
+                ðŸ’¬ Talk on WhatsApp
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="navbar-brand mb-3">VASTU <span class="gold">ONE</span></div>
+                <p style="color: var(--muted-white); font-size: 13px; line-height: 1.7; max-width: 320px;">
+                    Traceable Vastu Intelligence. Every finding has a source. Every recommendation has a reason.
+                </p>
+                <div class="footer-contact mt-4">
+                    <a href="mailto:hello@vastuone.in">âœ‰ï¸ Email</a>
+                    <a href="https://wa.me/919890602105" target="_blank" rel="noopener">ðŸ’¬ WhatsApp</a>
+                </div>
+            </div>
+            <div>
+                <h5>Platform</h5>
+                <ul>
+                    <li><a href="/login.html">Dashboard</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="/lms/courses.html">Academy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="mailto:hello@vastuone.in">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Legal</h5>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div>Â© 2026 VASTU ONE. All rights reserved.</div>
+            <div>Made with care in India ðŸ‡®ðŸ‡³</div>
+        </div>
+    </div>
+</footer>
+
+<!-- MOBILE CTA BAR -->
+<div class="mobile-cta-bar">
+    <a href="https://wa.me/919890602105" target="_blank" rel="noopener" class="btn btn-whatsapp">
+        ðŸ’¬ Chat
+    </a>
+    <a href="/login.html?tab=signup" class="btn btn-primary">
+        Get Started
+    </a>
+</div>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<button class="whatsapp-float" onclick="openWhatsApp()" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span class="whatsapp-tooltip">Chat with us on WhatsApp</span>
+</button>
+
+<script src="/static/api.js"></script>
+<script>
+// ==========================================
+// Mobile Menu
+// ==========================================
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const toggle = document.querySelector('.navbar-toggle');
+    menu.classList.toggle('open');
+    toggle.classList.toggle('open');
+}
+
+// Close mobile menu on link click
+document.querySelectorAll('.navbar-mobile a').forEach(link => {
+    link.addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.remove('open');
+        document.querySelector('.navbar-toggle').classList.remove('open');
+    });
+});
+
+// ==========================================
+// FAQ
+// ==========================================
+function toggleFaq(el) {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    
+    // Close all
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    
+    // Open this one if it wasn't open
+    if (!wasOpen) item.classList.add('open');
+}
+
+// ==========================================
+// WhatsApp
+// ==========================================
+function openWhatsApp() {
+    const phone = '919890602105';
+    const message = encodeURIComponent('Hi VASTU ONE team, I\'d like to know more about your platform.');
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+}
+
+// ==========================================
+// Smooth scroll for anchor links
+// ==========================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            e.preventDefault();
+            const navHeight = document.querySelector('.navbar').offsetHeight;
+            const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+            window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        }
+    });
+});
+
+// ==========================================
+// Reveal on scroll
+// ==========================================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.animation = 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature-card, .pillar, .pricing-card, .testimonial').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+});
+
+// ==========================================
+// Redirect if logged in
+// ==========================================
+if (VastuAPI.Auth.isLoggedIn()) {
+    // Show "Go to Dashboard" instead of Sign In
+    const navActions = document.querySelector('.navbar-actions');
+    if (navActions) {
+        navActions.innerHTML = `
+            <a href="/dashboard.html" class="btn btn-primary btn-sm">Dashboard</a>
+            <button class="navbar-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        `;
+    }
+}
+</script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch((err) => console.warn('[PWA] SW registration failed:', err));
+    });
+}
+</script>
+</body>
+</html>

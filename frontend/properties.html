@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Properties — VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html" class="active">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html">LMS</a>
+        </div>
+        <div class="flex gap-3" style="align-items: center;">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
+
+    <div class="flex-between mb-6">
+        <div>
+            <h1>Properties</h1>
+            <p class="text-muted mt-2" id="subtitle">All properties across your clients</p>
+        </div>
+        <button class="btn btn-primary" onclick="openCreateModal()">+ New Property</button>
+    </div>
+
+    <div class="card mb-5">
+        <div class="grid grid-2" style="gap: var(--space-4);">
+            <input type="text" class="form-input" id="search-input"
+                   placeholder="🔍 Search properties..." oninput="filterProperties()">
+            <select class="form-select" id="filter-client" onchange="filterProperties()">
+                <option value="">All Clients</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="properties-list">
+        <div class="text-muted text-sm">Loading...</div>
+    </div>
+
+</main>
+
+<div class="modal-backdrop hidden" id="property-modal">
+    <div class="modal" style="max-width: 600px;">
+        <div class="flex-between mb-5">
+            <h3 class="card-title" id="modal-title">New Property</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+        </div>
+        
+        <form id="property-form" onsubmit="handleSubmit(event)">
+            <input type="hidden" id="property-id">
+            
+            <div class="form-group">
+                <label class="form-label">Client *</label>
+                <select class="form-select" id="form-client" required>
+                    <option value="">Select a client...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Property Name *</label>
+                <input type="text" class="form-input" id="form-name" required
+                       placeholder="Rajesh Kumar Residence">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Property Type</label>
+                <select class="form-select" id="form-type">
+                    <option value="RESIDENTIAL">Residential</option>
+                    <option value="COMMERCIAL">Commercial</option>
+                    <option value="INDUSTRIAL">Industrial</option>
+                    <option value="LAND">Land / Plot</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <textarea class="form-textarea" id="form-address" rows="2"
+                          placeholder="Plot 45, Civil Lines"></textarea>
+            </div>
+            
+            <div class="grid grid-2" style="gap: var(--space-4);">
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-input" id="form-city" placeholder="Nagpur">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" class="form-input" id="form-pincode" placeholder="440001">
+                </div>
+            </div>
+            
+            <div class="grid grid-2" style="gap: var(--space-4);">
+                <div class="form-group">
+                    <label class="form-label">Latitude</label>
+                    <input type="number" step="any" class="form-input" id="form-latitude" placeholder="21.1458">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Longitude</label>
+                    <input type="number" step="any" class="form-input" id="form-longitude" placeholder="79.0882">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">North Direction (degrees from true north)</label>
+                <input type="number" min="0" max="360" step="0.1" class="form-input"
+                       id="form-north" placeholder="0" value="0">
+                <div class="form-hint">0 = perfect north. If plan rotated, enter degrees.</div>
+            </div>
+            
+            <div class="flex gap-3 mt-5">
+                <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="flex: 2;" id="submit-btn">Save Property</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-backdrop hidden" id="delete-modal">
+    <div class="modal" style="max-width: 420px;">
+        <h3 class="card-title mb-3">⚠️ Delete Property</h3>
+        <p class="text-muted mb-5">
+            Are you sure you want to delete <strong id="delete-name" class="text-gold"></strong>?
+            This will also delete all associated reports.
+        </p>
+        <div class="flex gap-3">
+            <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" style="flex: 1;" onclick="confirmDelete()">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/api.js"></script>
+<script>
+let allProperties = [];
+let filteredProperties = [];
+let allClients = [];
+let pendingDeleteId = null;
+
+async function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        VastuAPI.Auth.setUser(me);
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) { console.error(err); }
+}
+
+async function loadClients() {
+    const data = await VastuAPI.API.clients.list(0, 200);
+    allClients = data.items || [];
+    
+    // Populate filter dropdown
+    const filterEl = document.getElementById('filter-client');
+    filterEl.innerHTML = '<option value="">All Clients</option>' +
+        allClients.map(c => `<option value="${c.id}">${escapeHtml(c.full_name)}</option>`).join('');
+    
+    // Populate modal dropdown
+    const modalEl = document.getElementById('form-client');
+    modalEl.innerHTML = '<option value="">Select a client...</option>' +
+        allClients.map(c => `<option value="${c.id}">${escapeHtml(c.full_name)}</option>`).join('');
+}
+
+async function loadProperties() {
+    try {
+        VastuAPI.UI.loading(true);
+        
+        // Get client_id from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientIdFilter = urlParams.get('client_id');
+        
+        let data;
+        if (clientIdFilter) {
+            data = await VastuAPI.API.properties.list(clientIdFilter);
+            document.getElementById('filter-client').value = clientIdFilter;
+            const client = allClients.find(c => c.id === clientIdFilter);
+            if (client) {
+                document.getElementById('subtitle').textContent = `Properties for ${client.full_name}`;
+            }
+        } else {
+            data = await VastuAPI.API.properties.list();
+        }
+        
+        allProperties = data.items || [];
+        filteredProperties = [...allProperties];
+        renderProperties();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load properties: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function filterProperties() {
+    const q = document.getElementById('search-input').value.toLowerCase().trim();
+    const clientFilter = document.getElementById('filter-client').value;
+    
+    filteredProperties = allProperties.filter(p => {
+        const matchesSearch = !q || 
+            (p.name || '').toLowerCase().includes(q) ||
+            (p.address || '').toLowerCase().includes(q) ||
+            (p.city || '').toLowerCase().includes(q);
+        const matchesClient = !clientFilter || p.client_id === clientFilter;
+        return matchesSearch && matchesClient;
+    });
+    
+    renderProperties();
+}
+
+function renderProperties() {
+    const el = document.getElementById('properties-list');
+    
+    if (!filteredProperties.length) {
+        el.innerHTML = `
+            <div class="card text-center" style="padding: var(--space-7);">
+                <div class="text-muted mb-4">
+                    ${allProperties.length === 0 ? 'No properties yet.' : 'No properties match your filters.'}
+                </div>
+                ${allProperties.length === 0 ? '<button class="btn btn-primary" onclick="openCreateModal()">+ Add First Property</button>' : ''}
+            </div>
+        `;
+        return;
+    }
+    
+    el.innerHTML = `
+        <div class="text-muted text-sm mb-4">Showing ${filteredProperties.length} of ${allProperties.length} properties</div>
+        ${filteredProperties.map(p => {
+            const client = allClients.find(c => c.id === p.client_id);
+            const typeBadge = {
+                'RESIDENTIAL': 'badge-info',
+                'COMMERCIAL': 'badge-gold',
+                'INDUSTRIAL': 'badge-warning',
+                'LAND': 'badge-success',
+            }[p.property_type] || 'badge-info';
+            
+            return `
+            <div class="card mb-3">
+                <div class="flex-between" style="align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div class="flex gap-2" style="align-items: center;">
+                            <div style="font-weight: 600; font-size: 16px;">${escapeHtml(p.name)}</div>
+                            <span class="badge ${typeBadge}">${p.property_type}</span>
+                        </div>
+                        <div class="text-muted text-sm mt-2">
+                            👤 ${escapeHtml(client?.full_name || 'Unknown client')}
+                        </div>
+                        ${p.address ? `<div class="text-faint text-sm mt-1">📍 ${escapeHtml(p.address)}, ${escapeHtml(p.city || '')} ${p.pincode || ''}</div>` : ''}
+                        ${p.north_direction_deg !== null ? `<div class="text-faint text-xs mt-2">🧭 North: ${p.north_direction_deg}°</div>` : ''}
+                        <div class="text-faint text-xs mt-3">Added ${VastuAPI.UI.formatDate(p.created_at)}</div>
+                    </div>
+                    <div class="flex gap-2" style="align-items: flex-start;">
+                        <a href="/reports.html?property_id=${p.id}" class="btn btn-primary btn-sm">Generate Report</a>
+                        <button class="btn btn-ghost btn-sm" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="handleDelete('${p.id}', '${escapeHtml(p.name)}')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        }).join('')}
+    `;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+function openCreateModal() {
+    document.getElementById('modal-title').textContent = 'New Property';
+    document.getElementById('property-form').reset();
+    document.getElementById('property-id').value = '';
+    document.getElementById('form-north').value = '0';
+    
+    // Pre-select client if in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('client_id');
+    if (clientId) document.getElementById('form-client').value = clientId;
+    
+    document.getElementById('submit-btn').textContent = 'Create Property';
+    document.getElementById('property-modal').classList.remove('hidden');
+}
+
+function openEditModal(p) {
+    document.getElementById('modal-title').textContent = 'Edit Property';
+    document.getElementById('property-id').value = p.id;
+    document.getElementById('form-client').value = p.client_id;
+    document.getElementById('form-name').value = p.name || '';
+    document.getElementById('form-type').value = p.property_type || 'RESIDENTIAL';
+    document.getElementById('form-address').value = p.address || '';
+    document.getElementById('form-city').value = p.city || '';
+    document.getElementById('form-pincode').value = p.pincode || '';
+    document.getElementById('form-latitude').value = p.latitude || '';
+    document.getElementById('form-longitude').value = p.longitude || '';
+    document.getElementById('form-north').value = p.north_direction_deg ?? 0;
+    document.getElementById('submit-btn').textContent = 'Update Property';
+    document.getElementById('property-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('property-modal').classList.add('hidden');
+}
+
+async function handleSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('property-id').value;
+    
+    const payload = {
+        client_id: document.getElementById('form-client').value,
+        name: document.getElementById('form-name').value,
+        property_type: document.getElementById('form-type').value,
+        address: document.getElementById('form-address').value || null,
+        city: document.getElementById('form-city').value || null,
+        pincode: document.getElementById('form-pincode').value || null,
+        latitude: parseFloat(document.getElementById('form-latitude').value) || null,
+        longitude: parseFloat(document.getElementById('form-longitude').value) || null,
+        north_direction_deg: parseFloat(document.getElementById('form-north').value) || 0,
+    };
+    
+    try {
+        VastuAPI.UI.loading(true);
+        if (id) {
+            await VastuAPI.API.properties.update(id, payload);
+            VastuAPI.UI.toast('Property updated', 'success');
+        } else {
+            await VastuAPI.API.properties.create(payload);
+            VastuAPI.UI.toast('Property created', 'success');
+        }
+        closeModal();
+        await loadProperties();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function handleDelete(id, name) {
+    pendingDeleteId = id;
+    document.getElementById('delete-name').textContent = name;
+    document.getElementById('delete-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    document.getElementById('delete-modal').classList.add('hidden');
+}
+
+async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.properties.remove(pendingDeleteId);
+        VastuAPI.UI.toast('Property deleted', 'success');
+        closeDeleteModal();
+        await loadProperties();
+    } catch (err) {
+        VastuAPI.UI.toast('Delete failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModal(); closeDeleteModal(); }
+});
+
+async function init() {
+    if (!await requireAuth()) return;
+    await loadUser();
+    await loadClients();
+    await loadProperties();
+}
+
+init();
+</script>
+</body>
+</html>

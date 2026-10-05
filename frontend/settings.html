@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>सेटिंग — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/dashboard.css">
+<link rel="stylesheet" href="/static/settings.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+    <header class="navbar">
+        <div class="navbar-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <a href="/dashboard" class="navbar-brand">
+                <img src="/static/logo/vastu_logo.png" alt="Vastu One" class="brand-logo">
+                <div class="brand-text">
+                    <h1>VASTU ONE</h1>
+                    <p>शास्त्र-आधारित वास्तु विश्लेषण</p>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-right">
+            <a href="/dashboard" class="btn-back-nav">← गृह पृष्ठ</a>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <p class="sidebar-label">मुख्य</p>
+                <a href="/dashboard" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span class="sidebar-text">गृह पृष्ठ</span>
+                </a>
+                <a href="/plan-upload" class="sidebar-item">
+                    <span class="sidebar-icon">📤</span>
+                    <span class="sidebar-text">योजना अपलोड</span>
+                </a>
+                <a href="/reports" class="sidebar-item">
+                    <span class="sidebar-icon">📄</span>
+                    <span class="sidebar-text">मेरी रिपोर्ट</span>
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <p class="sidebar-label">खाता</p>
+                <a href="/profile" class="sidebar-item">
+                    <span class="sidebar-icon">👤</span>
+                    <span class="sidebar-text">प्रोफाइल</span>
+                </a>
+                <a href="/settings" class="sidebar-item active">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-text">सेटिंग</span>
+                </a>
+                <a href="#" onclick="logout()" class="sidebar-item">
+                    <span class="sidebar-icon">🚪</span>
+                    <span class="sidebar-text">लॉगआउट</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-header">
+                <h1>⚙️ सेटिंग</h1>
+                <p>अपनी पसंद और प्राथमिकताएँ सेट करें</p>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-card">
+                <div class="settings-header">
+                    <div>
+                        <h3>🔔 सूचनाएँ</h3>
+                        <p>Notifications कैसे मिलें</p>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>ईमेल सूचना</b>
+                            <span>Report तैयार होने पर ईमेल</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifEmail" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>WhatsApp सूचना</b>
+                            <span>WhatsApp पर अपडेट</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifWhatsapp" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>SMS सूचना</b>
+                            <span>Mobile SMS पर अपडेट</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifSms">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>Marketing ईमेल</b>
+                            <span>नए features और offers</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifMarketing">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language & Region -->
+            <div class="settings-card">
+                <div class="settings-header">
+                    <div>
+                        <h3>🌐 भाषा और क्षेत्र</h3>
+                        <p>अपनी पसंदीदा भाषा चुनें</p>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item-select">
+                        <div class="setting-info">
+                            <b>भाषा</b>
+                            <span>App की भाषा</span>
+                        </div>
+                        <select id="languageSelect">
+                            <option value="hi" selected>हिंदी</option>
+                            <option value="en">English</option>
+                            <option value="mr">मराठी</option>
+                            <option value="gu">ગુજરાતી</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="bn">বাংলা</option>
+                        </select>
+                    </div>
+                    <div class="setting-item-select">
+                        <div class="setting-info">
+                            <b>समय क्षेत्र</b>
+                            <span>Time zone</span>
+                        </div>
+                        <select id="timezoneSelect">
+                            <option value="5.5" selected>IST (GMT+5:30)</option>
+                            <option value="5">GMT+5:00</option>
+                            <option value="6">GMT+6:00</option>
+                            <option value="0">UTC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="settings-card">
+                <div class="settings-header">
+                    <div>
+                        <h3>🎨 प्राथमिकताएँ</h3>
+                        <p>Display और analysis सेटिंग</p>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item-select">
+                        <div class="setting-info">
+                            <b>थीम</b>
+                            <span>App का रंग</span>
+                        </div>
+                        <select id="themeSelect">
+                            <option value="dark" selected>Dark (सुनहरा)</option>
+                            <option value="light">Light</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    <div class="setting-item-select">
+                        <div class="setting-info">
+                            <b>Report का प्रकार</b>
+                            <span>Default report</span>
+                        </div>
+                        <select id="reportTypeSelect">
+                            <option value="detailed" selected>विस्तृत (Detailed)</option>
+                            <option value="summary">संक्षिप्त (Summary)</option>
+                            <option value="pdf">सिर्फ PDF</option>
+                        </select>
+                    </div>
+                    <div class="setting-item-select">
+                        <div class="setting-info">
+                            <b>Units</b>
+                            <span>Measurements</span>
+                        </div>
+                        <select id="unitSelect">
+                            <option value="ft" selected>Feet (ft)</option>
+                            <option value="m">Meters (m)</option>
+                            <option value="in">Inches (in)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy -->
+            <div class="settings-card">
+                <div class="settings-header">
+                    <div>
+                        <h3>🔒 गोपनीयता</h3>
+                        <p>Data और privacy सेटिंग</p>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>Data Analytics</b>
+                            <span>App improvement के लिए anonymous data</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="privacyAnalytics" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>Public Profile</b>
+                            <span>Profile public करें</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="privacyProfile">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-card danger">
+                <div class="settings-header">
+                    <div>
+                        <h3>⚠️ खतरनाक क्षेत्र</h3>
+                        <p>सावधानी से use करें</p>
+                    </div>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>सारी Reports डाउनलोड करें</b>
+                            <span>अपना data export करें</span>
+                        </div>
+                        <button class="btn-small" onclick="exportData()">📥 Export</button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <b>अकाउंट डिलीट करें</b>
+                            <span>Permanently delete — वापस नहीं आएगा</span>
+                        </div>
+                        <button class="btn-danger" onclick="deleteAccount()">🗑️ Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="save-section">
+                <button class="btn-primary" onclick="saveSettings()" id="saveBtn">
+                    💾 सारी सेटिंग सेव करें
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+</div>
+
+<script src="/static/settings.js"></script>
+</body>
+</html>

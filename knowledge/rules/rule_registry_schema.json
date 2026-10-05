@@ -1,0 +1,33 @@
+﻿{
+  "$schema": "https://vastu-one.local/schemas/rule-registry-v1.json",
+  "version": "1.0.0",
+  "description": "Schema for Vastu Rule Registry",
+  "rule_object": {
+    "rule_id": "string (e.g., VST-KIT-001)",
+    "category": "enum[land, plot, home, commercial, astro, numerology, remedy, timing]",
+    "topic": "string",
+    "assertion": "string - what the rule claims",
+    "condition": "object - machine-readable condition",
+    "source": {
+      "grantha_id": "string - FK to granth_registry",
+      "chapter": "string",
+      "verse": "string",
+      "translation": "string"
+    },
+    "evidence_level": "enum[A, B, C, D]",
+    "reliability_score": "float 0.0-1.0",
+    "tradition": "enum[Northern, Southern, Modern, Universal]",
+    "confidence": "float 0.0-1.0",
+    "impact": {
+      "severity": "enum[critical, high, medium, low, informational]",
+      "affected_areas": ["health", "wealth", "relationships", "career", "peace"],
+      "guna_impact": "enum[Tamas, Rajas, Sattva, Mixed]"
+    },
+    "remedies": [],
+    "conflicts_with": [],
+    "supports": [],
+    "verified": "boolean",
+    "created_at": "ISO date",
+    "updated_at": "ISO date"
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VASTU ONE — खाता बनाएँ</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/auth.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+
+<div class="bg-layer bg-gradient"></div>
+<div class="bg-layer bg-om">ॐ</div>
+
+<div class="auth-container">
+
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+        <div class="brand-mark">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One" class="brand-logo">
+        </div>
+        <h1 class="brand-title">VASTU ONE</h1>
+        <h2 class="welcome-title">सुभ आगमन</h2>
+        <p class="welcome-text">
+            भारत का पहला शास्त्र-आधारित<br>
+            वास्तु विश्लेषण मंच
+        </p>
+
+        <div class="feature-badges">
+            <span class="badge">45 देवता</span>
+            <span class="badge">81 पद</span>
+            <span class="badge">5 तत्व</span>
+            <span class="badge">16 ज़ोन</span>
+        </div>
+
+        <p class="shastra-names">
+            बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार
+        </p>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>खाता बनाएँ</h2>
+                <p>नया खाता बनाकर शुरू करें</p>
+            </div>
+
+            <form id="signupForm" onsubmit="handleSignup(event)">
+
+                <div class="input-group">
+                    <label for="name">👤 पूरा नाम</label>
+                    <input type="text" id="name" name="name"
+                           placeholder="आपका नाम" required autocomplete="name">
+                </div>
+
+                <div class="input-group">
+                    <label for="email">📧 ईमेल</label>
+                    <input type="email" id="email" name="email"
+                           placeholder="aapka@email.com" required autocomplete="email">
+                </div>
+
+                <div class="input-group">
+                    <label for="phone">📱 फ़ोन (10 digit)</label>
+                    <input type="tel" id="phone" name="phone"
+                           placeholder="9876543210" pattern="[0-9]{10}"
+                           maxlength="10" autocomplete="tel">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">🔒 पासवर्ड</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" name="password"
+                               placeholder="कम से कम 8 characters" required
+                               minlength="8" autocomplete="new-password">
+                        <button type="button" class="toggle-password"
+                                onclick="togglePassword()" aria-label="Toggle password">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirmPassword">🔒 पासवर्ड दोबारा</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                           placeholder="पासवर्ड दोबारा डालें" required
+                           minlength="8" autocomplete="new-password">
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" required>
+                        <span>मैं <a href="/terms">नियम व शर्तें</a> मानता हूँ</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="btn-text">खाता बनाएँ</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+
+                <div class="error-box" id="errorBox" style="display:none;"></div>
+
+            </form>
+
+            <div class="form-footer">
+                <p>पहले से खाता है? <a href="/login">प्रवेश करें</a></p>
+            </div>
+
+            <div class="divider-om-small">
+                <span class="line"></span>
+                <span class="om-mini">ॐ</span>
+                <span class="line"></span>
+            </div>
+
+            <p class="security-note">
+                🔒 आपकी जानकारी सुरक्षित है<br>
+                बृहत्संहिता, मयमतम् और मानसार पर आधारित
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="/static/auth.js"></script>
+</body>
+</html>

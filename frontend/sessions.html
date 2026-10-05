@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Active Sessions — VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html">LMS</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <a href="/settings.html" class="btn btn-ghost btn-sm">Settings</a>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7); max-width: 900px;">
+    
+    <a href="/settings.html" class="btn btn-ghost btn-sm mb-5">← Back to Settings</a>
+    
+    <div class="flex-between mb-6" style="flex-wrap: wrap; gap: var(--space-3);">
+        <div>
+            <h1>Active Sessions</h1>
+            <p class="text-muted mt-2">Devices where you're currently logged in</p>
+        </div>
+        <button class="btn btn-danger" onclick="revokeAll()" id="revoke-all-btn">
+            Sign out all other devices
+        </button>
+    </div>
+    
+    <div id="sessions-list">
+        <div class="text-muted text-sm">Loading...</div>
+    </div>
+    
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) { console.error(err); }
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+function detectDeviceName(ua) {
+    if (!ua) return 'Unknown device';
+    const lower = ua.toLowerCase();
+    if (lower.includes('chrome')) return 'Chrome Browser';
+    if (lower.includes('firefox')) return 'Firefox Browser';
+    if (lower.includes('safari') && !lower.includes('chrome')) return 'Safari Browser';
+    if (lower.includes('edge')) return 'Edge Browser';
+    return 'Web Browser';
+}
+
+async function loadSessions() {
+    try {
+        VastuAPI.UI.loading(true);
+        const sessions = await VastuAPI.apiCall('/api/auth/sessions');
+        
+        const el = document.getElementById('sessions-list');
+        if (!sessions.length) {
+            el.innerHTML = '<div class="card text-center" style="padding: var(--space-7);"><div class="text-muted">No active sessions</div></div>';
+            return;
+        }
+        
+        el.innerHTML = sessions.map((s, idx) => {
+            const deviceIcon = {
+                'iOS': '📱', 'Android': '📱', 'Windows': '💻', 'Mac': '💻', 'Linux': '💻'
+            }[s.device] || '🌐';
+            
+            const isCurrent = idx === 0; // Most recent = current
+            const created = VastuAPI.UI.formatDateTime(s.created_at);
+            const lastUsed = VastuAPI.UI.formatDateTime(s.last_used_at);
+            
+            return `
+                <div class="card mb-3">
+                    <div class="flex-between" style="flex-wrap: wrap; gap: var(--space-3);">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div class="flex gap-2" style="align-items: center;">
+                                <span style="font-size: 24px;">${deviceIcon}</span>
+                                <div>
+                                    <div style="font-weight: 600;">
+                                        ${escapeHtml(s.device || 'Unknown')}
+                                        ${isCurrent ? '<span class="badge badge-success" style="margin-left: 8px;">CURRENT</span>' : ''}
+                                    </div>
+                                    <div class="text-muted text-xs mt-1">
+                                        ${escapeHtml(s.ip_address || 'Unknown IP')}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-faint text-xs mt-3">
+                                <div>Started: ${created}</div>
+                                <div>Last used: ${lastUsed}</div>
+                                <div class="truncate" style="margin-top: 4px;">${escapeHtml(s.user_agent || '')}</div>
+                            </div>
+                        </div>
+                        
+                        ${!isCurrent ? `
+                            <button class="btn btn-danger btn-sm" onclick="revokeOne('${s.id}')">
+                                Sign Out
+                            </button>
+                        ` : `
+                            <span class="text-faint text-xs">This device</span>
+                        `}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load sessions: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+async function revokeOne(sessionId) {
+    if (!confirm('Sign out this device?')) return;
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.apiCall(`/api/auth/sessions/${sessionId}`, { method: 'DELETE' });
+        VastuAPI.UI.toast('Device signed out', 'success');
+        await loadSessions();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+async function revokeAll() {
+    if (!confirm('Sign out ALL devices except this one? You will need to login again on other devices.')) return;
+    try {
+        VastuAPI.UI.loading(true);
+        const res = await VastuAPI.apiCall('/api/auth/sessions/revoke-all', { method: 'POST' });
+        VastuAPI.UI.toast(res.message || 'All sessions revoked', 'success');
+        await loadSessions();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+(async () => {
+    if (!await requireAuth()) return;
+    await loadUser();
+    await loadSessions();
+})();
+</script>
+</body>
+</html>

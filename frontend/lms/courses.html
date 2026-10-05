@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courses — VASTU ONE LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html" class="active">LMS</a>
+        </div>
+        <div class="flex gap-3" style="align-items: center;">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
+
+    <div class="flex-between mb-6">
+        <div>
+            <h1>Courses</h1>
+            <p class="text-muted mt-2">Manage your LMS courses and academy</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="/lms/my-learning.html" class="btn btn-secondary">My Learning</a>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ New Course</button>
+        </div>
+    </div>
+
+    <div id="courses-list">
+        <div class="text-muted text-sm">Loading...</div>
+    </div>
+
+</main>
+
+<!-- CREATE MODAL -->
+<div class="modal-backdrop hidden" id="course-modal">
+    <div class="modal" style="max-width: 600px;">
+        <div class="flex-between mb-5">
+            <h3 class="card-title" id="modal-title">New Course</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+        </div>
+        
+        <form id="course-form" onsubmit="handleSubmit(event)">
+            <input type="hidden" id="course-id">
+            
+            <div class="form-group">
+                <label class="form-label">Course Title *</label>
+                <input type="text" class="form-input" id="form-title" required
+                       placeholder="Advance Astro Vastu">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">URL Slug *</label>
+                <input type="text" class="form-input" id="form-slug" required
+                       pattern="[a-z0-9-]+" placeholder="advance-astro-vastu">
+                <div class="form-hint">Lowercase, numbers, dashes only</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="form-description" rows="3"
+                          placeholder="Complete 30-module professional course on Astro Vastu integration..."></textarea>
+            </div>
+            
+            <div class="grid grid-3" style="gap: var(--space-4);">
+                <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <select class="form-select" id="form-language">
+                        <option value="hi">Hindi</option>
+                        <option value="en">English</option>
+                        <option value="mr">Marathi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (weeks)</label>
+                    <input type="number" class="form-input" id="form-duration" value="16" min="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ()</label>
+                    <input type="number" class="form-input" id="form-price" value="15000" min="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="flex gap-2" style="align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="form-published" style="width: 18px; height: 18px;">
+                    <span>Publish immediately (visible to students)</span>
+                </label>
+            </div>
+            
+            <div class="flex gap-3 mt-5">
+                <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="flex: 2;" id="submit-btn">Create Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-backdrop hidden" id="delete-modal">
+    <div class="modal" style="max-width: 420px;">
+        <h3 class="card-title mb-3">⚠️ Delete Course</h3>
+        <p class="text-muted mb-5">
+            Are you sure you want to delete <strong id="delete-name" class="text-gold"></strong>?
+            All modules, lessons, and enrollments will be deleted.
+        </p>
+        <div class="flex gap-3">
+            <button class="btn btn-ghost" style="flex: 1;" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" style="flex: 1;" onclick="confirmDelete()">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/api.js"></script>
+<script>
+let allCourses = [];
+let pendingDeleteId = null;
+
+async function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) { console.error(err); }
+}
+
+async function loadCourses() {
+    try {
+        VastuAPI.UI.loading(true);
+        allCourses = await VastuAPI.API.lms.listCourses();
+        renderCourses();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load courses: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderCourses() {
+    const el = document.getElementById('courses-list');
+    
+    if (!allCourses.length) {
+        el.innerHTML = `
+            <div class="card text-center" style="padding: var(--space-7);">
+                <div style="font-size: 48px; margin-bottom: var(--space-4);">🎓</div>
+                <h3 class="mb-3">No courses yet</h3>
+                <p class="text-muted mb-5">Create your first course to start teaching</p>
+                <button class="btn btn-primary" onclick="openCreateModal()">+ Create First Course</button>
+            </div>
+        `;
+        return;
+    }
+    
+    el.innerHTML = allCourses.map(c => `
+        <div class="card mb-4">
+            <div class="flex-between" style="align-items: flex-start;">
+                <div style="flex: 1;">
+                    <div class="flex gap-2" style="align-items: center; flex-wrap: wrap;">
+                        <h3 style="margin: 0;">${escapeHtml(c.title)}</h3>
+                        <span class="badge ${c.is_published ? 'badge-success' : 'badge-info'}">
+                            ${c.is_published ? 'PUBLISHED' : 'DRAFT'}
+                        </span>
+                    </div>
+                    <div class="text-muted text-sm mt-2">${escapeHtml(c.description || '')}</div>
+                    <div class="flex gap-4 mt-3 text-sm">
+                        <span>📚 ${c.duration_weeks} weeks</span>
+                        <span>🌐 ${c.language.toUpperCase()}</span>
+                        <span>💰 ${c.price_inr.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div class="text-faint text-xs mt-2">Created ${VastuAPI.UI.formatDate(c.created_at)}</div>
+                </div>
+                <div class="flex gap-2" style="align-items: flex-start;">
+                    <a href="/lms/course-detail.html?course_id=${c.id}" class="btn btn-primary btn-sm">Manage</a>
+                    <button class="btn btn-ghost btn-sm" onclick='openEditModal(${JSON.stringify(c).replace(/'/g, "&#39;")})'>Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleDelete('${c.id}', '${escapeHtml(c.title)}')">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+function openCreateModal() {
+    document.getElementById('modal-title').textContent = 'New Course';
+    document.getElementById('course-form').reset();
+    document.getElementById('course-id').value = '';
+    document.getElementById('submit-btn').textContent = 'Create Course';
+    document.getElementById('course-modal').classList.remove('hidden');
+}
+
+function openEditModal(c) {
+    document.getElementById('modal-title').textContent = 'Edit Course';
+    document.getElementById('course-id').value = c.id;
+    document.getElementById('form-title').value = c.title;
+    document.getElementById('form-slug').value = c.slug;
+    document.getElementById('form-description').value = c.description || '';
+    document.getElementById('form-language').value = c.language;
+    document.getElementById('form-duration').value = c.duration_weeks;
+    document.getElementById('form-price').value = c.price_inr;
+    document.getElementById('form-published').checked = c.is_published;
+    document.getElementById('submit-btn').textContent = 'Update Course';
+    document.getElementById('course-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('course-modal').classList.add('hidden');
+}
+
+async function handleSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('course-id').value;
+    
+    const payload = {
+        title: document.getElementById('form-title').value,
+        slug: document.getElementById('form-slug').value,
+        description: document.getElementById('form-description').value || null,
+        language: document.getElementById('form-language').value,
+        duration_weeks: parseInt(document.getElementById('form-duration').value),
+        price_inr: parseFloat(document.getElementById('form-price').value),
+        is_published: document.getElementById('form-published').checked,
+    };
+    
+    try {
+        VastuAPI.UI.loading(true);
+        if (id) {
+            // Update not supported yet — just show message
+            VastuAPI.UI.toast('Update coming soon. Create a new course.', 'info');
+        } else {
+            await VastuAPI.API.lms.createCourse(payload);
+            VastuAPI.UI.toast('Course created', 'success');
+            closeModal();
+            await loadCourses();
+        }
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function handleDelete(id, name) {
+    pendingDeleteId = id;
+    document.getElementById('delete-name').textContent = name;
+    document.getElementById('delete-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    document.getElementById('delete-modal').classList.add('hidden');
+}
+
+async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    try {
+        VastuAPI.UI.loading(true);
+        // No delete endpoint yet — just refresh
+        VastuAPI.UI.toast('Delete coming soon', 'info');
+        closeDeleteModal();
+    } catch (err) {
+        VastuAPI.UI.toast('Delete failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModal(); closeDeleteModal(); }
+});
+
+async function init() {
+    if (!await requireAuth()) return;
+    await loadUser();
+    await loadCourses();
+}
+
+init();
+</script>
+</body>
+</html>

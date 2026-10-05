@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numerology V3 — Vastu One</title>
+<link rel="stylesheet" href="/static/premium.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/static/pdf-export.js"></script>
+<style>
+    .num-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .num-card { background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(255,153,51,0.04) 100%); border: 1.5px solid var(--border-gold); border-radius: 18px; padding: 24px; }
+    .num-label { font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 10px; }
+    .num-value { font-size: 32px; font-weight: 800; background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .num-sub { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+    .lo-shu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 400px; margin: 20px auto; }
+    .lo-shu-cell { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 2px solid var(--border-gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: var(--gold); }
+    .lo-shu-cell.empty { color: var(--text-muted); font-size: 16px; }
+    .print-btn { position: fixed; bottom: 30px; right: 30px; padding: 16px 28px; background: var(--grad-gold); color: #0a0a0f; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-gold-lg); z-index: 100; }
+    .section-title { font-family: var(--font-display); font-size: 32px; font-weight: 700; margin: 40px 0 20px; padding-bottom: 16px; border-bottom: 3px solid var(--border-gold); }
+    .section-title .gold { background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+</style>
+</head>
+<body>
+<header class="ux-header">
+<div class="ux-header-inner">
+<a href="/" class="ux-logo"><div class="ux-logo-mark">🔢</div><div class="ux-logo-text"><h1>VASTU ONE</h1><p>Numerology V3</p></div></a>
+<nav class="ux-nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/vastu-integration.html">Vastu</a>
+<a href="/advanced-kundli.html">Kundli</a>
+<a href="/numerology-analysis.html" class="active">Numerology</a>
+</nav>
+</div>
+</header>
+<div class="ux-container">
+<section class="ux-hero">
+<div class="ux-hero-badge">Lo Shu Grid • Chaldean • Pythagorean</div>
+<h1>Numerology <span class="gold">V3</span></h1>
+<p>Mulank • Bhagyank • Name Number • Lo Shu Grid • Compatibility</p>
+</section>
+
+<div class="ux-card" id="inputCard">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Tithi</label>
+<input type="date" class="ux-input" id="dob" value="1990-05-04">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Poora Naam</label>
+<input type="text" class="ux-input" id="name" value="Rajesh Kumar">
+</div>
+</div>
+<button class="ux-btn ux-btn-block" id="analyzeBtn" onclick="analyzeNumerology()" style="margin-top:24px;font-size:18px;padding:20px;">
+<span>🔢</span> Complete Numerology Dekhein
+</button>
+<div class="ux-error" id="error"></div>
+</div>
+
+<div id="result" style="display:none;">
+<div class="section-title">Basic <span class="gold">Numbers</span></div>
+<div class="num-grid" id="numGrid"></div>
+
+<div class="section-title">Lo Shu <span class="gold">Grid</span></div>
+<div class="lo-shu-grid" id="loShuGrid"></div>
+
+<div class="section-title">Compatibility</div>
+<div id="compatContent"></div>
+</div>
+</div>
+<button class="print-btn" onclick="downloadPDF('result', 'numerology-report')">🖨️ Download PDF</button>
+<footer class="ux-footer"><p>🕉️ Vastu One — Numerology V3</p></footer>
+<script>
+var API_BASE = window.location.origin;
+async function analyzeNumerology() {
+    var dob = document.getElementById('dob').value;
+    var name = document.getElementById('name').value;
+    if (!dob || !name) { document.getElementById('error').textContent = 'Kripya sab fields bharein'; return; }
+    
+    document.getElementById('analyzeBtn').disabled = true;
+    try {
+        var res = await fetch(API_BASE + '/api/numerology-v3/full-report', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({dob: dob, name: name})
+        });
+        var data = await res.json();
+        document.getElementById('numGrid').innerHTML = 
+            card('Mulank', data.mulank.mulank, 'Planet: ' + data.mulank.planet) +
+            card('Bhagyank', data.bhagyank.bhagyank, 'Planet: ' + data.bhagyank.planet) +
+            card('Name Number', data.name_number.name_number, 'Planet: ' + data.name_number.planet);
+        
+        var grid = data.lo_shu_grid;
+        var order = [4,9,2,3,5,7,8,1,6];
+        document.getElementById('loShuGrid').innerHTML = order.map(n => {
+            var count = grid[n] || 0;
+            return '<div class="lo-shu-cell' + (count === 0 ? ' empty' : '') + '">' + (count === 0 ? n : Array(count).fill(n).join('')) + '</div>';
+        }).join('');
+        
+        document.getElementById('compatContent').innerHTML = '<div class="num-card"><div class="num-label">Mulank vs Bhagyank</div><div class="num-value">' + data.compatibility.verdict + '</div></div>';
+        
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('inputCard').style.display = 'none';
+    } catch (err) {
+        document.getElementById('error').textContent = 'Error: ' + err.message;
+    } finally {
+        document.getElementById('analyzeBtn').disabled = false;
+    }
+}
+function card(label, value, sub) {
+    return '<div class="num-card"><div class="num-label">' + label + '</div><div class="num-value">' + value + '</div><div class="num-sub">' + sub + '</div></div>';
+}
+</script>
+</body>
+</html>

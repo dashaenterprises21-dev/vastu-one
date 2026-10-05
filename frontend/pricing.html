@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Package चुनें — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/pricing.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">    
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <a href="/dashboard" class="btn-back">← Dashboard</a>
+    </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+    <div class="container">
+        <div class="om-symbol">🕉️</div>
+        <h1>अपना Package चुनें</h1>
+        <p>जहाँ हर घर शास्त्रों के अनुसार — और हर बजट के लिए एक solution</p>
+
+        <div class="toggle">
+            <button class="toggle-btn active" onclick="toggleBilling('monthly', this)">One-time</button>
+            <button class="toggle-btn" onclick="toggleBilling('annual', this)">Annual (20% off)</button>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PRICING CARDS ═══ -->
+<section class="pricing-section">
+    <div class="container">
+        <div class="pricing-grid">
+
+            <!-- Bronze -->
+            <div class="pricing-card bronze">
+                <div class="card-badge bronze-badge">🥉 BRONZE</div>
+                <div class="card-icon">📄</div>
+                <h3>Basic Report</h3>
+                <p class="card-desc">Test करने के लिए perfect</p>
+                <div class="price">
+                    <span class="currency">₹</span>
+                    <span class="amount" data-monthly="999" data-annual="799">999</span>
+                    <span class="period">/ report</span>
+                </div>
+                <ul class="features">
+                    <li>✅ Basic वास्तु analysis</li>
+                    <li>✅ 5 मुख्य दोष</li>
+                    <li>✅ 5 उपाय + मंत्र</li>
+                    <li>✅ Overall Score</li>
+                    <li>✅ Browser में report</li>
+                    <li class="disabled">❌ PDF download</li>
+                    <li class="disabled">❌ 81 पद चक्र</li>
+                    <li class="disabled">❌ Consultation</li>
+                </ul>
+                <button class="btn-buy bronze-btn" onclick="buyPackage('bronze', 999)">
+                    Buy Bronze — ₹999
+                </button>
+            </div>
+
+            <!-- Silver — POPULAR -->
+            <div class="pricing-card silver popular">
+                <div class="popular-badge">⭐ सबसे लोकप्रिय</div>
+                <div class="card-badge silver-badge">🥈 SILVER</div>
+                <div class="card-icon">📊</div>
+                <h3>Detailed Report</h3>
+                <p class="card-desc">घर के मालिकों के लिए</p>
+                <div class="price">
+                    <span class="currency">₹</span>
+                    <span class="amount" data-monthly="2999" data-annual="2399">2,999</span>
+                    <span class="period">/ report</span>
+                </div>
+                <ul class="features">
+                    <li>✅ Bronze का सब कुछ</li>
+                    <li>✅ 15-page detailed report</li>
+                    <li>✅ 81 पद वास्तु चक्र</li>
+                    <li>✅ 45 देवता status</li>
+                    <li>✅ सारे दोष + उपाय</li>
+                    <li>✅ शास्त्र प्रमाण (बृहत्संहिता)</li>
+                    <li>✅ PDF download</li>
+                    <li class="disabled">❌ Consultation</li>
+                </ul>
+                <button class="btn-buy silver-btn" onclick="buyPackage('silver', 2999)">
+                    Buy Silver — ₹2,999
+                </button>
+            </div>
+
+            <!-- Gold -->
+            <div class="pricing-card gold">
+                <div class="card-badge gold-badge">🥇 GOLD</div>
+                <div class="card-icon">👑</div>
+                <h3>Premium Report</h3>
+                <p class="card-desc">नया घर बनाने वालों के लिए</p>
+                <div class="price">
+                    <span class="currency">₹</span>
+                    <span class="amount" data-monthly="9999" data-annual="7999">9,999</span>
+                    <span class="period">/ report</span>
+                </div>
+                <ul class="features">
+                    <li>✅ Silver का सब कुछ</li>
+                    <li>✅ 30-page ultra report</li>
+                    <li>✅ कक्ष-वार analysis</li>
+                    <li>✅ 16 ज़ोन direction</li>
+                    <li>✅ ब्रह्मस्थान deep audit</li>
+                    <li>✅ सभी 4 शास्त्र प्रमाण</li>
+                    <li>✅ 5-year roadmap</li>
+                    <li>✅ 2 revisions free</li>
+                </ul>
+                <button class="btn-buy gold-btn" onclick="buyPackage('gold', 9999)">
+                    Buy Gold — ₹9,999
+                </button>
+            </div>
+
+            <!-- Platinum -->
+            <div class="pricing-card platinum">
+                <div class="card-badge platinum-badge">💎 PLATINUM</div>
+                <div class="card-icon">🏆</div>
+                <h3>Ultimate Package</h3>
+                <p class="card-desc">Builder / Architect / Serious</p>
+                <div class="price">
+                    <span class="currency">₹</span>
+                    <span class="amount" data-monthly="24999" data-annual="19999">24,999</span>
+                    <span class="period">/ report</span>
+                </div>
+                <ul class="features">
+                    <li>✅ Gold का सब कुछ</li>
+                    <li>✅ 50-page full report</li>
+                    <li>✅ 1:1 Video Consultation (30 min)</li>
+                    <li>✅ बहन से personal call</li>
+                    <li>✅ Custom remedies</li>
+                    <li>✅ Astro-Vastu integration</li>
+                    <li>✅ 1-year support</li>
+                    <li>✅ Lifetime access</li>
+                </ul>
+                <button class="btn-buy platinum-btn" onclick="buyPackage('platinum', 24999)">
+                    Buy Platinum — ₹24,999
+                </button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURES COMPARISON ═══ -->
+<section class="comparison">
+    <div class="container">
+        <h2>पूरी तुलना</h2>
+        <div class="table-wrap">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>🥉 Bronze</th>
+                        <th>🥈 Silver</th>
+                        <th>🥇 Gold</th>
+                        <th>💎 Platinum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>वास्तु Analysis</td><td>Basic</td><td>Detailed</td><td>Complete</td><td>Ultimate</td></tr>
+                    <tr><td>Report Pages</td><td>3-5</td><td>15</td><td>30</td><td>50+</td></tr>
+                    <tr><td>दोष Analysis</td><td>5</td><td>सभी</td><td>सभी</td><td>सभी</td></tr>
+                    <tr><td>81 पद चक्र</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                    <tr><td>45 देवता</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                    <tr><td>शास्त्र प्रमाण</td><td>Basic</td><td>बृहत्संहिता</td><td>सभी 4</td><td>सभी 4</td></tr>
+                    <tr><td>PDF Download</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                    <tr><td>कक्ष-वार</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                    <tr><td>Consultation</td><td>❌</td><td>❌</td><td>❌</td><td>✅ 30 min</td></tr>
+                    <tr><td>1-Year Support</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq">
+    <div class="container">
+        <h2>सामान्य प्रश्न</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <h3>❓ Report कैसे मिलेगी?</h3>
+                <p>Payment के बाद तुरंत आपके dashboard और email पर भेज दी जाएगी।</p>
+            </div>
+            <div class="faq-item">
+                <h3>❓ क्या refund मिलेगा?</h3>
+                <p>7 दिन के अंदर अगर report से संतुष्ट नहीं हैं, तो पूरा refund मिलेगा।</p>
+            </div>
+            <div class="faq-item">
+                <h3>❓ Payment कैसे करें?</h3>
+                <p>Razorpay से — UPI, Card, Net Banking, Wallet — सब accepted।</p>
+            </div>
+            <div class="faq-item">
+                <h3>❓ क्या report बार-बार download कर सकते हैं?</h3>
+                <p>हाँ, Lifetime access — जब चाहें download करें।</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="final-cta">
+    <div class="container">
+        <h2>अभी भी confused?</h2>
+        <p>हमसे WhatsApp पर बात करें — बहन खुद guide करेंगी</p>
+        <a href="https://wa.me/919890602105" class="btn-whatsapp" target="_blank">
+            📞 WhatsApp पर बात करें
+        </a>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p>बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/pricing.js"></script>
+</body>
+</html>

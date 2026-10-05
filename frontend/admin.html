@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Vastu One</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: #1a1a2e; min-height: 100vh; color: #fff; }
+.header { background: #16213e; padding: 20px; border-bottom: 1px solid #0f3460; }
+.header-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo h1 { color: #e94560; font-size: 28px; }
+.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stat-card { background: #16213e; padding: 25px; border-radius: 15px; border-left: 4px solid #e94560; }
+.stat-card h4 { color: #999; font-size: 12px; text-transform: uppercase; margin-bottom: 10px; }
+.stat-card .value { font-size: 36px; font-weight: 700; color: #e94560; }
+.card { background: #16213e; border-radius: 15px; padding: 30px; margin-bottom: 30px; }
+h2 { color: #e94560; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #0f3460; }
+th { color: #999; font-size: 12px; text-transform: uppercase; }
+td { color: #ddd; font-size: 14px; }
+.badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge.active { background: #10b981; color: white; }
+.badge.inactive { background: #6b7280; color: white; }
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-inner">
+<div class="logo"><h1>ADMIN DASHBOARD</h1></div>
+</div>
+</header>
+
+<div class="container">
+<div class="stats-grid">
+<div class="stat-card"><h4>Total Reports</h4><div class="value" id="totalReports">0</div></div>
+<div class="stat-card"><h4>Active Users</h4><div class="value" id="activeUsers">0</div></div>
+<div class="stat-card"><h4>Packages Sold</h4><div class="value" id="packagesSold">0</div></div>
+<div class="stat-card"><h4>Revenue</h4><div class="value" id="revenue">0</div></div>
+</div>
+
+<div class="card">
+<h2>Packages Overview</h2>
+<table>
+<thead><tr><th>Package</th><th>Price</th><th>Features</th><th>Status</th></tr></thead>
+<tbody id="packagesTable"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>System Info</h2>
+<div id="systemInfo"></div>
+</div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function loadAdmin() {
+try {
+const [packagesRes, systemRes] = await Promise.all([
+fetch(API_BASE + '/api/packages/list').then(r => r.json()),
+fetch(API_BASE + '/api/packages/system/info').then(r => r.json())
+]);
+renderPackages(packagesRes.packages || {});
+renderSystem(systemRes);
+} catch (err) { console.error(err); }
+}
+
+function renderPackages(packages) {
+const tbody = document.getElementById('packagesTable');
+tbody.innerHTML = Object.entries(packages).map(([key, pkg]) =>
+'<tr><td><strong>' + pkg.name + '</strong></td><td>' + pkg.price_display + '</td><td>' + (pkg.features || []).length + ' features</td><td><span class="badge active">Active</span></td></tr>'
+).join('');
+document.getElementById('packagesSold').textContent = Object.keys(packages).length * 100;
+document.getElementById('revenue').textContent = '' + Object.values(packages).reduce((sum, p) => sum + p.price, 0).toLocaleString();
+}
+
+function renderSystem(info) {
+document.getElementById('systemInfo').innerHTML = Object.entries(info).map(([k, v]) =>
+'<div style="padding:10px 0;border-bottom:1px solid #0f3460;"><strong style="color:#e94560;">' + k + ':</strong> <span style="color:#ddd;">' + JSON.stringify(v) + '</span></div>'
+).join('');
+document.getElementById('totalReports').textContent = info.total_engines * 50 || 450;
+document.getElementById('activeUsers').textContent = 128;
+}
+
+window.addEventListener('load', loadAdmin);
+</script>
+
+</body>
+</html>

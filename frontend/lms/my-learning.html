@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Learning — VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html" class="active">LMS</a>
+        </div>
+        <div class="flex gap-3" style="align-items: center;">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
+
+    <div class="flex-between mb-6">
+        <div>
+            <h1>My Learning</h1>
+            <p class="text-muted mt-2">Your enrolled courses and progress</p>
+        </div>
+        <a href="/lms/courses.html" class="btn btn-secondary">Browse All Courses</a>
+    </div>
+
+    <div id="enrollments-list">
+        <div class="text-muted text-sm">Loading...</div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+let myEnrollments = [];
+let allCourses = [];
+
+async function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) { console.error(err); }
+}
+
+async function loadEnrollments() {
+    try {
+        VastuAPI.UI.loading(true);
+        
+        // Fetch all data
+        const [enrollments, courses] = await Promise.all([
+            VastuAPI.API.lms.myEnrollments(),
+            VastuAPI.API.lms.listCourses(),
+        ]);
+        
+        myEnrollments = enrollments || [];
+        allCourses = courses || [];
+        
+        renderEnrollments();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderEnrollments() {
+    const el = document.getElementById('enrollments-list');
+    
+    if (!myEnrollments.length) {
+        el.innerHTML = `
+            <div class="card text-center" style="padding: var(--space-8);">
+                <div style="font-size: 64px; margin-bottom: var(--space-5);">🎓</div>
+                <h2 class="mb-3">Start Your Vastu Journey</h2>
+                <p class="text-muted mb-5" style="max-width: 500px; margin: 0 auto var(--space-5);">
+                    You're not enrolled in any courses yet. Explore our professional courses and begin learning today.
+                </p>
+                <a href="/lms/courses.html" class="btn btn-primary btn-lg">Browse Courses</a>
+            </div>
+        `;
+        return;
+    }
+    
+    el.innerHTML = myEnrollments.map(e => {
+        const course = allCourses.find(c => c.id === e.course_id);
+        const progress = Math.round(e.progress_pct || 0);
+        const progressClass = progress >= 80 ? 'good' : progress >= 40 ? 'warn' : '';
+        
+        return `
+            <div class="card mb-5">
+                <div class="flex-between" style="align-items: flex-start; margin-bottom: var(--space-5);">
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 8px;">${escapeHtml(course?.title || 'Course')}</h3>
+                        <p class="text-muted text-sm">${escapeHtml(course?.description || '')}</p>
+                        <div class="text-faint text-xs mt-2">
+                            Enrolled ${VastuAPI.UI.formatDate(e.enrolled_at)}
+                        </div>
+                    </div>
+                    <a href="/lms/course-detail.html?course_id=${e.course_id}" class="btn btn-primary">Continue Learning →</a>
+                </div>
+                
+                <div>
+                    <div class="flex-between mb-2">
+                        <div class="text-xs text-muted">PROGRESS</div>
+                        <div class="text-xs"><strong>${progress}%</strong></div>
+                    </div>
+                    <div style="height: 8px; background: var(--deep-space); border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: ${progress}%; background: linear-gradient(90deg, var(--cosmic-gold), var(--gold-light)); transition: width 0.5s;"></div>
+                    </div>
+                </div>
+                
+                ${progress >= 100 ? `
+                    <div class="card mt-4" style="background: rgba(212, 175, 55, 0.08); border-color: var(--cosmic-gold);">
+                        <div class="flex-between">
+                            <div>
+                                <div class="text-gold text-sm"><strong>🎉 Course Completed!</strong></div>
+                                <div class="text-muted text-xs mt-1">Download your certificate</div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="getCertificate('${e.id}')">Get Certificate</button>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+async function getCertificate(enrollmentId) {
+    try {
+        VastuAPI.UI.loading(true);
+        const cert = await VastuAPI.apiCall(`/api/lms/enrollments/${enrollmentId}/certificate`);
+        if (cert.certificate_available) {
+            VastuAPI.UI.toast('Certificate ready! PDF generation coming soon.', 'success');
+        } else {
+            VastuAPI.UI.toast('Complete the course to unlock certificate', 'info');
+        }
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+async function init() {
+    if (!await requireAuth()) return;
+    await loadUser();
+    await loadEnrollments();
+}
+
+init();
+</script>
+</body>
+</html>

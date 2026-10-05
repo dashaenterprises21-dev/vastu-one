@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vastu Integration — Vastu One</title>
+<link rel="stylesheet" href="/static/premium.css">
+<style>
+    .integration-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .integration-card {
+        background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(255,153,51,0.05) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+    }
+    .integration-card.danger { background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(239,68,68,0.05) 100%); border-color: rgba(239,68,68,0.3); }
+    .integration-card.success { background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.05) 100%); border-color: rgba(16,185,129,0.3); }
+    .integration-label { font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 12px; }
+    .integration-value { font-family: var(--font-display); font-size: 42px; font-weight: 800; background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 8px; }
+    .integration-value.danger { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .integration-value.success { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .integration-sub { font-size: 16px; color: var(--text-secondary); font-weight: 500; }
+
+    .direction-selector { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin: 20px 0; }
+    .direction-btn {
+        padding: 14px 8px;
+        background: rgba(255,255,255,0.04);
+        border: 2px solid var(--border-subtle);
+        border-radius: var(--radius);
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-family: var(--font-sans);
+        text-align: center;
+    }
+    .direction-btn:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); }
+    .direction-btn.active { background: var(--grad-gold); color: #0a0a0f; border-color: var(--gold); box-shadow: var(--shadow-gold); }
+    .direction-btn small { display: block; font-size: 10px; opacity: 0.7; margin-top: 2px; font-family: var(--font-hindi); }
+
+    .alert-card { padding: 20px; border-radius: var(--radius-md); border-left: 4px solid; margin-bottom: 16px; background: rgba(255,255,255,0.03); }
+    .alert-card.critical { border-color: var(--danger); background: rgba(239,68,68,0.08); }
+    .alert-card.high { border-color: var(--warning); background: rgba(245,158,11,0.08); }
+    .alert-card.safe { border-color: var(--success); background: rgba(16,185,129,0.08); }
+    .alert-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .alert-type.critical { color: var(--danger); }
+    .alert-type.high { color: var(--warning); }
+    .alert-type.safe { color: var(--success); }
+    .alert-message { font-size: 15px; color: var(--text-primary); font-weight: 600; margin-bottom: 8px; }
+    .alert-remedy { font-size: 13px; color: var(--text-secondary); padding: 10px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); margin-top: 8px; }
+    .alert-remedy strong { color: var(--gold); }
+
+    .score-circle-wrap { display: flex; align-items: center; gap: 24px; }
+    .score-circle { width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: conic-gradient(var(--gold) 0deg, var(--gold) var(--score-deg, 342deg), rgba(255,255,255,0.05) var(--score-deg, 342deg)); position: relative; }
+    .score-circle::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: var(--bg-primary); }
+    .score-circle-inner { position: relative; z-index: 1; text-align: center; }
+    .score-number { font-family: var(--font-display); font-size: 36px; font-weight: 800; color: var(--gold); line-height: 1; }
+    .score-label { font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-top: 4px; }
+
+    /* 16-Zone Grid */
+    .zone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+    .zone-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius);
+        padding: 16px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    .zone-card:hover { border-color: var(--border-gold); transform: translateY(-2px); }
+    .zone-card.strong { border-left: 4px solid var(--success); }
+    .zone-card.moderate { border-left: 4px solid var(--warning); }
+    .zone-card.weak { border-left: 4px solid var(--danger); }
+    .zone-card.bhadhaka { box-shadow: inset 0 0 0 2px var(--danger); }
+    .zone-card.door { box-shadow: inset 0 0 0 2px var(--gold); }
+    .zone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .zone-dir { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+    .zone-dir small { font-family: var(--font-hindi); font-size: 11px; color: var(--text-tertiary); display: block; font-weight: 500; }
+    .zone-score { font-size: 20px; font-weight: 800; }
+    .zone-score.strong { color: var(--success); }
+    .zone-score.moderate { color: var(--warning); }
+    .zone-score.weak { color: var(--danger); }
+    .zone-planet { font-size: 11px; color: var(--gold); font-weight: 600; margin-top: 4px; }
+    .zone-tag { font-size: 9px; padding: 2px 6px; border-radius: 100px; font-weight: 700; text-transform: uppercase; margin-top: 6px; display: inline-block; }
+    .zone-tag.bhadhaka { background: rgba(239,68,68,0.2); color: var(--danger); }
+    .zone-tag.door { background: rgba(212,175,55,0.2); color: var(--gold); }
+
+    /* Element Balance */
+    .element-bar-wrap { display: flex; flex-direction: column; gap: 12px; }
+    .element-bar-item { display: grid; grid-template-columns: 100px 1fr 80px; gap: 12px; align-items: center; }
+    .element-name { font-size: 14px; font-weight: 700; color: var(--text-primary); text-transform: capitalize; }
+    .element-name small { font-family: var(--font-hindi); color: var(--gold); display: block; font-size: 11px; font-weight: 500; }
+    .element-bar { height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; }
+    .element-fill { height: 100%; border-radius: 5px; transition: width 1s var(--ease); }
+    .element-fill.balanced { background: var(--grad-gold); }
+    .element-fill.excess { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+    .element-fill.deficient { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .element-status { font-size: 12px; font-weight: 700; text-align: right; }
+    .element-status.balanced { color: var(--success); }
+    .element-status.excess { color: var(--warning); }
+    .element-status.deficient { color: var(--danger); }
+
+    /* Room Recommendations Table */
+    .room-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .room-table th { text-align: left; padding: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); font-weight: 700; border-bottom: 1px solid var(--border-subtle); }
+    .room-table td { padding: 12px; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); }
+    .room-table tr:hover td { background: rgba(212,175,55,0.03); }
+    .room-name { color: var(--text-primary); font-weight: 700; }
+    .room-best { color: var(--success); font-weight: 700; }
+    .room-avoid { color: var(--danger); font-weight: 700; }
+
+    /* Sync Card */
+    .sync-card { padding: 20px; border-radius: var(--radius-md); background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); }
+    .sync-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+    .sync-row:last-child { border-bottom: none; }
+    .sync-label { font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .sync-value { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .sync-status { padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+    .sync-status.high { background: rgba(16,185,129,0.2); color: var(--success); }
+    .sync-status.low { background: rgba(245,158,11,0.2); color: var(--warning); }
+
+    /* Priority Remedies */
+    .priority-item { padding: 18px; border-radius: var(--radius); margin-bottom: 12px; border-left: 4px solid; }
+    .priority-item.high { border-color: var(--danger); background: rgba(239,68,68,0.08); }
+    .priority-item.medium { border-color: var(--warning); background: rgba(245,158,11,0.08); }
+    .priority-item.low { border-color: var(--info); background: rgba(59,130,246,0.08); }
+    .priority-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .priority-level { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; border-radius: 100px; }
+    .priority-level.high { background: rgba(239,68,68,0.2); color: var(--danger); }
+    .priority-level.medium { background: rgba(245,158,11,0.2); color: var(--warning); }
+    .priority-level.low { background: rgba(59,130,246,0.2); color: var(--info); }
+    .priority-cat { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .priority-remedy { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+    .priority-meta { display: flex; gap: 16px; margin-top: 8px; font-size: 11px; color: var(--text-tertiary); }
+    .priority-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Remedy cards */
+    .remedy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .remedy-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 18px; transition: var(--transition); }
+    .remedy-card:hover { border-color: var(--border-gold); transform: translateY(-2px); }
+    .remedy-card h4 { font-size: 14px; font-weight: 800; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .remedy-card ul { list-style: none; padding: 0; }
+    .remedy-card li { padding: 6px 0; color: var(--text-secondary); font-size: 13px; border-bottom: 1px solid var(--border-subtle); }
+    .remedy-card li:last-child { border-bottom: none; }
+    .remedy-card li::before { content: '→ '; color: var(--gold); font-weight: 700; margin-right: 6px; }
+
+    .section-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text-primary); margin: 40px 0 16px; letter-spacing: -0.02em; }
+    .section-title .gold { background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    @media (max-width: 768px) {
+        .integration-hero { grid-template-columns: 1fr; }
+        .direction-selector { grid-template-columns: repeat(4, 1fr); }
+        .zone-grid { grid-template-columns: repeat(2, 1fr); }
+        .score-circle-wrap { flex-direction: column; text-align: center; }
+        .element-bar-item { grid-template-columns: 80px 1fr 60px; }
+    }
+
+    .ux-loading { display: none; text-align: center; padding: 60px 20px; }
+    .ux-loading.show { display: block; }
+</style>
+</head>
+<body>
+
+<header class="ux-header">
+<div class="ux-header-inner">
+<a href="/" class="ux-logo">
+<div class="ux-logo-mark">🏠</div>
+<div class="ux-logo-text">
+<h1>VASTU ONE</h1>
+<p>Vastu Integration</p>
+</div>
+</a>
+<nav class="ux-nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/vastu-integration.html" class="active">Vastu Integration</a>
+<a href="/numerology-analysis.html">Numerology</a>
+<a href="/marma-points.html">Marma</a>
+<a href="/packages.html">Packages</a>
+</nav>
+</div>
+</header>
+
+<div class="ux-container">
+
+<section class="ux-hero">
+<div class="ux-hero-badge">Astro + Vastu • Humara USP</div>
+<h1>Complete <span class="gold">Vastu Integration</span></h1>
+<p>16-Zone Audit • 5-Element Balance • Room Recommendations • Property-Dasha Sync • Priority Remedies</p>
+</section>
+
+<!-- Input Card -->
+<div class="ux-card ux-animate" id="inputCard">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Tithi</label>
+<input type="date" class="ux-input" id="dob" value="1990-05-04">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Samay</label>
+<input type="time" class="ux-input" id="tob" value="21:35">
+</div>
+<div class="ux-form-group" style="margin-bottom:0;">
+<label class="ux-label">Janm Sthan</label>
+<input type="text" class="ux-input" id="place" value="Bhandara, Maharashtra">
+</div>
+</div>
+
+<div style="margin-top:20px;">
+<label class="ux-label">Main Door Direction (Ghar ka mukhya dwar)</label>
+<div class="direction-selector" id="directionSelector">
+<button class="direction-btn" data-dir="N" onclick="selectDirection('N', this)">N<small>उत्तर</small></button>
+<button class="direction-btn" data-dir="NE" onclick="selectDirection('NE', this)">NE<small>ईशान</small></button>
+<button class="direction-btn" data-dir="E" onclick="selectDirection('E', this)">E<small>पूर्व</small></button>
+<button class="direction-btn" data-dir="SE" onclick="selectDirection('SE', this)">SE<small>आग्नेय</small></button>
+<button class="direction-btn" data-dir="S" onclick="selectDirection('S', this)">S<small>दक्षिण</small></button>
+<button class="direction-btn" data-dir="SW" onclick="selectDirection('SW', this)">SW<small>नैऋत्य</small></button>
+<button class="direction-btn" data-dir="W" onclick="selectDirection('W', this)">W<small>पश्चिम</small></button>
+<button class="direction-btn" data-dir="NW" onclick="selectDirection('NW', this)">NW<small>वायव्य</small></button>
+</div>
+</div>
+
+<button class="ux-btn ux-btn-block" id="analyzeBtn" onclick="analyzeIntegration()" style="margin-top:20px;">
+<span>🏠</span> Complete Vastu Integration Dekhein
+</button>
+<div class="ux-error" id="error"></div>
+</div>
+
+<div class="ux-loading" id="loading">
+<div class="ux-spinner"></div>
+<p>Complete integration calculate ho raha hai...</p>
+</div>
+
+<!-- Results -->
+<div id="result" style="display:none;">
+
+<!-- Score + Summary -->
+<div class="integration-hero">
+<div class="integration-card" id="scoreCard">
+<div class="score-circle-wrap">
+<div class="score-circle" id="scoreCircle">
+<div class="score-circle-inner">
+<div class="score-number" id="scoreNumber">—</div>
+<div class="score-label">Score</div>
+</div>
+</div>
+<div>
+<div class="integration-label">Integration Score</div>
+<div class="integration-value" id="scoreGrade">—</div>
+<div class="integration-sub" id="scoreStatus">—</div>
+</div>
+</div>
+</div>
+<div class="integration-card" id="summaryCard">
+<div class="integration-label">Summary</div>
+<div id="summaryContent"></div>
+</div>
+</div>
+
+<!-- Bhadhaka + Door -->
+<div class="integration-hero">
+<div class="integration-card" id="bhadhakaCard">
+<div class="integration-label">Bhadhaka Planet</div>
+<div class="integration-value" id="bhadhakaValue">—</div>
+<div class="integration-sub" id="bhadhakaSub">—</div>
+<div style="margin-top:16px;" id="bhadhakaMeta"></div>
+</div>
+<div class="integration-card" id="doorCard">
+<div class="integration-label">Main Door Direction</div>
+<div class="integration-value" id="doorValue">—</div>
+<div class="integration-sub" id="doorSub">—</div>
+<div style="margin-top:16px;" id="doorMeta"></div>
+</div>
+</div>
+
+<!-- 16-Zone Audit -->
+<div class="section-title">16-Zone <span class="gold">Directional Audit</span></div>
+<div id="zoneStats" style="margin-bottom:16px;"></div>
+<div class="zone-grid" id="zoneGrid"></div>
+
+<!-- Element Balance -->
+<div class="section-title">5-Element <span class="gold">Balance</span></div>
+<div class="element-bar-wrap" id="elementBars"></div>
+
+<!-- Bhadhaka vs Door -->
+<div class="section-title">Bhadhaka <span class="gold">vs</span> Main Door</div>
+<div id="comparisonContent"></div>
+
+<!-- Dasha Alert -->
+<div class="section-title">Dasha <span class="gold">Alert</span></div>
+<div id="dashaAlertContent"></div>
+
+<!-- Property-Dasha Sync -->
+<div class="section-title">Property-Dasha <span class="gold">Sync</span></div>
+<div class="sync-card" id="syncContent"></div>
+
+<!-- Room Recommendations -->
+<div class="section-title">Room-wise <span class="gold">Recommendations</span></div>
+<div style="overflow-x:auto;">
+<table class="room-table">
+<thead><tr><th>Room</th><th>Best Direction</th><th>Avoid</th><th>Element</th></tr></thead>
+<tbody id="roomTable"></tbody>
+</table>
+</div>
+
+<!-- Priority Remedies -->
+<div class="section-title">Priority <span class="gold">Remedies</span></div>
+<div id="priorityContent"></div>
+
+<!-- Vastu Remedies -->
+<div class="section-title">Detailed <span class="gold">Remedies</span></div>
+<div id="remediesContent"></div>
+
+</div>
+
+</div>
+
+<footer class="ux-footer">
+<p>🕉️ Vastu One — Complete Astro + Vastu Integration</p>
+<p style="margin-top:8px;font-size:12px;color:var(--text-muted);">16-Zone Audit • Element Balance • Room Recommendations • Property-Dasha Sync</p>
+</footer>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+let selectedDirection = 'N';
+
+function selectDirection(dir, el) {
+    selectedDirection = dir;
+    document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function analyzeIntegration() {
+    const dob = document.getElementById('dob').value;
+    const tob = document.getElementById('tob').value || '12:00';
+    const place = document.getElementById('place').value || 'Unknown';
+
+    if (!dob) { showError('Kripya janm tithi daalein'); return; }
+
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('error').classList.remove('show');
+    document.getElementById('result').style.display = 'none';
+
+    try {
+        const response = await fetch(API_BASE + '/api/vastu-astro/full-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dob, tob, place, main_door_direction: selectedDirection })
+        });
+        if (!response.ok) throw new Error('API error');
+        const data = await response.json();
+
+        renderScore(data.integration_score || {});
+        renderSummary(data.summary || {});
+        renderBhadhaka(data.bhadhaka || {});
+        renderDoor(data.main_door || {});
+        renderZoneAudit(data.zone_audit || {});
+        renderElementBalance(data.element_balance || {});
+        renderComparison(data.comparison || {});
+        renderDashaAlert(data.dasha_alert || {});
+        renderSync(data.property_dasha_sync || {});
+        renderRooms(data.room_recommendations || {});
+        renderPriority(data.priority_remedies || []);
+        renderRemedies(data.remedies || {});
+
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('inputCard').style.display = 'none';
+    } catch (err) {
+        showError('Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+function renderScore(score) {
+    const total = score.total_score || 0;
+    document.getElementById('scoreNumber').textContent = total;
+    document.getElementById('scoreCircle').style.setProperty('--score-deg', (total / 100 * 360) + 'deg');
+    document.getElementById('scoreGrade').textContent = score.grade || '—';
+    document.getElementById('scoreStatus').textContent = score.status || '—';
+    const card = document.getElementById('scoreCard');
+    card.classList.remove('danger', 'success');
+    if (total >= 70) card.classList.add('success');
+    else if (total < 55) card.classList.add('danger');
+}
+
+function renderSummary(s) {
+    document.getElementById('summaryContent').innerHTML =
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+        summaryItem('Bhadhaka Planet', s.bhadhaka_planet) +
+        summaryItem('Main Door', s.main_door) +
+        summaryItem('Severity', s.severity) +
+        summaryItem('Dasha Status', s.dasha_status) +
+        '</div>';
+}
+
+function summaryItem(label, value) {
+    return '<div><div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;">' + label + '</div><div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-top:4px;">' + (value || '-') + '</div></div>';
+}
+
+function renderBhadhaka(b) {
+    document.getElementById('bhadhakaValue').textContent = b.bhadhaka_hindi || '—';
+    document.getElementById('bhadhakaSub').textContent = b.bhadhaka_planet + ' • ' + b.bhadhaka_direction + ' (' + b.bhadhaka_direction_hindi + ')';
+    document.getElementById('bhadhakaMeta').innerHTML =
+        '<div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">' +
+        '<div><strong style="color:var(--gold);">Lagna:</strong> ' + (b.lagna_hindi || '') + ' (' + (b.lagna_rashi || '') + ')</div>' +
+        '<div><strong style="color:var(--gold);">Element:</strong> ' + (b.bhadhaka_element || '') + '</div>' +
+        '<div><strong style="color:var(--gold);">Deity:</strong> ' + (b.bhadhaka_deity || '') + '</div>' +
+        '</div>';
+}
+
+function renderDoor(d) {
+    document.getElementById('doorValue').textContent = d.hindi || '—';
+    document.getElementById('doorSub').textContent = d.direction + ' • ' + (d.planet || '') + ' (' + (d.planet_hindi || '') + ')';
+    document.getElementById('doorMeta').innerHTML =
+        '<div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">' +
+        '<div><strong style="color:var(--gold);">Element:</strong> ' + (d.element || '') + '</div>' +
+        '<div><strong style="color:var(--gold);">Deity:</strong> ' + (d.deity || '') + '</div>' +
+        '<div><strong style="color:var(--gold);">Auspicious:</strong> ' + (d.auspicious ? '✅ Yes' : '⚠️ No') + '</div>' +
+        '</div>';
+}
+
+function renderZoneAudit(z) {
+    const zones = z.zones || {};
+    document.getElementById('zoneStats').innerHTML =
+        '<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;">' +
+        '<span><strong style="color:var(--gold);">Average:</strong> ' + (z.average_score || 0) + '</span>' +
+        '<span><strong style="color:var(--success);">Strong:</strong> ' + (z.strong_zones || []).length + '</span>' +
+        '<span><strong style="color:var(--danger);">Weak:</strong> ' + (z.weak_zones || []).length + '</span>' +
+        '</div>';
+
+    const order = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    document.getElementById('zoneGrid').innerHTML = order.map(d => {
+        const zone = zones[d];
+        if (!zone) return '';
+        const status = (zone.status || '').toLowerCase();
+        let tags = '';
+        if (zone.is_bhadhaka) tags += '<span class="zone-tag bhadhaka">Bhadhaka</span> ';
+        if (zone.is_main_door) tags += '<span class="zone-tag door">Main Door</span>';
+        return '<div class="zone-card ' + status + (zone.is_bhadhaka ? ' bhadhaka' : '') + (zone.is_main_door ? ' door' : '') + '">' +
+            '<div class="zone-header"><div class="zone-dir">' + d + '<small>' + zone.hindi + '</small></div>' +
+            '<div class="zone-score ' + status + '">' + zone.score + '</div></div>' +
+            '<div class="zone-planet">' + zone.planet + ' (' + zone.planet_hindi + ')</div>' +
+            '<div class="zone-planet" style="color:var(--text-tertiary);">' + (zone.planet_status || '') + '</div>' +
+            '<div>' + tags + '</div></div>';
+    }).join('');
+}
+
+function renderElementBalance(elements) {
+    const elementHindi = { fire: 'अग्नि', earth: 'पृथ्वी', air: 'वायु', water: 'जल', space: 'आकाश' };
+    document.getElementById('elementBars').innerHTML = Object.entries(elements).map(([name, data]) => {
+        const status = data.status.includes('Balanced') ? 'balanced' : (data.status.includes('Excess') ? 'excess' : 'deficient');
+        const statusText = data.status.replace('✅', '').replace('⚠️', '').replace('🔴', '').trim();
+        return '<div class="element-bar-item">' +
+            '<div class="element-name">' + name + '<small>' + (elementHindi[name] || '') + '</small></div>' +
+            '<div class="element-bar"><div class="element-fill ' + status + '" style="width:' + data.avg_score + '%"></div></div>' +
+            '<div class="element-status ' + status + '">' + data.avg_score + ' — ' + statusText + '</div>' +
+            '</div>';
+    }).join('');
+}
+
+function renderComparison(c) {
+    const severity = c.severity || 'Low';
+    let alertClass = 'safe';
+    if (severity === 'Critical') alertClass = 'critical';
+    else if (severity === 'High') alertClass = 'high';
+
+    document.getElementById('comparisonContent').innerHTML =
+        '<div class="alert-card ' + alertClass + '">' +
+        '<div class="alert-type ' + alertClass + '">Severity: ' + severity + '</div>' +
+        '<div class="alert-message">' + (c.message || '') + '</div>' +
+        '<div class="alert-remedy"><strong>Remedy:</strong> ' + (c.remedy || 'Koi remedy nahi') + '</div>' +
+        (c.affected_areas && c.affected_areas.length ? '<div style="margin-top:12px;font-size:12px;color:var(--text-tertiary);"><strong style="color:var(--gold);">Affected Areas:</strong> ' + c.affected_areas.join(', ') + '</div>' : '') +
+        '</div>';
+}
+
+function renderDashaAlert(d) {
+    const md = d.current_mahadasha || {};
+    const ad = d.current_antardasha || {};
+    const alerts = d.alerts || [];
+
+    let html = '<div class="integration-hero">' +
+        '<div class="integration-card"><div class="integration-label">Current Mahadasha</div>' +
+        '<div class="integration-value">' + (md.planet || '—') + '</div>' +
+        '<div class="integration-sub">' + (md.hindi || '') + ' • ' + (md.direction || '') + ' (' + (md.direction_hindi || '') + ')</div>' +
+        '<div style="margin-top:12px;font-size:12px;color:var(--text-tertiary);">' + (md.period || '') + '</div></div>' +
+        '<div class="integration-card"><div class="integration-label">Current Antardasha</div>' +
+        '<div class="integration-value">' + (ad.planet || '—') + '</div>' +
+        '<div class="integration-sub">' + (ad.hindi || '') + ' • ' + (ad.direction || '') + ' (' + (ad.direction_hindi || '') + ')</div>' +
+        '<div style="margin-top:12px;font-size:12px;color:var(--text-tertiary);">' + (ad.period || '') + '</div></div></div>';
+
+    if (alerts.length === 0) {
+        html += '<div class="alert-card safe"><div class="alert-type safe">✅ Safe</div>' +
+            '<div class="alert-message">Current dasha planets ki direction main door se match nahi kar rahi — koi alert nahi</div></div>';
+    } else {
+        alerts.forEach(a => {
+            const cls = a.type === 'Critical' ? 'critical' : 'high';
+            html += '<div class="alert-card ' + cls + '">' +
+                '<div class="alert-type ' + cls + '">' + a.type + ' Alert</div>' +
+                '<div class="alert-message">' + a.message + '</div>' +
+                '<div class="alert-remedy"><strong>Remedy:</strong> ' + a.remedy + '</div></div>';
+        });
+    }
+    document.getElementById('dashaAlertContent').innerHTML = html;
+}
+
+function renderSync(s) {
+    const cls = s.synchronicity && s.synchronicity.includes('High') ? 'high' : 'low';
+    document.getElementById('syncContent').innerHTML =
+        '<div class="sync-row"><span class="sync-label">Current Mahadasha</span><span class="sync-value">' + (s.current_mahadasha || '-') + '</span></div>' +
+        '<div class="sync-row"><span class="sync-label">Mahadasha Direction</span><span class="sync-value">' + (s.md_direction || '-') + '</span></div>' +
+        '<div class="sync-row"><span class="sync-label">Main Door Direction</span><span class="sync-value">' + (s.main_door || '-') + '</span></div>' +
+        '<div class="sync-row"><span class="sync-label">Synchronicity</span><span class="sync-status ' + cls + '">' + (s.synchronicity || '-') + '</span></div>' +
+        '<div style="margin-top:12px;padding:12px;background:rgba(212,175,55,0.08);border-radius:8px;font-size:13px;color:var(--text-secondary);">' + (s.message || '') + '</div>';
+}
+
+function renderRooms(rooms) {
+    document.getElementById('roomTable').innerHTML = Object.values(rooms).map(r =>
+        '<tr><td class="room-name">' + r.room + '</td>' +
+        '<td class="room-best">' + (r.best_directions || []).join(', ') + '</td>' +
+        '<td class="room-avoid">' + (r.avoid_directions || []).join(', ') + '</td>' +
+        '<td>' + r.element + '</td></tr>'
+    ).join('');
+}
+
+function renderPriority(remedies) {
+    document.getElementById('priorityContent').innerHTML = remedies.map(r => {
+        const cls = (r.priority || 'low').toLowerCase();
+        return '<div class="priority-item ' + cls + '">' +
+            '<div class="priority-header"><span class="priority-cat">' + r.category + '</span>' +
+            '<span class="priority-level ' + cls + '">' + r.priority + '</span></div>' +
+            '<div class="priority-remedy">' + r.remedy + '</div>' +
+            '<div class="priority-meta"><span>💰 ' + r.cost + '</span><span>⏱️ ' + r.duration + '</span></div>' +
+            '</div>';
+    }).join('');
+}
+
+function renderRemedies(r) {
+    let html = '<div class="remedy-grid">';
+    if (r.remedies && r.remedies.length) {
+        html += '<div class="remedy-card"><h4>🌍 Element Remedies</h4><ul>' + r.remedies.map(x => '<li>' + x + '</li>').join('') + '</ul></div>';
+    }
+    if (r.planet_remedies && r.planet_remedies.length) {
+        html += '<div class="remedy-card"><h4>🪐 ' + (r.bhadhaka_hindi || '') + ' Remedies</h4><ul>' + r.planet_remedies.map(x => '<li>' + x + '</li>').join('') + '</ul></div>';
+    }
+    if (r.main_door && r.main_door.remedies) {
+        html += '<div class="remedy-card"><h4>🚪 Main Door Remedies</h4><ul>' + r.main_door.remedies.map(x => '<li>' + x + '</li>').join('') + '</ul></div>';
+    }
+    html += '</div>';
+    document.getElementById('remediesContent').innerHTML = html;
+}
+
+function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('show');
+}
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        selectDirection('N', document.querySelector('[data-dir="N"]'));
+        analyzeIntegration();
+    }, 500);
+});
+</script>
+</body>
+</html>

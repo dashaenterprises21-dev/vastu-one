@@ -1,0 +1,369 @@
+{
+  "version": "2.0",
+  "source": "Brihat Samhita + Mayamata + Manasara + Samarangana Sutradhara",
+  "rules": {
+    "kitchen": {
+      "hindi": "रसोई",
+      "icon": "🍳",
+      "element": "fire",
+      "best_directions": ["SE", "E", "S"],
+      "bad_directions": ["NE", "N", "SW"],
+      "shastra": {
+        "source": "Samarangana Sutradhara",
+        "chapter": 53,
+        "meaning": "अग्नि कोण (SE) रसोई के लिए श्रेष्ठ है — अग्नि देव का वास"
+      },
+      "impact": {
+        "best": "परिवार में स्वास्थ्य, समृद्धि और सुख-शांति",
+        "bad": "घर में कलह, रोग, धन-हानि"
+      },
+      "remedies": {
+        "if_bad": [
+          "रसोई में लाल रंग का use करें",
+          "ताम्र (copper) के बर्तन रखें",
+          "अग्नि देवता का पूजन करें",
+          "SE में लाल बल्ब जलाएँ"
+        ],
+        "mantra": "ॐ अग्नये नमः"
+      }
+    },
+    "bedroom": {
+      "hindi": "शयनकक्ष",
+      "icon": "🛏️",
+      "element": "earth",
+      "best_directions": ["SW", "S", "W"],
+      "bad_directions": ["NE", "SE", "N"],
+      "shastra": {
+        "source": "Mayamata",
+        "chapter": 32,
+        "meaning": "दक्षिण-पश्चिम (SW) शयनकक्ष के लिए श्रेष्ठ — स्थिरता और नींद"
+      },
+      "impact": {
+        "best": "गहरी नींद, मानसिक शांति, दांपत्य सुख",
+        "bad": "अनिद्रा, तनाव, स्वास्थ्य समस्याएँ"
+      },
+      "remedies": {
+        "if_bad": [
+          "बिस्तर का मुँह दक्षिण या पूर्व रखें",
+          "पीले रंग का use करें",
+          "ताम्र यंत्र रखें",
+          "SW में भारी furniture रखें"
+        ],
+        "mantra": "ॐ पृथ्व्यै नमः"
+      }
+    },
+    "master_bedroom": {
+      "hindi": "मुख्य शयनकक्ष",
+      "icon": "🛏️",
+      "element": "earth",
+      "best_directions": ["SW"],
+      "bad_directions": ["NE", "SE", "N", "NW"],
+      "shastra": {
+        "source": "Brihat Samhita",
+        "chapter": 53,
+        "meaning": "गृहस्वामी का कक्ष दक्षिण-पश्चिम (SW) में शुभ — पितर देव का क्षेत्र"
+      },
+      "impact": {
+        "best": "स्वामी की उन्नति, परिवार में स्थिरता, वंश वृद्धि",
+        "bad": "स्वामी की हानि, गृह कलह, आर्थिक नुकसान"
+      },
+      "remedies": {
+        "if_bad": [
+          "सोने का मुँह दक्षिण दिशा में करें",
+          "SW में भारी सामान रखें",
+          "पितर देव का पूजन करें",
+          "भूरे/पीले रंग का use करें"
+        ],
+        "mantra": "ॐ पितृभ्यो नमः"
+      }
+    },
+    "living": {
+      "hindi": "बैठक",
+      "icon": "🛋️",
+      "element": "water",
+      "best_directions": ["N", "E", "NE", "NW"],
+      "bad_directions": ["SW", "S", "W"],
+      "shastra": {
+        "source": "Brihat Samhita",
+        "chapter": 53,
+        "meaning": "उत्तर-पूर्व (NE) बैठक में धन-वृद्धि और संवाद"
+      },
+      "impact": {
+        "best": "धन-वृद्धि, सामाजिक प्रतिष्ठा, सुख-समृद्धि",
+        "bad": "आर्थिक समस्याएँ, कलह, अपयश"
+      },
+      "remedies": {
+        "if_bad": [
+          "जल फव्वारा रखें",
+          "हल्के रंग use करें",
+          "कुबेर देव का पूजन करें"
+        ],
+        "mantra": "ॐ कुबेराय नमः"
+      }
+    },
+    "dining": {
+      "hindi": "भोजन कक्ष",
+      "icon": "🍽️",
+      "element": "fire",
+      "best_directions": ["W", "E", "S"],
+      "bad_directions": ["NE", "SE", "N"],
+      "shastra": {
+        "source": "Mayamata",
+        "chapter": 32,
+        "meaning": "पश्चिम (W) भोजन के लिए शुभ — अन्नपूर्णा का वास"
+      },
+      "impact": {
+        "best": "अन्न की प्रचुरता, स्वास्थ्य, परिवार में प्रेम",
+        "bad": "भोजन संबंधी रोग, अन्न की कमी"
+      },
+      "remedies": {
+        "if_bad": [
+          "भोजन के समय मुँह पूर्व की ओर",
+          "ताम्र बर्तन use करें",
+          "अन्नपूर्णा माता का पूजन"
+        ],
+        "mantra": "ॐ अन्नपूर्णायै नमः"
+      }
+    },
+    "toilet": {
+      "hindi": "शौचालय",
+      "icon": "🚿",
+      "element": "air",
+      "best_directions": ["NW", "W", "S"],
+      "bad_directions": ["NE", "SE", "CENTER", "N", "SW"],
+      "shastra": {
+        "source": "Brihat Samhita",
+        "chapter": 53,
+        "meaning": "ईशान (NE) में शौचालय = वंश नाश (सबसे बड़ा दोष)"
+      },
+      "impact": {
+        "best": "स्वास्थ्य ठीक, वायु संचार",
+        "bad": "गंभीर रोग, धन-नाश, वंश वृद्धि रुकती, कुंडली दोष"
+      },
+      "remedies": {
+        "if_bad": [
+          "समुद्री नमक रखें हर कोने में",
+          "ताम्र (copper) प्लेट रखें",
+          "तुलसी का पौधा लगाएँ",
+          "प्रतिदिन गंगाजल का छिड़काव",
+          "नीला बल्ब लगाएँ",
+          "महामृत्युंजय मंत्र का जाप"
+        ],
+        "mantra": "ॐ त्र्यम्बकं यजामहे"
+      }
+    },
+    "bathroom": {
+      "hindi": "स्नानघर",
+      "icon": "🛁",
+      "element": "water",
+      "best_directions": ["E", "N", "NE"],
+      "bad_directions": ["SE", "SW", "S"],
+      "shastra": {
+        "source": "Mayamata",
+        "chapter": 32,
+        "meaning": "पूर्व या उत्तर में स्नानघर शुभ"
+      },
+      "impact": {
+        "best": "स्वास्थ्य, पवित्रता, मन की शांति",
+        "bad": "स्वास्थ्य समस्याएँ, रोग"
+      },
+      "remedies": {
+        "if_bad": [
+          "समुद्री नमक रखें",
+          "हल्के नीले रंग use करें",
+          "जल देवता का पूजन"
+        ],
+        "mantra": "ॐ वरुणाय नमः"
+      }
+    },
+    "pooja": {
+      "hindi": "पूजा स्थल",
+      "icon": "🙏",
+      "element": "space",
+      "best_directions": ["NE", "E", "N"],
+      "bad_directions": ["S", "SW", "W"],
+      "shastra": {
+        "source": "Vishvakarma Prakash",
+        "chapter": 5,
+        "meaning": "ईशान (NE) में पूजा स्थल = मोक्ष, आध्यात्मिक ऊर्जा"
+      },
+      "impact": {
+        "best": "आध्यात्मिक उन्नति, मन की शांति, भगवत कृपा",
+        "bad": "मन अशांत, आध्यात्मिक पतन"
+      },
+      "remedies": {
+        "if_bad": [
+          "पूजा स्थल NE में shift करें",
+          "तुलसी का पौधा रखें",
+          "शंख, घंटी रखें",
+          "प्रतिदिन दीपक जलाएँ"
+        ],
+        "mantra": "ॐ नमः शिवाय"
+      }
+    },
+    "balcony": {
+      "hindi": "छज्जा",
+      "icon": "🌅",
+      "element": "space",
+      "best_directions": ["E", "N", "NE"],
+      "bad_directions": ["SW", "S"],
+      "shastra": {
+        "source": "Brihat Samhita",
+        "chapter": 53,
+        "meaning": "पूर्व या उत्तर में बालकनी शुभ"
+      },
+      "impact": {
+        "best": "सकारात्मक ऊर्जा, स्वास्थ्य",
+        "bad": "नकारात्मक ऊर्जा"
+      },
+      "remedies": {
+        "if_bad": [
+          "हरी पौधे लगाएँ",
+          "हल्के रंग use करें"
+        ],
+        "mantra": "ॐ वायवे नमः"
+      }
+    },
+    "store": {
+      "hindi": "भंडार",
+      "icon": "📦",
+      "element": "earth",
+      "best_directions": ["SW", "W", "S"],
+      "bad_directions": ["NE", "N"],
+      "shastra": {
+        "source": "Mayamata",
+        "chapter": 32,
+        "meaning": "दक्षिण-पश्चिम में भंडार कक्ष शुभ"
+      },
+      "impact": {
+        "best": "धन-धान्य का संचय",
+        "bad": "आर्थिक अस्थिरता"
+      },
+      "remedies": {
+        "if_bad": [
+          "अनाज भरें",
+          "पीले रंग का use करें"
+        ],
+        "mantra": "ॐ धनदाय नमः"
+      }
+    },
+    "staircase": {
+      "hindi": "सीढ़ी",
+      "icon": "🪜",
+      "element": "air",
+      "best_directions": ["SW", "S", "W"],
+      "bad_directions": ["NE", "CENTER", "SE"],
+      "shastra": {
+        "source": "Samarangana Sutradhara",
+        "chapter": 53,
+        "meaning": "दक्षिण-पश्चिम में सीढ़ी शुभ"
+      },
+      "impact": {
+        "best": "स्थिरता, उन्नति",
+        "bad": "आर्थिक नुकसान"
+      },
+      "remedies": {
+        "if_bad": [
+          "सीढ़ी की दिशा ठीक करें",
+          "लोहे का पाइप रखें"
+        ],
+        "mantra": "ॐ विष्णवे नमः"
+      }
+    },
+    "main_entry": {
+      "hindi": "मुख्य द्वार",
+      "icon": "🚪",
+      "element": "space",
+      "best_directions": ["N", "E", "NE", "SE", "S"],
+      "bad_directions": ["SW", "W", "NW"],
+      "shastra": {
+        "source": "Brihat Samhita",
+        "chapter": 53,
+        "meaning": "उत्तर-पूर्व (NE) मुख्य द्वार = धन, समृद्धि। दक्षिण 4th pada (गृहक्षत) श्रेष्ठ है — 'South entry खराब' गलत धारणा"
+      },
+      "impact": {
+        "best": "धन-वृद्धि, सुख-समृद्धि, सर्व कामनाओं की पूर्ति",
+        "bad": "आर्थिक हानि, कलह, अपयश"
+      },
+      "remedies": {
+        "if_bad": [
+          "द्वार पर गणेश जी की मूर्ति लगाएँ",
+          "तोरण (तोरण द्वार) लगाएँ",
+          "पीला/सुनहरा रंग करें",
+          "द्वार के दोनों तरफ तुलसी लगाएँ"
+        ],
+        "mantra": "ॐ गं गणपतये नमः"
+      }
+    },
+    "cash_locker": {
+      "hindi": "तिजोरी",
+      "icon": "💰",
+      "element": "water",
+      "best_directions": ["N", "NE", "W"],
+      "bad_directions": ["SE", "S", "SW"],
+      "shastra": {
+        "source": "Samarangana Sutradhara",
+        "chapter": 53,
+        "meaning": "उत्तर में तिजोरी = कुबेर का वास"
+      },
+      "impact": {
+        "best": "धन-वृद्धि, आर्थिक स्थिरता",
+        "bad": "धन-नाश"
+      },
+      "remedies": {
+        "if_bad": [
+          "तिजोरी उत्तर दिशा में रखें",
+          "तिजोरी में कुबेर यंत्र रखें",
+          "सोना/चाँदी रखें"
+        ],
+        "mantra": "ॐ श्रीं कुबेराय नमः"
+      }
+    },
+    "water_tank": {
+      "hindi": "जल टंकी",
+      "icon": "💧",
+      "element": "water",
+      "best_directions": ["NE", "N", "E"],
+      "bad_directions": ["SW", "S", "SE"],
+      "shastra": {
+        "source": "Mayamata",
+        "chapter": 32,
+        "meaning": "ईशान में जल = पुण्य"
+      },
+      "impact": {
+        "best": "स्वास्थ्य, समृद्धि",
+        "bad": "रोग, आर्थिक हानि"
+      },
+      "remedies": {
+        "if_bad": [
+          "जल स्रोत NE में shift करें",
+          "ताम्र यंत्र रखें"
+        ],
+        "mantra": "ॐ वरुणाय नमः"
+      }
+    },
+    "parking": {
+      "hindi": "पार्किंग",
+      "icon": "🚗",
+      "element": "air",
+      "best_directions": ["NW", "W", "SE"],
+      "bad_directions": ["NE", "CENTER"],
+      "shastra": {
+        "source": "Samarangana Sutradhara",
+        "chapter": 53,
+        "meaning": "वायव्य (NW) में पार्किंग शुभ"
+      },
+      "impact": {
+        "best": "वाहन सुरक्षित, आवागमन शुभ",
+        "bad": "वाहन संबंधी समस्या"
+      },
+      "remedies": {
+        "if_bad": [
+          "पार्किंग में नमक रखें",
+          "गणेश जी की फोटो रखें"
+        ],
+        "mantra": "ॐ गं गणपतये नमः"
+      }
+    }
+  }
+}

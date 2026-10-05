@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login â€” VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<div class="modal-backdrop" style="background: var(--void-black);">
+    <div class="modal" style="max-width: 420px;">
+        
+        <div class="text-center mb-6">
+            <div class="navbar-brand" style="font-size: 32px; justify-content: center;">
+                VASTU <span class="gold">ONE</span>
+            </div>
+            <p class="text-muted text-sm mt-2">Traceable Vastu Intelligence</p>
+        </div>
+        
+        <div class="flex gap-2 mb-5" style="background: var(--deep-space); padding: 4px; border-radius: var(--radius-md);">
+            <button class="btn btn-ghost" id="tab-login" style="flex: 1;" onclick="switchTab('login')">Login</button>
+            <button class="btn btn-ghost" id="tab-signup" style="flex: 1;" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+        
+        <!-- LOGIN FORM -->
+        <form id="form-login" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="login-email" required
+                       placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="login-password" required
+                       placeholder="Your password" autocomplete="current-password">
+                <div class="text-right mt-2">
+                    <a href="/forgot-password.html" class="text-faint text-xs">Forgot password?</a>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                Login
+            </button>
+        </form>
+        
+        <!-- SIGNUP FORM -->
+        <form id="form-signup" class="hidden" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="signup-name" required
+                       placeholder="Deepak Nagpure" autocomplete="name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="signup-email" required
+                       placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone (optional)</label>
+                <input type="tel" class="form-input" id="signup-phone"
+                       placeholder="9876543210" autocomplete="tel">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="signup-password" required
+                       minlength="8" placeholder="Min 8 characters" autocomplete="new-password">
+                <div class="form-hint">Minimum 8 characters</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Studio / Business Name</label>
+                <input type="text" class="form-input" id="signup-tenant-name" required
+                       placeholder="Dasha Enterprises">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Studio Slug (URL)</label>
+                <input type="text" class="form-input" id="signup-tenant-slug" required
+                       pattern="[a-z0-9-]+" placeholder="dasha-enterprises">
+                <div class="form-hint">Lowercase, numbers, dashes only</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                Create Account
+            </button>
+        </form>
+        
+        <p class="text-center text-xs text-faint mt-5">
+            By continuing, you agree to VASTU ONE's terms of service.
+        </p>
+    </div>
+</div>
+
+<script src="/static/api.js"></script>
+<script>
+// Redirect if already logged in
+if (VastuAPI.Auth.isLoggedIn()) {
+    window.location.href = '/dashboard.html';
+}
+
+function switchTab(tab) {
+    document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('form-signup').classList.toggle('hidden', tab !== 'signup');
+    document.getElementById('tab-login').classList.toggle('btn-primary', tab === 'login');
+    document.getElementById('tab-signup').classList.toggle('btn-primary', tab === 'signup');
+    document.getElementById('tab-login').classList.toggle('btn-ghost', tab !== 'login');
+    document.getElementById('tab-signup').classList.toggle('btn-ghost', tab !== 'signup');
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.auth.login(email, password);
+        VastuAPI.UI.toast('Login successful', 'success');
+        setTimeout(() => window.location.href = '/dashboard.html', 500);
+    } catch (err) {
+        VastuAPI.UI.toast('Login failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+    const payload = {
+        full_name: document.getElementById('signup-name').value,
+        email: document.getElementById('signup-email').value,
+        phone: document.getElementById('signup-phone').value || null,
+        password: document.getElementById('signup-password').value,
+        role: 'CONSULTANT',
+        tenant_name: document.getElementById('signup-tenant-name').value,
+        tenant_slug: document.getElementById('signup-tenant-slug').value,
+    };
+    
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.auth.signup(payload);
+        VastuAPI.UI.toast('Account created', 'success');
+        setTimeout(() => window.location.href = '/dashboard.html', 500);
+    } catch (err) {
+        VastuAPI.UI.toast('Signup failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+switchTab('login');
+</script>
+</body>
+</html>

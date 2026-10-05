@@ -1,0 +1,236 @@
+"""
+VASTU ONE - FastAPI Application
+"""
+from __future__ import annotations
+import os
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
+
+from api.routes.auth_routes import router as auth_router
+from api.routes.auth_routes_v2 import router as auth_v2_router
+from api.routes.client_routes import router as client_router
+from api.routes.property_routes import router as property_router
+from api.routes.report_routes import router as report_router
+from api.routes.lms_routes import router as lms_router
+from api.routes.ecommerce_routes import router as ecommerce_router
+from database.base import init_db
+
+# Sentinel
+from sentinel.middleware.rate_limiter import RateLimiterMiddleware
+from sentinel.middleware.request_logger import SentinelLoggerMiddleware
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = PROJECT_ROOT / "frontend"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        await init_db()
+        print("ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Database tables verified")
+        print("ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂºÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  Sentinel: active (rate-limiter + logger)")
+    except Exception as e:
+        print(f"ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  DB init warning: {e}")
+    yield
+
+
+app = FastAPI(
+    title="VASTU ONE",
+    description="Traceable Vastu Intelligence Platform",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+
+# CORS
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000").split(",")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in CORS_ORIGINS],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ==========================================
+# SENTINEL MIDDLEWARE
+# ==========================================
+app.add_middleware(RateLimiterMiddleware, auth_limit=10, general_limit=200, window_sec=60)
+app.add_middleware(SentinelLoggerMiddleware)
+
+
+# ==========================================
+# API ROUTES
+# ==========================================
+app.include_router(auth_router)
+app.include_router(auth_v2_router)
+app.include_router(client_router)
+app.include_router(property_router)
+app.include_router(report_router)
+app.include_router(lms_router)
+app.include_router(ecommerce_router)
+
+
+@app.get("/api")
+async def api_root():
+    return {"app": "VASTU ONE", "version": "1.0.0", "sentinel": "active"}
+
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "sentinel": "active"}
+
+
+# ==========================================
+# STATIC FILES
+# ==========================================
+if (FRONTEND_DIR / "static").exists():
+    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
+
+
+# ==========================================
+# HTML PAGES
+# ==========================================
+def serve_html(filename: str):
+    path = FRONTEND_DIR / filename
+    if path.exists():
+        return FileResponse(str(path), media_type="text/html")
+    return HTMLResponse(f"<h1>404 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â {filename} not found</h1>", status_code=404)
+
+
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    return serve_html("index.html")
+
+
+@app.get("/login.html", response_class=HTMLResponse)
+async def login_page():
+    return serve_html("login.html")
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_redirect():
+    return serve_html("login.html")
+
+
+@app.get("/dashboard.html", response_class=HTMLResponse)
+async def dashboard_page():
+    return serve_html("dashboard.html")
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_redirect():
+    return serve_html("dashboard.html")
+
+
+@app.get("/clients.html", response_class=HTMLResponse)
+async def clients_page():
+    return serve_html("clients.html")
+
+
+@app.get("/properties.html", response_class=HTMLResponse)
+async def properties_page():
+    return serve_html("properties.html")
+
+
+@app.get("/reports.html", response_class=HTMLResponse)
+async def reports_page():
+    return serve_html("reports.html")
+
+
+@app.get("/lms/{page}.html", response_class=HTMLResponse)
+async def lms_page(page: str):
+    return serve_html(f"lms/{page}.html")
+
+# ==========================================
+# PWA Ã¢â‚¬â€ Manifest + Service Worker
+# ==========================================
+@app.get("/manifest.json")
+async def manifest():
+    path = FRONTEND_DIR / "manifest.json"
+    if path.exists():
+        return FileResponse(str(path), media_type="application/manifest+json")
+    return HTMLResponse('{"error": "manifest not found"}', status_code=404)
+
+
+@app.get("/service-worker.js")
+async def service_worker():
+    path = FRONTEND_DIR / "service-worker.js"
+    if path.exists():
+        return FileResponse(
+            str(path),
+            media_type="application/javascript",
+            headers={"Service-Worker-Allowed": "/"},
+        )
+    return HTMLResponse('// service worker not found', status_code=404)
+
+
+@app.get("/robots.txt")
+async def robots():
+    return HTMLResponse(
+        "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /static/\n",
+        media_type="text/plain",
+    )
+
+
+# ==========================================
+# HTML PAGES (Catch-all)
+# ==========================================
+# ==========================================
+# FAVICON + MANIFEST
+# ==========================================
+@app.get("/favicon.ico")
+async def favicon():
+    """Serve favicon."""
+    path = FRONTEND_DIR / "static" / "favicon.svg"
+    if path.exists():
+        return FileResponse(str(path), media_type="image/svg+xml")
+    return HTMLResponse("", status_code=204)
+
+
+@app.get("/manifest.json")
+async def manifest():
+    """Serve PWA manifest."""
+    path = FRONTEND_DIR / "manifest.json"
+    if path.exists():
+        return FileResponse(str(path), media_type="application/manifest+json")
+    return HTMLResponse("{}", status_code=404)
+
+
+@app.get("/service-worker.js")
+async def service_worker():
+    """Serve PWA service worker."""
+    path = FRONTEND_DIR / "service-worker.js"
+    if path.exists():
+        return FileResponse(
+            str(path),
+            media_type="application/javascript",
+            headers={"Service-Worker-Allowed": "/"},
+        )
+    return HTMLResponse("// not found", status_code=404)
+
+
+@app.get("/robots.txt")
+async def robots():
+    """Robots.txt for SEO."""
+    return HTMLResponse(
+        "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /static/\n",
+        media_type="text/plain",
+    )
+
+@app.get("/{page}.html", response_class=HTMLResponse)
+async def any_html(page: str):
+    path = FRONTEND_DIR / f"{page}.html"
+    if path.exists():
+        return FileResponse(str(path), media_type="text/html")
+    return HTMLResponse(f"<h1>404 Ã¢â‚¬â€ {page}.html not found</h1>", status_code=404)

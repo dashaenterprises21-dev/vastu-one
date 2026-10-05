@@ -1,0 +1,24 @@
+﻿{
+  "version": "1.0",
+  "mulank": {
+    "1": {"hindi": "सूर्य", "planet": "Surya", "traits": "Leadership, Authority", "lucky_direction": "E", "lucky_color": "Red", "lucky_day": "Sunday"},
+    "2": {"hindi": "चन्द्र", "planet": "Chandra", "traits": "Emotion, Intuition", "lucky_direction": "NW", "lucky_color": "White", "lucky_day": "Monday"},
+    "3": {"hindi": "गुरु", "planet": "Guru", "traits": "Wisdom, Expansion", "lucky_direction": "NE", "lucky_color": "Yellow", "lucky_day": "Thursday"},
+    "4": {"hindi": "राहु", "planet": "Rahu", "traits": "Structure, Analysis", "lucky_direction": "SW", "lucky_color": "Blue", "lucky_day": "Saturday"},
+    "5": {"hindi": "बुध", "planet": "Budh", "traits": "Communication, Business", "lucky_direction": "N", "lucky_color": "Green", "lucky_day": "Wednesday"},
+    "6": {"hindi": "शुक्र", "planet": "Shukra", "traits": "Love, Beauty", "lucky_direction": "SE", "lucky_color": "White", "lucky_day": "Friday"},
+    "7": {"hindi": "केतु", "planet": "Ketu", "traits": "Spiritual, Mystical", "lucky_direction": "NW", "lucky_color": "Grey", "lucky_day": "Tuesday"},
+    "8": {"hindi": "शनि", "planet": "Shani", "traits": "Discipline, Karma", "lucky_direction": "W", "lucky_color": "Black", "lucky_day": "Saturday"},
+    "9": {"hindi": "मंगल", "planet": "Mangal", "traits": "Energy, Courage", "lucky_direction": "S", "lucky_color": "Red", "lucky_day": "Tuesday"}
+  },
+  "chaldean": {
+    "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 8, "G": 3, "H": 5, "I": 1,
+    "J": 1, "K": 2, "L": 3, "M": 4, "N": 5, "O": 7, "P": 8, "Q": 1, "R": 2,
+    "S": 3, "T": 4, "U": 6, "V": 6, "W": 6, "X": 5, "Y": 1, "Z": 7
+  },
+  "pythagorean": {
+    "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9,
+    "J": 1, "K": 2, "L": 3, "M": 4, "N": 5, "O": 6, "P": 7, "Q": 8, "R": 9,
+    "S": 1, "T": 2, "U": 3, "V": 4, "W": 5, "X": 6, "Y": 7, "Z": 8
+  }
+}

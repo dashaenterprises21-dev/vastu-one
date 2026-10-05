@@ -1,0 +1,56 @@
+﻿{
+  "version": "1.0.0",
+  "packages": {
+    "cosmos_free": {
+      "price_inr": 0,
+      "engines": ["shastra_rules", "element_balance"],
+      "guna_report": false
+    },
+    "vastu_basic": {
+      "price_inr": [499, 999],
+      "engines": ["grid_81", "devata_audit", "entrance_audit", "direction_strength"],
+      "guna_report": false
+    },
+    "vastu_advanced": {
+      "price_inr": [1999, 3999],
+      "engines": ["grid_81", "devata_audit", "element_balance", "brahma_audit", "direction_strength", "room_analysis", "shastra_rules", "entrance_audit", "plot_layout_engine", "marma_engine", "soil_engine", "water_engine", "colour_engine"],
+      "guna_report": true
+    },
+    "vastu_super_advanced": {
+      "price_inr": [4999, 9999],
+      "engines": ["all_15_vastu", "all_5_new_vastu", "muhurt_engine"],
+      "guna_report": true
+    },
+    "astro_vastu_combo": {
+      "price_inr": [7999, 14999],
+      "engines": ["all_vastu", "all_astro"],
+      "guna_report": true
+    },
+    "triple_system": {
+      "price_inr": [11999, 21999],
+      "engines": ["all_54_engines"],
+      "guna_report": true
+    },
+    "enterprise": {
+      "price_inr": [99999],
+      "engines": ["all_54_engines", "commercial_engine", "astrology_house_mapping", "plot_extension_engine", "fengshui_engine", "pyramid_engine"],
+      "extras": ["white_label", "api_access", "bulk_reports", "priority_support"]
+    },
+    "student_starter": {
+      "price_inr": 999,
+      "period": "monthly",
+      "course_access": ["advance_astro_vastu_basics"]
+    },
+    "student_pro": {
+      "price_inr": 1999,
+      "period": "monthly",
+      "course_access": ["advance_astro_vastu_full"]
+    },
+    "student_master": {
+      "price_inr": 3999,
+      "period": "monthly",
+      "course_access": ["all_courses"],
+      "extras": ["certification_path", "live_sessions"]
+    }
+  }
+}

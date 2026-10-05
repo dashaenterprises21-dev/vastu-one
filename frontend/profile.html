@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>मेरी प्रोफाइल — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/dashboard.css">
+<link rel="stylesheet" href="/static/profile.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <a href="/dashboard" class="navbar-brand">
+                <img src="/static/logo/vastu_logo.png" alt="Vastu One" class="brand-logo">
+                <div class="brand-text">
+                    <h1>VASTU ONE</h1>
+                    <p>शास्त्र-आधारित वास्तु विश्लेषण</p>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-right">
+            <a href="/dashboard" class="btn-back-nav">← गृह पृष्ठ</a>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <p class="sidebar-label">मुख्य</p>
+                <a href="/dashboard" class="sidebar-item">
+                    <span class="sidebar-icon">🏠</span>
+                    <span class="sidebar-text">गृह पृष्ठ</span>
+                </a>
+                <a href="/plan-upload" class="sidebar-item">
+                    <span class="sidebar-icon">📤</span>
+                    <span class="sidebar-text">योजना अपलोड</span>
+                </a>
+                <a href="/reports" class="sidebar-item">
+                    <span class="sidebar-icon">📄</span>
+                    <span class="sidebar-text">मेरी रिपोर्ट</span>
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <p class="sidebar-label">खाता</p>
+                <a href="/profile" class="sidebar-item active">
+                    <span class="sidebar-icon">👤</span>
+                    <span class="sidebar-text">प्रोफाइल</span>
+                </a>
+                <a href="/settings" class="sidebar-item">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-text">सेटिंग</span>
+                </a>
+                <a href="#" onclick="logout()" class="sidebar-item">
+                    <span class="sidebar-icon">🚪</span>
+                    <span class="sidebar-text">लॉगआउट</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+            <div class="page-header">
+                <h1>👤 मेरी प्रोफाइल</h1>
+                <p>अपनी जानकारी देखें और अपडेट करें</p>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar-large" id="profileAvatar">D</div>
+                    <div class="profile-info">
+                        <h2 id="profileName">—</h2>
+                        <p id="profileEmail">—</p>
+                        <span class="profile-badge" id="profileRole">User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Form -->
+            <div class="form-card">
+                <h3>📝 जानकारी अपडेट करें</h3>
+                <form id="profileForm" onsubmit="updateProfile(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>नाम</label>
+                            <input type="text" id="inputName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ईमेल</label>
+                            <input type="email" id="inputEmail" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>फ़ोन</label>
+                            <input type="tel" id="inputPhone" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label>शहर</label>
+                            <input type="text" id="inputCity" placeholder="Nagpur">
+                        </div>
+                        <div class="form-group">
+                            <label>राज्य</label>
+                            <input type="text" id="inputState" placeholder="Maharashtra">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="saveBtn">💾 सेव करें</button>
+                </form>
+            </div>
+
+            <!-- Birth Info (for Astro) -->
+            <div class="form-card">
+                <h3>🔮 जन्म जानकारी (Astro-Vastu के लिए)</h3>
+                <p class="form-note">ये जानकारी आपकी कुंडली बनाने के लिए चाहिए — ताकि personalized वास्तु analysis मिल सके।</p>
+                <form id="birthForm" onsubmit="saveBirthInfo(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>जन्म तारीख</label>
+                            <input type="date" id="inputDob">
+                        </div>
+                        <div class="form-group">
+                            <label>जन्म समय</label>
+                            <input type="time" id="inputTime">
+                        </div>
+                        <div class="form-group">
+                            <label>जन्म स्थान (शहर)</label>
+                            <input type="text" id="inputBirthCity" placeholder="Nagpur">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-secondary">🔮 सेव करें</button>
+                </form>
+            </div>
+
+            <!-- Change Password -->
+            <div class="form-card">
+                <h3>🔒 पासवर्ड बदलें</h3>
+                <form id="passwordForm" onsubmit="changePassword(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>पुराना पासवर्ड</label>
+                            <input type="password" id="oldPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>नया पासवर्ड</label>
+                            <input type="password" id="newPassword" required minlength="8">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-secondary">🔒 पासवर्ड बदलें</button>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+</div>
+
+<script src="/static/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+﻿{
+  "version": "1.0.0",
+  "last_updated": "2026-10-06",
+  "description": "Registry of Vastu Granthas (classical texts) with metadata for rule sourcing",
+  "granthas": [
+    {
+      "id": "brihat_samhita",
+      "name": "Brihat Samhita",
+      "sanskrit_name": "बृहत्संहिता",
+      "author": "Varahamihira",
+      "period_approx": "6th century CE",
+      "chapters_vastu": ["53", "54", "55"],
+      "tradition": "Northern",
+      "language": "Sanskrit",
+      "evidence_level": "A",
+      "reliability_score": 0.95
+    },
+    {
+      "id": "vishvakarma_prakash",
+      "name": "Vishvakarma Prakash",
+      "sanskrit_name": "विश्वकर्मप्रकाश",
+      "author": "Vishvakarma (attributed)",
+      "period_approx": "Medieval",
+      "tradition": "Northern",
+      "evidence_level": "A",
+      "reliability_score": 0.90
+    },
+    {
+      "id": "samaranganasutradhara",
+      "name": "Samarangana Sutradhara",
+      "sanskrit_name": "समराङ्गणसूत्रधार",
+      "author": "King Bhoja",
+      "period_approx": "11th century CE",
+      "tradition": "Northern",
+      "evidence_level": "A",
+      "reliability_score": 0.92
+    },
+    {
+      "id": "mayamata",
+      "name": "Mayamata",
+      "sanskrit_name": "मयमत",
+      "author": "Maya",
+      "period_approx": "Classical",
+      "tradition": "Southern",
+      "evidence_level": "A",
+      "reliability_score": 0.94
+    },
+    {
+      "id": "manasara",
+      "name": "Manasara",
+      "sanskrit_name": "मानसार",
+      "author": "Anonymous",
+      "period_approx": "Classical",
+      "tradition": "Southern",
+      "evidence_level": "A",
+      "reliability_score": 0.92
+    },
+    {
+      "id": "maha_vastu",
+      "name": "MahaVastu (Modern)",
+      "author": "Dr. Khushdeep Bansal",
+      "period_approx": "Contemporary",
+      "tradition": "Modern Synthesis",
+      "evidence_level": "B",
+      "reliability_score": 0.75
+    }
+  ],
+  "evidence_level_legend": {
+    "A": "Classical Sanskrit text with verifiable shloka + chapter",
+    "B": "Recognized modern authority OR regional text with citation",
+    "C": "Training material / practitioner compilation",
+    "D": "Unverified / oral tradition / folklore"
+  }
+}

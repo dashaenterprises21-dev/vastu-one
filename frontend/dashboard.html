@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">
+            VASTU <span class="gold">ONE</span>
+        </a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html" class="active">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/courses.html">LMS</a>
+        </div>
+        <div class="flex gap-3" style="align-items: center;">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
+
+    <!-- WELCOME -->
+    <div class="mb-6">
+        <h1 id="welcome-heading">Welcome</h1>
+        <p class="text-muted mt-2">Your Vastu intelligence workspace</p>
+    </div>
+
+    <!-- METRICS -->
+    <div class="grid grid-4 mb-6">
+        <div class="metric-card">
+            <div class="metric-label">Clients</div>
+            <div class="metric-value" id="metric-clients">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Properties</div>
+            <div class="metric-value" id="metric-properties">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Reports</div>
+            <div class="metric-value" id="metric-reports">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Revenue</div>
+            <div class="metric-value" id="metric-revenue">—</div>
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="card mb-6">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Quick Actions</h3>
+                <p class="card-subtitle">Common tasks</p>
+            </div>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <a href="/clients.html" class="btn btn-secondary">+ New Client</a>
+            <a href="/properties.html" class="btn btn-secondary">+ New Property</a>
+            <a href="/reports.html" class="btn btn-primary">+ Generate Report</a>
+            <a href="/lms/courses.html" class="btn btn-secondary">+ New Course</a>
+        </div>
+    </div>
+
+    <!-- RECENT REPORTS -->
+    <div class="card mb-6">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Recent Reports</h3>
+                <p class="card-subtitle">Latest Vastu analysis reports</p>
+            </div>
+            <a href="/reports.html" class="btn btn-ghost btn-sm">View all →</a>
+        </div>
+        <div id="recent-reports">
+            <div class="text-muted text-sm">Loading...</div>
+        </div>
+    </div>
+
+    <!-- RECENT CLIENTS -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Recent Clients</h3>
+                <p class="card-subtitle">Latest clients added</p>
+            </div>
+            <a href="/clients.html" class="btn btn-ghost btn-sm">View all →</a>
+        </div>
+        <div id="recent-clients">
+            <div class="text-muted text-sm">Loading...</div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+async function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function loadDashboard() {
+    if (!await requireAuth()) return;
+    
+    try {
+        VastuAPI.UI.loading(true);
+        
+        // Load user
+        const me = await VastuAPI.API.auth.me();
+        VastuAPI.Auth.setUser(me);
+        document.getElementById('user-name').textContent = me.full_name;
+        document.getElementById('welcome-heading').textContent = `Welcome, ${me.full_name.split(' ')[0]}`;
+        
+        // Load metrics
+        const [clientsRes, propertiesRes, reportsRes] = await Promise.all([
+            VastuAPI.API.clients.list(0, 100),
+            VastuAPI.API.properties.list(),
+            VastuAPI.API.reports.list(),
+        ]);
+        
+        document.getElementById('metric-clients').textContent = clientsRes.total || 0;
+        document.getElementById('metric-properties').textContent = propertiesRes.total || 0;
+        document.getElementById('metric-reports').textContent = reportsRes.total || 0;
+        
+        // Revenue
+        const revenue = (reportsRes.items || []).reduce((sum, r) => sum + (r.price_inr || 0), 0);
+        document.getElementById('metric-revenue').textContent = '' + revenue.toLocaleString('en-IN');
+        
+        // Render recent reports
+        renderReports(reportsRes.items || []);
+        
+        // Render recent clients
+        renderClients(clientsRes.items || []);
+        
+    } catch (err) {
+        console.error(err);
+        VastuAPI.UI.toast('Failed to load dashboard: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderReports(reports) {
+    const el = document.getElementById('recent-reports');
+    if (!reports.length) {
+        el.innerHTML = '<div class="text-muted text-sm">No reports yet. <a href="/reports.html">Generate your first →</a></div>';
+        return;
+    }
+    
+    el.innerHTML = reports.slice(0, 5).map(r => {
+        const score = r.scores?.score || 0;
+        const verdict = r.guna_profile?.verdict || '—';
+        const statusClass = {
+            'DRAFT': 'badge-info',
+            'IN_REVIEW': 'badge-warning',
+            'APPROVED': 'badge-gold',
+            'DELIVERED': 'badge-success',
+        }[r.status] || 'badge-info';
+        
+        return `
+            <div class="card" style="margin-bottom: var(--space-3);">
+                <div class="flex-between">
+                    <div>
+                        <div style="font-weight: 600;">${r.package.replace('_', ' ').toUpperCase()}</div>
+                        <div class="text-muted text-sm mt-1">
+                            ${verdict} • Score: ${score} • ${VastuAPI.UI.formatDate(r.created_at)}
+                        </div>
+                    </div>
+                    <div class="flex gap-2" style="align-items: center;">
+                        <span class="badge ${statusClass}">${r.status}</span>
+                        <button class="btn btn-ghost btn-sm" onclick="downloadPDF('${r.id}')">PDF</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderClients(clients) {
+    const el = document.getElementById('recent-clients');
+    if (!clients.length) {
+        el.innerHTML = '<div class="text-muted text-sm">No clients yet. <a href="/clients.html">Add your first →</a></div>';
+        return;
+    }
+    
+    el.innerHTML = clients.slice(0, 5).map(c => `
+        <div class="card" style="margin-bottom: var(--space-3);">
+            <div class="flex-between">
+                <div>
+                    <div style="font-weight: 600;">${c.full_name}</div>
+                    <div class="text-muted text-sm mt-1">
+                        ${c.email || ''} ${c.phone ? '• ' + c.phone : ''}
+                    </div>
+                </div>
+                <a href="/properties.html?client_id=${c.id}" class="btn btn-ghost btn-sm">Properties</a>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function downloadPDF(reportId) {
+    try {
+        VastuAPI.UI.loading(true);
+        await VastuAPI.API.reports.downloadPDF(reportId);
+        VastuAPI.UI.toast('PDF downloaded', 'success');
+    } catch (err) {
+        VastuAPI.UI.toast('PDF download failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

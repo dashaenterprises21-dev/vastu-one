@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pooja Plan - Vastu One</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); min-height: 100vh; color: #333; }
+.header { background: rgba(255,255,255,0.95); padding: 20px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+.header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo h1 { color: #ef4444; font-size: 28px; }
+.nav a { color: #ef4444; text-decoration: none; margin-left: 20px; font-weight: 600; }
+.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 30px; }
+h2 { color: #ef4444; margin-bottom: 20px; font-size: 32px; }
+.subtitle { color: #666; margin-bottom: 30px; }
+.pooja-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.pooja-card { background: #fff7ed; padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b; }
+.pooja-card h4 { color: #ef4444; margin-bottom: 8px; font-size: 18px; }
+.pooja-card .hindi { color: #f59e0b; font-size: 14px; margin-bottom: 10px; }
+.pooja-card .method { color: #333; font-size: 14px; margin-bottom: 8px; }
+.pooja-card .time { color: #999; font-size: 13px; }
+.mantra-box { background: #fef3c7; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center; }
+.mantra-box .mantra { font-size: 24px; color: #92400e; font-weight: 600; margin: 10px 0; }
+.mantra-box .planet { color: #78350f; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-inner">
+<div class="logo"><h1>POOJA PLAN</h1></div>
+<nav class="nav">
+<a href="/">Home</a>
+<a href="/astro-analysis.html">Astro</a>
+<a href="/occult-remedies.html">Occult</a>
+</nav>
+</div>
+</header>
+
+<div class="container">
+<div class="card">
+<h2>Pooja Suggestions</h2>
+<p class="subtitle">Aapki property aur grah sthiti ke hisaab se pooja</p>
+<div class="pooja-grid" id="poojaGrid"></div>
+</div>
+
+<div class="card">
+<h2>Mantra Jaap</h2>
+<div id="mantraBox"></div>
+</div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function loadPooja() {
+try {
+const res = await fetch(API_BASE + '/api/pooja/all');
+const data = await res.json();
+renderPooja(data.poojas || data || {});
+} catch (err) { console.error(err); }
+}
+
+function renderPooja(poojas) {
+const grid = document.getElementById('poojaGrid');
+if (Array.isArray(poojas)) {
+grid.innerHTML = poojas.map(p =>
+'<div class="pooja-card"><h4>' + (p.name || 'Pooja') + '</h4><div class="method">' + (p.method || p.description || '') + '</div><div class="time">' + (p.time || '') + '</div></div>'
+).join('');
+} else {
+grid.innerHTML = Object.entries(poojas).map(([name, info]) =>
+'<div class="pooja-card"><h4>' + name + '</h4><div class="hindi">' + (info.hindi || '') + '</div><div class="method">' + (info.method || info.description || '') + '</div></div>'
+).join('');
+}
+}
+
+window.addEventListener('load', loadPooja);
+</script>
+
+</body>
+</html>

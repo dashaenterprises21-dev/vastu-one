@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "description": "Building fate math - 6 formulas for house dimensions",
+  "formulas": {
+    "Aya": {
+      "hindi": "आय (Income)",
+      "formula": "(Length × 8) ÷ 12",
+      "meaning": "Income, prosperity",
+      "good_when": "Aya > Vyaya"
+    },
+    "Vyaya": {
+      "hindi": "व्यय (Loss)",
+      "formula": "(Breadth × 9) ÷ 10",
+      "meaning": "Loss, expenses",
+      "good_when": "Vyaya < Aya"
+    },
+    "Rksa": {
+      "hindi": "ऋक्ष (Nakshatra)",
+      "formula": "(Length × 8) ÷ 27",
+      "meaning": "Nakshatra influence",
+      "good_when": "Remainder 1-27"
+    },
+    "Yoni": {
+      "hindi": "योनि (Energy)",
+      "formula": "(Breadth × 3) ÷ 8",
+      "meaning": "Energy, vitality",
+      "good_when": "Remainder 1-8"
+    },
+    "Vara": {
+      "hindi": "वार (Weekday)",
+      "formula": "(Height × 9) ÷ 7",
+      "meaning": "Weekday influence",
+      "good_when": "Remainder 1-7"
+    },
+    "Tithi": {
+      "hindi": "तिथि (Lunar Day)",
+      "formula": "(Height × 9) ÷ 30",
+      "meaning": "Lunar day influence",
+      "good_when": "Remainder 1-30"
+    }
+  },
+  "interpretation": {
+    "Aya_gt_Vyaya": "Prosperity, growth, wealth accumulation",
+    "Aya_lt_Vyaya": "Financial loss, need partition or water feature remedy",
+    "Aya_eq_Vyaya": "Balance, stable life"
+  }
+}
