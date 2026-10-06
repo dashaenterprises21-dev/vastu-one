@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Instructor Dashboard - VASTU ONE Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+.metric-card-v2 { padding: 24px; background: var(--space); border: 1px solid rgba(248, 247, 242, 0.08); border-radius: 12px; position: relative; overflow: hidden; }
+.metric-card-v2::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cosmic-gold), transparent); opacity: 0.6; }
+.metric-icon { font-size: 24px; margin-bottom: 12px; display: block; }
+.metric-value-v2 { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: var(--starlight); line-height: 1; margin-bottom: 6px; }
+.metric-label-v2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted-white); font-weight: 600; }
+.course-row { padding: 20px; background: var(--space); border: 1px solid rgba(248, 247, 242, 0.08); border-radius: 12px; margin-bottom: 12px; transition: all 0.2s; }
+.course-row:hover { border-color: rgba(212, 175, 55, 0.3); background: var(--space-light); }
+.stat-inline { display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; color: var(--muted-white); margin-top: 12px; }
+.stat-inline-item strong { color: var(--starlight); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/lms/instructor-dashboard.html" class="active">Academy</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">-</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: 100px;">
+
+    <div class="mb-6">
+        <h1>Instructor Dashboard</h1>
+        <p class="text-muted mt-2">Manage your academy, students, and revenue</p>
+    </div>
+
+    <div class="grid grid-4 mb-7">
+        <div class="metric-card-v2">
+            <span class="metric-icon">👥</span>
+            <div class="metric-value-v2" id="metric-students">-</div>
+            <div class="metric-label-v2">Students</div>
+        </div>
+        <div class="metric-card-v2">
+            <span class="metric-icon">📚</span>
+            <div class="metric-value-v2" id="metric-courses">-</div>
+            <div class="metric-label-v2">Courses</div>
+        </div>
+        <div class="metric-card-v2">
+            <span class="metric-icon">💰</span>
+            <div class="metric-value-v2" id="metric-revenue">-</div>
+            <div class="metric-label-v2">Revenue</div>
+        </div>
+        <div class="metric-card-v2">
+            <span class="metric-icon">⭐</span>
+            <div class="metric-value-v2" id="metric-rating">-</div>
+            <div class="metric-label-v2">Avg Rating</div>
+        </div>
+    </div>
+
+    <div class="mb-7">
+        <div class="flex-between mb-4" style="flex-wrap: wrap; gap: 12px;">
+            <h2>My Courses</h2>
+            <a href="/lms/courses.html" class="btn btn-primary btn-sm">+ New Course</a>
+        </div>
+        <div id="courses-list">
+            <div class="text-muted text-sm">Loading...</div>
+        </div>
+    </div>
+
+    <div class="mb-7">
+        <h2 class="mb-4">Recent Students</h2>
+        <div id="students-list">
+            <div class="text-muted text-sm">Loading...</div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+function loadUser() {
+    return VastuAPI.API.auth.me().then(function(me) {
+        document.getElementById('user-name').textContent = me.full_name;
+    }).catch(function(err) { console.error(err); });
+}
+
+function loadStats() {
+    return VastuAPI.apiCall('/api/lms/v2/instructor/stats').then(function(stats) {
+        document.getElementById('metric-students').textContent = stats.total_students || 0;
+        document.getElementById('metric-courses').textContent = stats.total_courses || 0;
+        document.getElementById('metric-revenue').textContent = 'Rs ' + (stats.total_revenue || 0).toLocaleString('en-IN');
+        document.getElementById('metric-rating').textContent = stats.average_rating ? stats.average_rating.toFixed(1) : '-';
+    }).catch(function(err) { console.error('Stats error:', err); });
+}
+
+function loadCourses() {
+    return VastuAPI.apiCall('/api/lms/v2/instructor/courses').then(function(data) {
+        var el = document.getElementById('courses-list');
+        
+        if (!data.courses || data.courses.length === 0) {
+            el.innerHTML = '<div class="card text-center" style="padding: 40px;">' +
+                '<div style="font-size: 48px; margin-bottom: 16px;">📚</div>' +
+                '<h3 class="mb-3">No courses yet</h3>' +
+                '<p class="text-muted mb-5">Create your first course to start teaching</p>' +
+                '<a href="/lms/courses.html" class="btn btn-primary">+ Create First Course</a>' +
+                '</div>';
+            return;
+        }
+        
+        var html = '';
+        data.courses.forEach(function(c) {
+            var badgeClass = c.is_published ? 'badge-success' : 'badge-info';
+            var badgeText = c.is_published ? 'PUBLISHED' : 'DRAFT';
+            var ratingText = c.avg_rating ? String(c.avg_rating) : '-';
+            
+            html += '<div class="course-row">' +
+                '<div class="flex-between" style="flex-wrap: wrap; gap: 12px;">' +
+                '<div style="flex: 1; min-width: 250px;">' +
+                '<div class="flex gap-2" style="align-items: center;">' +
+                '<h3 style="margin: 0;">' + escapeHtml(c.title) + '</h3>' +
+                '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+                '</div>' +
+                '<div class="stat-inline">' +
+                '<span class="stat-inline-item">Students: <strong>' + c.students + '</strong></span>' +
+                '<span class="stat-inline-item">Avg Progress: <strong>' + c.avg_progress + '%</strong></span>' +
+                '<span class="stat-inline-item">Rating: <strong>' + ratingText + '</strong></span>' +
+                '<span class="stat-inline-item">Revenue: <strong>Rs ' + c.revenue.toLocaleString('en-IN') + '</strong></span>' +
+                '</div>' +
+                '</div>' +
+                '<div class="flex gap-2">' +
+                '<a href="/lms/course-detail.html?course_id=' + c.id + '" class="btn btn-primary btn-sm">Manage Content</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        });
+        
+        el.innerHTML = html;
+    }).catch(function(err) { console.error('Courses error:', err); });
+}
+
+function loadStudents() {
+    return VastuAPI.apiCall('/api/lms/v2/instructor/students').then(function(data) {
+        var el = document.getElementById('students-list');
+        
+        if (!data.students || data.students.length === 0) {
+            el.innerHTML = '<div class="text-muted text-sm">No students yet.</div>';
+            return;
+        }
+        
+        var html = '';
+        data.students.forEach(function(s) {
+            var email = s.email || '';
+            var enrolledDate = VastuAPI.UI.formatDate(s.enrolled_at);
+            var progress = Math.round(s.progress_pct);
+            
+            html += '<div class="course-row">' +
+                '<div class="flex-between" style="flex-wrap: wrap; gap: 12px;">' +
+                '<div>' +
+                '<div class="flex gap-2" style="align-items: center;">' +
+                '<span style="font-size: 20px;">👤</span>' +
+                '<div>' +
+                '<div style="font-weight: 600;">' + escapeHtml(s.name) + '</div>' +
+                '<div class="text-faint text-xs">' + escapeHtml(email) + '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="text-muted text-xs mt-2">' + escapeHtml(s.course_title) + '</div>' +
+                '</div>' +
+                '<div style="text-align: right;">' +
+                '<div class="text-gold" style="font-family: \'Cormorant Garamond\', serif; font-size: 24px; font-weight: 700;">' + progress + '%</div>' +
+                '<div class="text-faint text-xs">Enrolled ' + enrolledDate + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        });
+        
+        el.innerHTML = html;
+    }).catch(function(err) { console.error('Students error:', err); });
+}
+
+function init() {
+    if (!requireAuth()) return;
+    loadUser();
+    loadStats();
+    loadCourses();
+    loadStudents();
+}
+
+init();
+</script>
+</body>
+</html>

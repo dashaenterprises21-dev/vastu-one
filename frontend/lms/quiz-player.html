@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Quiz — VASTU ONE Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+.quiz-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.quiz-header {
+    background: var(--space);
+    border: 1px solid rgba(248, 247, 242, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.progress-bar-lg {
+    height: 8px;
+    background: var(--deep-space);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 16px 0 8px;
+}
+
+.progress-bar-lg-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cosmic-gold), var(--gold-light));
+    transition: width 0.4s ease;
+}
+
+.question-card {
+    background: var(--space);
+    border: 1px solid rgba(248, 247, 242, 0.08);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+}
+
+.question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--starlight);
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: var(--deep-space);
+    border: 1px solid rgba(248, 247, 242, 0.1);
+    border-radius: 10px;
+    color: var(--starlight);
+    font-family: inherit;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.option-btn:hover:not(:disabled) {
+    border-color: var(--cosmic-gold);
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.option-btn.selected {
+    border-color: var(--cosmic-gold);
+    background: rgba(212, 175, 55, 0.12);
+}
+
+.option-btn.correct {
+    border-color: var(--success);
+    background: rgba(74, 222, 128, 0.12);
+}
+
+.option-btn.wrong {
+    border-color: var(--danger);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.option-btn:disabled { cursor: default; }
+
+.option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--space);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.option-btn.selected .option-letter {
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+}
+
+.option-btn.correct .option-letter {
+    background: var(--success);
+    color: var(--void-black);
+}
+
+.option-btn.wrong .option-letter {
+    background: var(--danger);
+    color: white;
+}
+
+.result-screen {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.result-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+}
+
+.result-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.result-score.pass { color: var(--success); }
+.result-score.fail { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/lms/student-dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/lms/student-dashboard.html">← Back to Dashboard</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<div class="quiz-container" id="quiz-container">
+    <div class="text-muted text-center">Loading quiz...</div>
+</div>
+
+<script src="/static/api.js"></script>
+<script>
+let quiz = null;
+let questions = [];
+let currentIndex = 0;
+let answers = {};
+let quizId = null;
+let timerInterval = null;
+let timeLeft = 0;
+
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m];
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+async function loadQuiz() {
+    try {
+        VastuAPI.UI.loading(true);
+        
+        const params = new URLSearchParams(window.location.search);
+        quizId = params.get('quiz_id');
+        if (!quizId) {
+            document.getElementById('quiz-container').innerHTML = 
+                '<div class="text-center text-muted">No quiz specified</div>';
+            return;
+        }
+        
+        // Load questions
+        questions = await VastuAPI.apiCall(`/api/lms/v2/quizzes/${quizId}/questions`);
+        if (!questions.length) {
+            document.getElementById('quiz-container').innerHTML = 
+                '<div class="text-center text-muted">No questions in this quiz yet</div>';
+            return;
+        }
+        
+        // Shuffle if needed
+        questions = questions.sort(() => Math.random() - 0.5);
+        
+        // Start timer if time_limit exists
+        timeLeft = 300; // Default 5 min
+        startTimer();
+        
+        renderQuestion();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load quiz: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const el = document.getElementById('timer');
+        if (el) el.textContent = formatTime(timeLeft);
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+        }
+    }, 1000);
+}
+
+function renderQuestion() {
+    const q = questions[currentIndex];
+    const total = questions.length;
+    const progress = ((currentIndex + 1) / total) * 100;
+    const selectedAnswer = answers[q.id];
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    
+    document.getElementById('quiz-container').innerHTML = `
+        <div class="quiz-header">
+            <div class="flex-between">
+                <div>
+                    <div class="text-gold text-xs" style="letter-spacing: 2px;">KNOWLEDGE TEST</div>
+                    <h2 style="margin: 8px 0 0;">Quiz Question ${currentIndex + 1} of ${total}</h2>
+                </div>
+                <div style="text-align: right;">
+                    <div class="text-faint text-xs">TIME LEFT</div>
+                    <div id="timer" style="font-family: 'JetBrains Mono', monospace; font-size: 24px; color: var(--cosmic-gold); font-weight: 700;">
+                        ${formatTime(timeLeft)}
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar-lg">
+                <div class="progress-bar-lg-fill" style="width: ${progress}%;"></div>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-text">${escapeHtml(q.question_text)}</div>
+            
+            ${q.options.map((opt, idx) => `
+                <button class="option-btn ${selectedAnswer === idx ? 'selected' : ''}"
+                        onclick="selectOption(${idx})">
+                    <span class="option-letter">${letters[idx]}</span>
+                    <span>${escapeHtml(opt)}</span>
+                </button>
+            `).join('')}
+        </div>
+        
+        <div class="flex-between">
+            <button class="btn btn-ghost" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}>
+                ← Previous
+            </button>
+            
+            ${currentIndex === total - 1 ? `
+                <button class="btn btn-primary btn-lg" onclick="submitQuiz()">
+                    Submit Quiz →
+                </button>
+            ` : `
+                <button class="btn btn-primary" onclick="nextQuestion()">
+                    Next Question →
+                </button>
+            `}
+        </div>
+    `;
+}
+
+function selectOption(idx) {
+    answers[questions[currentIndex].id] = idx;
+    renderQuestion();
+}
+
+function nextQuestion() {
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+    }
+}
+
+function prevQuestion() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+    }
+}
+
+async function submitQuiz() {
+    clearInterval(timerInterval);
+    
+    try {
+        VastuAPI.UI.loading(true);
+        
+        const result = await VastuAPI.apiCall('/api/lms/v2/quizzes/attempt', {
+            method: 'POST',
+            body: { quiz_id: quizId, answers },
+        });
+        
+        renderResult(result);
+    } catch (err) {
+        VastuAPI.UI.toast('Submit failed: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderResult(result) {
+    const passed = result.passed;
+    const score = Math.round(result.score_percentage);
+    
+    document.getElementById('quiz-container').innerHTML = `
+        <div class="question-card result-screen">
+            <div class="result-icon">${passed ? '🎉' : '😔'}</div>
+            <div class="result-score ${passed ? 'pass' : 'fail'}">${score}%</div>
+            <h2 style="margin: 16px 0;">${passed ? 'Congratulations!' : 'Keep Practicing'}</h2>
+            <p class="text-muted mb-5" style="max-width: 400px; margin: 0 auto 24px;">
+                ${passed 
+                    ? 'You passed the quiz! Your knowledge is growing.' 
+                    : 'You didn\'t pass this time. Review the lessons and try again.'}
+            </p>
+            
+            <div class="grid grid-2" style="max-width: 400px; margin: 0 auto 32px; gap: 16px;">
+                <div class="metric-card" style="padding: 20px;">
+                    <div class="metric-label">Correct</div>
+                    <div class="metric-value" style="font-size: 28px; color: var(--success);">
+                        ${Math.round(score * questions.length / 100)}
+                    </div>
+                </div>
+                <div class="metric-card" style="padding: 20px;">
+                    <div class="metric-label">Total</div>
+                    <div class="metric-value" style="font-size: 28px;">
+                        ${questions.length}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3" style="justify-content: center; flex-wrap: wrap;">
+                <a href="/lms/student-dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+                ${!passed ? '<button class="btn btn-primary" onclick="location.reload()">Retry Quiz</button>' : ''}
+            </div>
+        </div>
+    `;
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) {}
+}
+
+async function init() {
+    if (!await requireAuth()) return;
+    await loadUser();
+    await loadQuiz();
+}
+
+init();
+</script>
+</body>
+</html>

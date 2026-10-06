@@ -1,0 +1,239 @@
+/* ============================================================
+   VASTU ONE — API CLIENT v2
+   Centralized API calls with auth, error handling.
+   ============================================================ */
+
+const API_BASE = 'http://localhost:8000';
+
+// ==========================================
+// TOKEN MANAGEMENT
+// ==========================================
+const Auth = {
+    getToken() { return localStorage.getItem('vastu_access_token'); },
+    getRefreshToken() { return localStorage.getItem('vastu_refresh_token'); },
+    setTokens(access, refresh) {
+        localStorage.setItem('vastu_access_token', access);
+        if (refresh) localStorage.setItem('vastu_refresh_token', refresh);
+    },
+    clear() {
+        localStorage.removeItem('vastu_access_token');
+        localStorage.removeItem('vastu_refresh_token');
+        localStorage.removeItem('vastu_user');
+    },
+    getUser() {
+        const u = localStorage.getItem('vastu_user');
+        return u ? JSON.parse(u) : null;
+    },
+    setUser(user) { localStorage.setItem('vastu_user', JSON.stringify(user)); },
+    isLoggedIn() { return !!this.getToken(); },
+};
+
+// ==========================================
+// FETCH WRAPPER
+// ==========================================
+async function apiCall(endpoint, options = {}) {
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+    
+    const headers = {
+        'Accept': 'application/json',
+        ...(options.headers || {}),
+    };
+    
+    const token = Auth.getToken();
+    if (token && !options.noAuth) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    if (options.body && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(options.body);
+    }
+    
+    try {
+        const response = await fetch(url, { ...options, headers });
+        
+        if (response.status === 401 && Auth.getRefreshToken() && !options.noAuth) {
+            const refreshed = await refreshAccessToken();
+            if (refreshed) {
+                headers['Authorization'] = `Bearer ${Auth.getToken()}`;
+                const retry = await fetch(url, { ...options, headers });
+                return handleResponse(retry);
+            } else {
+                Auth.clear();
+                window.location.href = '/login.html';
+                throw new Error('Session expired');
+            }
+        }
+        
+        return handleResponse(response);
+    } catch (err) {
+        if (err.name === 'TypeError') {
+            throw new Error('Network error — backend not reachable');
+        }
+        throw err;
+    }
+}
+
+async function handleResponse(response) {
+    const contentType = response.headers.get('content-type') || '';
+    
+    let data;
+    if (contentType.includes('application/json')) {
+        data = await response.json();
+    } else if (contentType.includes('application/pdf')) {
+        return await response.blob();
+    } else {
+        data = await response.text();
+    }
+    
+    if (!response.ok) {
+        const message = data?.detail || data?.message || `HTTP ${response.status}`;
+        const error = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+        error.status = response.status;
+        error.data = data;
+        throw error;
+    }
+    
+    return data;
+}
+
+async function refreshAccessToken() {
+    try {
+        const refresh = Auth.getRefreshToken();
+        if (!refresh) return false;
+        
+        const res = await fetch(`${API_BASE}/api/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refresh }),
+        });
+        
+        if (!res.ok) return false;
+        const data = await res.json();
+        Auth.setTokens(data.access_token, data.refresh_token);
+        return true;
+    } catch { return false; }
+}
+
+// ==========================================
+// UI HELPERS
+// ==========================================
+const UI = {
+    toast(message, type = 'info') {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = message;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+    },
+    loading(show = true) {
+        let el = document.getElementById('vastu-loading');
+        if (show) {
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'vastu-loading';
+                el.className = 'loading-overlay';
+                el.innerHTML = '<div class="spinner"></div>';
+                document.body.appendChild(el);
+            }
+        } else if (el) {
+            el.remove();
+        }
+    },
+    formatDate(iso) {
+        if (!iso) return '-';
+        try {
+            return new Date(iso).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+        } catch { return '-'; }
+    },
+    formatDateTime(iso) {
+        if (!iso) return '-';
+        try {
+            return new Date(iso).toLocaleString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        } catch { return '-'; }
+    },
+    formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    },
+};
+
+// ==========================================
+// API MODULES
+// ==========================================
+const API = {
+    auth: {
+        async signup(payload) {
+            const data = await apiCall('/api/auth/signup', { method: 'POST', body: payload, noAuth: true });
+            Auth.setTokens(data.access_token, data.refresh_token);
+            return data;
+        },
+        async login(email, password) {
+            const data = await apiCall('/api/auth/login', { method: 'POST', body: { email, password }, noAuth: true });
+            Auth.setTokens(data.access_token, data.refresh_token);
+            return data;
+        },
+        async me() { return await apiCall('/api/auth/me'); },
+        logout() { Auth.clear(); },
+    },
+    clients: {
+        async list(skip = 0, limit = 50) { return await apiCall(`/api/clients?skip=${skip}&limit=${limit}`); },
+        async get(id) { return await apiCall(`/api/clients/${id}`); },
+        async create(payload) { return await apiCall('/api/clients', { method: 'POST', body: payload }); },
+        async update(id, payload) { return await apiCall(`/api/clients/${id}`, { method: 'PUT', body: payload }); },
+        async remove(id) { return await apiCall(`/api/clients/${id}`, { method: 'DELETE' }); },
+    },
+    properties: {
+        async list(clientId = null) {
+            const q = clientId ? `?client_id=${clientId}` : '';
+            return await apiCall(`/api/properties${q}`);
+        },
+        async get(id) { return await apiCall(`/api/properties/${id}`); },
+        async create(payload) { return await apiCall('/api/properties', { method: 'POST', body: payload }); },
+        async update(id, payload) { return await apiCall(`/api/properties/${id}`, { method: 'PUT', body: payload }); },
+        async remove(id) { return await apiCall(`/api/properties/${id}`, { method: 'DELETE' }); },
+    },
+    reports: {
+        async list(propertyId = null) {
+            const q = propertyId ? `?property_id=${propertyId}` : '';
+            return await apiCall(`/api/reports${q}`);
+        },
+        async get(id) { return await apiCall(`/api/reports/${id}`); },
+        async generate(payload) { return await apiCall('/api/reports/generate', { method: 'POST', body: payload }); },
+        async updateStatus(id, status) { return await apiCall(`/api/reports/${id}/status`, { method: 'PUT', body: { status } }); },
+        async remove(id) { return await apiCall(`/api/reports/${id}`, { method: 'DELETE' }); },
+        async downloadPDF(id) {
+            const blob = await apiCall(`/api/reports/${id}/pdf`);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vastu_one_report_${id.slice(0, 8)}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        },
+    },
+    lms: {
+        async listCourses(publishedOnly = false) {
+            const q = publishedOnly ? '?published_only=true' : '';
+            return await apiCall(`/api/lms/courses${q}`);
+        },
+        async getCourse(id) { return await apiCall(`/api/lms/courses/${id}`); },
+        async createCourse(payload) { return await apiCall('/api/lms/courses', { method: 'POST', body: payload }); },
+        async listModules(courseId) { return await apiCall(`/api/lms/courses/${courseId}/modules`); },
+        async createModule(courseId, payload) { return await apiCall(`/api/lms/courses/${courseId}/modules`, { method: 'POST', body: payload }); },
+        async listLessons(moduleId) { return await apiCall(`/api/lms/modules/${moduleId}/lessons`); },
+        async createLesson(moduleId, payload) { return await apiCall(`/api/lms/modules/${moduleId}/lessons`, { method: 'POST', body: payload }); },
+        async enroll(courseId) { return await apiCall(`/api/lms/courses/${courseId}/enroll`, { method: 'POST' }); },
+        async myEnrollments() { return await apiCall('/api/lms/enrollments'); },
+        async markProgress(payload) { return await apiCall('/api/lms/progress', { method: 'POST', body: payload }); },
+    },
+};
+
+// Export
+window.VastuAPI = { API, Auth, UI, apiCall };

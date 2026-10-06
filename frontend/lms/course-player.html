@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Course Player — VASTU ONE Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+/* ============ PLAYER LAYOUT ============ */
+.player-container {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    min-height: calc(100vh - 64px);
+    background: var(--void-black);
+}
+
+@media (max-width: 1024px) {
+    .player-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============ MAIN STAGE ============ */
+.player-main {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.video-wrapper {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    max-height: 60vh;
+}
+
+.video-wrapper video,
+.video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0A0D1A, #05060F);
+    color: var(--muted-white);
+    gap: 16px;
+}
+
+.video-placeholder-icon {
+    font-size: 64px;
+    opacity: 0.4;
+}
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.lesson-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--starlight);
+    margin: 0 0 8px;
+}
+
+.lesson-meta {
+    display: flex;
+    gap: 16px;
+    color: var(--muted-white);
+    font-size: 13px;
+    flex-wrap: wrap;
+}
+
+.progress-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--success);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* TABS */
+.tabs-bar {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.08);
+    padding-bottom: 0;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--muted-white);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.tab-btn:hover { color: var(--starlight); }
+.tab-btn.active { color: var(--cosmic-gold); }
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--cosmic-gold);
+}
+
+.tab-content {
+    padding: 20px 0;
+    min-height: 200px;
+}
+
+.tab-content.hidden { display: none; }
+
+/* NOTES */
+.notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.note-card {
+    padding: 14px 16px;
+    background: var(--space);
+    border-left: 3px solid var(--cosmic-gold);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.note-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--cosmic-gold);
+    cursor: pointer;
+    user-select: none;
+}
+
+.note-time:hover { text-decoration: underline; }
+
+.note-content {
+    flex: 1;
+    color: var(--starlight);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Q&A */
+.qa-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.qa-post {
+    padding: 16px;
+    background: var(--space);
+    border-radius: 8px;
+    border: 1px solid rgba(248, 247, 242, 0.06);
+}
+
+.qa-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.qa-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cosmic-gold), var(--gold-dim));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--void-black);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.qa-user {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--starlight);
+}
+
+.qa-time {
+    font-size: 11px;
+    color: var(--faint-white);
+    margin-left: auto;
+}
+
+.instructor-badge {
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.qa-content {
+    color: var(--starlight);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.qa-actions {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.qa-upvote {
+    color: var(--muted-white);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.qa-upvote:hover { color: var(--cosmic-gold); }
+
+/* RESOURCES */
+.resource-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--space);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.resource-item:hover {
+    background: var(--space-light);
+    transform: translateX(4px);
+}
+
+.resource-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.resource-info {
+    flex: 1;
+}
+
+.resource-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--starlight);
+}
+
+.resource-meta {
+    font-size: 11px;
+    color: var(--faint-white);
+    margin-top: 2px;
+}
+
+/* ACTIONS */
+.lesson-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ============ SIDEBAR ============ */
+.player-sidebar {
+    background: var(--deep-space);
+    border-left: 1px solid rgba(248, 247, 242, 0.08);
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    position: sticky;
+    top: 64px;
+}
+
+@media (max-width: 1024px) {
+    .player-sidebar {
+        position: static;
+        max-height: none;
+        border-left: none;
+        border-top: 1px solid rgba(248, 247, 242, 0.08);
+    }
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.08);
+    position: sticky;
+    top: 0;
+    background: var(--deep-space);
+    z-index: 10;
+}
+
+.sidebar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--starlight);
+    margin: 0 0 12px;
+}
+
+.progress-mini {
+    height: 6px;
+    background: var(--space);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-mini-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cosmic-gold), var(--gold-light));
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: var(--muted-white);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* SECTIONS */
+.section-item {
+    border-bottom: 1px solid rgba(248, 247, 242, 0.05);
+}
+
+.section-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.section-header:hover { background: rgba(248, 247, 242, 0.03); }
+
+.section-title-sidebar {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--starlight);
+    flex: 1;
+}
+
+.section-toggle {
+    color: var(--cosmic-gold);
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+
+.section-item.collapsed .section-toggle { transform: rotate(-90deg); }
+.section-item.collapsed .lessons-list { display: none; }
+
+.lessons-list {
+    padding-bottom: 8px;
+}
+
+.lesson-row {
+    padding: 10px 20px 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--muted-white);
+    border-left: 2px solid transparent;
+}
+
+.lesson-row:hover {
+    background: rgba(248, 247, 242, 0.03);
+    color: var(--starlight);
+}
+
+.lesson-row.active {
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--cosmic-gold);
+    border-left-color: var(--cosmic-gold);
+    font-weight: 600;
+}
+
+.lesson-row.completed .lesson-status {
+    color: var(--success);
+}
+
+.lesson-status {
+    flex-shrink: 0;
+    font-size: 14px;
+    width: 16px;
+    text-align: center;
+}
+
+.lesson-row-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lesson-row-time {
+    font-size: 11px;
+    color: var(--faint-white);
+    flex-shrink: 0;
+}
+
+/* MOBILE SIDEBAR TOGGLE */
+.sidebar-toggle-mobile {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+}
+
+@media (max-width: 1024px) {
+    .sidebar-toggle-mobile { display: flex; align-items: center; justify-content: center; }
+}
+
+/* Utility */
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/lms/student-dashboard.html">← Back to Dashboard</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<!-- PLAYER -->
+<div class="player-container" id="player-container">
+
+    <!-- MAIN STAGE -->
+    <div class="player-main" id="player-main">
+        <div class="text-muted">Loading lesson...</div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="player-sidebar" id="player-sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title" id="sidebar-course-title">Course Content</h3>
+            <div class="progress-mini">
+                <div class="progress-mini-fill" id="sidebar-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text">
+                <span id="sidebar-progress-label">0% complete</span>
+                <span id="sidebar-lesson-count">0 / 0</span>
+            </div>
+        </div>
+        <div id="sidebar-content">
+            <div class="text-muted text-sm" style="padding: 20px;">Loading...</div>
+        </div>
+    </aside>
+
+</div>
+
+<!-- MOBILE SIDEBAR TOGGLE -->
+<button class="sidebar-toggle-mobile" id="sidebar-toggle" onclick="toggleSidebar()" style="display: none;">
+    📚
+</button>
+
+<script src="/static/api.js"></script>
+<script>
+let currentCourseId = null;
+let currentLessonId = null;
+let currentLesson = null;
+let courseContent = null;
+
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+async function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+}
+
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function detectVideoSource(url) {
+    if (!url) return { type: 'placeholder' };
+    
+    const lower = url.toLowerCase();
+    
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (ytMatch) {
+        return { type: 'youtube', id: ytMatch[1], embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0` };
+    }
+    
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) {
+        return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1` };
+    }
+    
+    // Direct video file
+    if (lower.match(/\.(mp4|webm|ogg|mov)$/)) {
+        return { type: 'video', src: url };
+    }
+    
+    // PDF
+    if (lower.match(/\.pdf$/)) {
+        return { type: 'pdf', src: url };
+    }
+    
+    // Text / link
+    return { type: 'link', url };
+}
+
+async function loadCourseContent() {
+    try {
+        const data = await VastuAPI.apiCall(`/api/lms/v2/player/course/${currentCourseId}/content`);
+        courseContent = data;
+        
+        document.getElementById('sidebar-course-title').textContent = data.course_title;
+        
+        // Render sidebar
+        renderSidebar(data);
+        
+        // Update progress
+        document.getElementById('sidebar-progress-fill').style.width = `${data.progress_pct}%`;
+        document.getElementById('sidebar-progress-label').textContent = `${Math.round(data.progress_pct)}% complete`;
+        
+        // Count completed vs total
+        let total = 0, completed = 0;
+        data.content.forEach(s => {
+            total += s.lessons.length;
+            completed += s.lessons.filter(l => l.is_completed).length;
+        });
+        document.getElementById('sidebar-lesson-count').textContent = `${completed} / ${total}`;
+    } catch (err) {
+        console.error('Course content error:', err);
+        VastuAPI.UI.toast('Failed to load course content', 'error');
+    }
+}
+
+function renderSidebar(data) {
+    const el = document.getElementById('sidebar-content');
+    if (!data.content.length) {
+        el.innerHTML = '<div class="text-muted text-sm" style="padding: 20px;">No content yet.</div>';
+        return;
+    }
+    
+    el.innerHTML = data.content.map((section, sIdx) => `
+        <div class="section-item" data-section-id="${section.section_id}">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-sidebar">
+                    <span class="text-gold" style="font-size: 11px;">MODULE ${sIdx + 1}</span><br>
+                    ${escapeHtml(section.section_title)}
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="lessons-list">
+                ${section.lessons.map((lesson, lIdx) => `
+                    <div class="lesson-row ${lesson.is_completed ? 'completed' : ''} ${lesson.id === currentLessonId ? 'active' : ''}"
+                         onclick="goToLesson('${lesson.id}')">
+                        <span class="lesson-status">${lesson.is_completed ? '✅' : (lesson.id === currentLessonId ? '▶' : '○')}</span>
+                        <span class="lesson-row-title">${lIdx + 1}. ${escapeHtml(lesson.title)}</span>
+                        <span class="lesson-row-time">${lesson.duration_minutes}min</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleSection(el) {
+    const item = el.parentElement;
+    item.classList.toggle('collapsed');
+}
+
+function goToLesson(lessonId) {
+    if (lessonId === currentLessonId) return;
+    window.location.href = `/lms/course-player.html?course_id=${currentCourseId}&lesson_id=${lessonId}`;
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('player-sidebar');
+    sidebar.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function loadLesson() {
+    try {
+        VastuAPI.UI.loading(true);
+        const data = await VastuAPI.apiCall(`/api/lms/v2/player/lesson/${currentLessonId}`);
+        currentLesson = data;
+        
+        renderLesson(data);
+        await loadCourseContent();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed to load lesson: ' + err.message, 'error');
+    } finally {
+        VastuAPI.UI.loading(false);
+    }
+}
+
+function renderLesson(lesson) {
+    const el = document.getElementById('player-main');
+    const videoSrc = detectVideoSource(lesson.content_url);
+    
+    let videoHTML = '';
+    if (videoSrc.type === 'youtube' || videoSrc.type === 'vimeo') {
+        videoHTML = `<iframe src="${videoSrc.embedUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    } else if (videoSrc.type === 'video') {
+        videoHTML = `
+            <video id="lesson-video" controls autoplay preload="metadata" style="width:100%;height:100%;">
+                <source src="${videoSrc.src}" type="video/mp4">
+            </video>
+        `;
+    } else if (videoSrc.type === 'pdf') {
+        videoHTML = `<iframe src="${videoSrc.src}" style="width:100%;height:100%;"></iframe>`;
+    } else {
+        videoHTML = `
+            <div class="video-placeholder">
+                <div class="video-placeholder-icon">🎥</div>
+                <div style="font-size: 16px;">Video content</div>
+                <div style="font-size: 12px; opacity: 0.6;">Duration: ${lesson.duration_minutes} minutes</div>
+            </div>
+        `;
+    }
+    
+    el.innerHTML = `
+        <div class="video-wrapper">
+            ${videoHTML}
+        </div>
+        
+        <div class="lesson-header">
+            <div style="flex: 1;">
+                <h1 class="lesson-title">${escapeHtml(lesson.title)}</h1>
+                <div class="lesson-meta">
+                    ${lesson.section_title ? `<span>📚 ${escapeHtml(lesson.section_title)}</span>` : ''}
+                    <span>⏱️ ${lesson.duration_minutes} minutes</span>
+                    ${lesson.is_completed ? '<span class="progress-badge">✅ Completed</span>' : ''}
+                    ${lesson.is_preview ? '<span class="badge badge-gold">FREE PREVIEW</span>' : ''}
+                </div>
+            </div>
+        </div>
+        
+        ${lesson.text_content ? `<div style="color: var(--muted-white); line-height: 1.7;">${escapeHtml(lesson.text_content)}</div>` : ''}
+        
+        <div class="lesson-actions">
+            ${lesson.prev_lesson_id 
+                ? `<a href="/lms/course-player.html?course_id=${currentCourseId}&lesson_id=${lesson.prev_lesson_id}" class="btn btn-ghost">← Previous</a>`
+                : '<span></span>'
+            }
+            
+            <button class="btn btn-primary" onclick="markComplete()" id="complete-btn" ${lesson.is_completed ? 'disabled' : ''}>
+                ${lesson.is_completed ? '✅ Completed' : 'Mark as Complete'}
+            </button>
+            
+            ${lesson.next_lesson_id 
+                ? `<a href="/lms/course-player.html?course_id=${currentCourseId}&lesson_id=${lesson.next_lesson_id}" class="btn btn-primary" id="next-btn">Next Lesson →</a>`
+                : '<span class="text-gold">🎉 Course completed!</span>'
+            }
+        </div>
+        
+        <!-- TABS -->
+        <div class="tabs-bar">
+            <button class="tab-btn active" onclick="switchTab('notes')">📝 Notes (${lesson.notes_count})</button>
+            <button class="tab-btn" onclick="switchTab('qa')">💬 Q&A (${lesson.discussion_count})</button>
+            <button class="tab-btn" onclick="switchTab('resources')">📎 Resources (${lesson.resources_count})</button>
+        </div>
+        
+        <div class="tab-content" id="tab-notes">
+            <div class="notes-list" id="notes-list">
+                <div class="text-muted text-sm">Loading notes...</div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" class="form-input" id="note-input" placeholder="Add a note..." 
+                       onkeydown="if(event.key==='Enter') addNote()">
+                <button class="btn btn-primary" onclick="addNote()">Add</button>
+            </div>
+        </div>
+        
+        <div class="tab-content hidden" id="tab-qa">
+            <div class="qa-list" id="qa-list">
+                <div class="text-muted text-sm">Loading discussions...</div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <input type="text" class="form-input" id="qa-input" placeholder="Ask a question..."
+                       onkeydown="if(event.key==='Enter') askQuestion()">
+                <button class="btn btn-primary" onclick="askQuestion()">Post</button>
+            </div>
+        </div>
+        
+        <div class="tab-content hidden" id="tab-resources">
+            <div id="resources-list">
+                <div class="text-muted text-sm">Loading resources...</div>
+            </div>
+        </div>
+    `;
+    
+    // Video event listeners for auto-complete
+    const video = document.getElementById('lesson-video');
+    if (video) {
+        video.addEventListener('timeupdate', () => {
+            if (video.duration && video.currentTime / video.duration >= 0.9 && !lesson.is_completed) {
+                markComplete();
+            }
+        });
+        
+        // Resume from last position
+        if (lesson.watch_seconds > 0) {
+            video.currentTime = lesson.watch_seconds;
+        }
+    }
+    
+    // Load tab data
+    loadNotes();
+    loadQA();
+    loadResources();
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+}
+
+async function markComplete() {
+    try {
+        await VastuAPI.apiCall('/api/lms/progress', {
+            method: 'POST',
+            body: {
+                lesson_id: currentLessonId,
+                watch_seconds: Math.round(document.getElementById('lesson-video')?.currentTime || 0),
+                is_completed: true,
+            },
+        });
+        VastuAPI.UI.toast('✅ Lesson marked complete!', 'success');
+        
+        document.getElementById('complete-btn').textContent = '✅ Completed';
+        document.getElementById('complete-btn').disabled = true;
+        
+        await loadCourseContent();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    }
+}
+
+async function loadNotes() {
+    try {
+        const notes = await VastuAPI.apiCall('/api/lms/v2/engagement/notes');
+        const filtered = notes.filter(n => n.lesson_id === currentLessonId);
+        const el = document.getElementById('notes-list');
+        
+        if (!filtered.length) {
+            el.innerHTML = '<div class="text-muted text-sm">No notes yet. Take your first note!</div>';
+            return;
+        }
+        
+        el.innerHTML = filtered.map(n => `
+            <div class="note-card">
+                <div style="flex: 1;">
+                    <div class="note-time" onclick="seekTo(${n.timestamp_seconds})">⏱️ ${formatTime(n.timestamp_seconds)}</div>
+                    <div class="note-content mt-2">${escapeHtml(n.content)}</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="deleteNote('${n.id}')">✕</button>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function addNote() {
+    const input = document.getElementById('note-input');
+    const content = input.value.trim();
+    if (!content) return;
+    
+    const video = document.getElementById('lesson-video');
+    const timestamp = Math.round(video?.currentTime || 0);
+    
+    try {
+        await VastuAPI.apiCall('/api/lms/v2/engagement/notes', {
+            method: 'POST',
+            body: { lesson_id: currentLessonId, content, timestamp_seconds: timestamp },
+        });
+        input.value = '';
+        VastuAPI.UI.toast('Note added', 'success');
+        await loadNotes();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    }
+}
+
+async function deleteNote(id) {
+    try {
+        await VastuAPI.apiCall(`/api/lms/v2/engagement/notes/${id}`, { method: 'DELETE' });
+        VastuAPI.UI.toast('Note deleted', 'success');
+        await loadNotes();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    }
+}
+
+function seekTo(seconds) {
+    const video = document.getElementById('lesson-video');
+    if (video) video.currentTime = seconds;
+}
+
+async function loadQA() {
+    try {
+        const posts = await VastuAPI.apiCall(`/api/lms/v2/engagement/discussions/${currentLessonId}`);
+        const el = document.getElementById('qa-list');
+        
+        if (!posts.length) {
+            el.innerHTML = '<div class="text-muted text-sm">No questions yet. Be the first to ask!</div>';
+            return;
+        }
+        
+        el.innerHTML = posts.map(p => `
+            <div class="qa-post">
+                <div class="qa-header">
+                    <div class="qa-avatar">👤</div>
+                    <div>
+                        <div class="qa-user">User ${p.user_id.slice(0, 6)}</div>
+                        ${p.is_instructor ? '<span class="instructor-badge">INSTRUCTOR</span>' : ''}
+                    </div>
+                    <div class="qa-time">${VastuAPI.UI.formatDate(p.created_at)}</div>
+                </div>
+                <div class="qa-content">${escapeHtml(p.content)}</div>
+                <div class="qa-actions">
+                    <span class="qa-upvote" onclick="upvote('${p.id}')">▲ ${p.upvotes} Upvotes</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function askQuestion() {
+    const input = document.getElementById('qa-input');
+    const content = input.value.trim();
+    if (!content) return;
+    
+    try {
+        await VastuAPI.apiCall('/api/lms/v2/engagement/discussions', {
+            method: 'POST',
+            body: { lesson_id: currentLessonId, content },
+        });
+        input.value = '';
+        VastuAPI.UI.toast('Question posted', 'success');
+        await loadQA();
+    } catch (err) {
+        VastuAPI.UI.toast('Failed: ' + err.message, 'error');
+    }
+}
+
+async function upvote(postId) {
+    try {
+        await VastuAPI.apiCall(`/api/lms/v2/engagement/discussions/${postId}/upvote`, { method: 'POST' });
+        await loadQA();
+    } catch (err) {}
+}
+
+async function loadResources() {
+    try {
+        const resources = await VastuAPI.apiCall(`/api/lms/v2/resources/by-lesson/${currentLessonId}`);
+        const el = document.getElementById('resources-list');
+        
+        if (!resources.length) {
+            el.innerHTML = '<div class="text-muted text-sm">No resources attached.</div>';
+            return;
+        }
+        
+        const iconMap = { pdf: '📄', video: '🎥', link: '🔗', doc: '📝' };
+        
+        el.innerHTML = resources.map(r => `
+            <a href="${r.url}" target="_blank" rel="noopener" class="resource-item" style="text-decoration: none;">
+                <span class="resource-icon">${iconMap[r.resource_type] || '📎'}</span>
+                <div class="resource-info">
+                    <div class="resource-title">${escapeHtml(r.title)}</div>
+                    <div class="resource-meta">
+                        ${r.resource_type.toUpperCase()}${r.size_kb ? ` • ${(r.size_kb / 1024).toFixed(1)} MB` : ''}
+                        ${r.downloadable ? ' • Downloadable' : ''}
+                    </div>
+                </div>
+                <span style="color: var(--cosmic-gold);">→</span>
+            </a>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function loadUser() {
+    try {
+        const me = await VastuAPI.API.auth.me();
+        document.getElementById('user-name').textContent = me.full_name;
+    } catch (err) {}
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    
+    const video = document.getElementById('lesson-video');
+    if (!video) return;
+    
+    if (e.code === 'Space') {
+        e.preventDefault();
+        video.paused ? video.play() : video.pause();
+    }
+    if (e.code === 'ArrowRight') video.currentTime += 5;
+    if (e.code === 'ArrowLeft') video.currentTime -= 5;
+});
+
+async function init() {
+    if (!await requireAuth()) return;
+    
+    const params = new URLSearchParams(window.location.search);
+    currentCourseId = params.get('course_id');
+    currentLessonId = params.get('lesson_id');
+    
+    if (!currentLessonId && currentCourseId) {
+        // Redirect to first lesson
+        try {
+            const data = await VastuAPI.apiCall(`/api/lms/v2/player/course/${currentCourseId}/content`);
+            const firstLesson = data.content[0]?.lessons[0];
+            if (firstLesson) {
+                window.location.href = `/lms/course-player.html?course_id=${currentCourseId}&lesson_id=${firstLesson.id}`;
+                return;
+            }
+        } catch (err) {}
+    }
+    
+    if (!currentLessonId) {
+        window.location.href = '/lms/student-dashboard.html';
+        return;
+    }
+    
+    await loadUser();
+    await loadLesson();
+}
+
+init();
+</script>
+</body>
+</html>

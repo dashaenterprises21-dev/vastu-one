@@ -286,7 +286,10 @@ class Lesson(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
     module_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("course_modules.id", ondelete="CASCADE"), nullable=False
+        String(36), ForeignKey("course_modules.id", ondelete="CASCADE"), nullable=True
+    )
+    section_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("course_sections.id", ondelete="CASCADE"), nullable=True
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     content_type: Mapped[str] = mapped_column(String(20), default="video")
@@ -621,3 +624,264 @@ class OTPCode(Base):
         Index("ix_otp_user", "user_id"),
         Index("ix_otp_purpose", "purpose"),
     )
+
+
+# ==========================================
+# LMS v2: COURSE SECTION
+# ==========================================
+class CourseSection(Base):
+    __tablename__ = "course_sections"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    course_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+    duration_minutes: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (Index("ix_sections_course", "course_id"),)
+
+
+# ==========================================
+# LMS v2: LESSON RESOURCE
+# ==========================================
+class LessonResource(Base):
+    __tablename__ = "lesson_resources"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    lesson_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    resource_type: Mapped[str] = mapped_column(String(20), default="pdf")  # pdf, video, link, doc
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    size_kb: Mapped[int] = mapped_column(Integer, default=0)
+    downloadable: Mapped[bool] = mapped_column(Boolean, default=True)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+# ==========================================
+# LMS v2: QUIZ
+# ==========================================
+class Quiz(Base):
+    __tablename__ = "quizzes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    section_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("course_sections.id", ondelete="CASCADE"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    pass_percentage: Mapped[int] = mapped_column(Integer, default=70)
+    time_limit_minutes: Mapped[int] = mapped_column(Integer, default=0)  # 0 = no limit
+    max_attempts: Mapped[int] = mapped_column(Integer, default=3)
+    shuffle_questions: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class QuizQuestion(Base):
+    __tablename__ = "quiz_questions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    quiz_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False
+    )
+    question_text: Mapped[str] = mapped_column(Text, nullable=False)
+    options: Mapped[list] = mapped_column(JSON, default=list)  # ["A", "B", "C", "D"]
+    correct_option_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    points: Mapped[int] = mapped_column(Integer, default=1)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class QuizAttempt(Base):
+    __tablename__ = "quiz_attempts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    quiz_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    answers: Mapped[dict] = mapped_column(JSON, default=dict)  # {question_id: selected_index}
+    score_percentage: Mapped[float] = mapped_column(Float, default=0.0)
+    passed: Mapped[bool] = mapped_column(Boolean, default=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    __table_args__ = (
+        Index("ix_attempts_quiz", "quiz_id"),
+        Index("ix_attempts_student", "student_id"),
+    )
+
+
+# ==========================================
+# LMS v2: ASSIGNMENT
+# ==========================================
+class Assignment(Base):
+    __tablename__ = "assignments"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    section_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("course_sections.id", ondelete="CASCADE"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    due_days: Mapped[int] = mapped_column(Integer, default=7)
+    max_score: Mapped[int] = mapped_column(Integer, default=100)
+    attachment_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class AssignmentSubmission(Base):
+    __tablename__ = "assignment_submissions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    assignment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("assignments.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    content_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    feedback: Mapped[str | None] = mapped_column(Text, nullable=True)
+    submitted_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    graded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    __table_args__ = (
+        Index("ix_submissions_assignment", "assignment_id"),
+        Index("ix_submissions_student", "student_id"),
+    )
+
+
+# ==========================================
+# LMS v2: DISCUSSION
+# ==========================================
+class DiscussionPost(Base):
+    __tablename__ = "discussion_posts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    lesson_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    parent_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("discussion_posts.id", ondelete="CASCADE"), nullable=True
+    )
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    upvotes: Mapped[int] = mapped_column(Integer, default=0)
+    is_instructor: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_pinned: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    __table_args__ = (Index("ix_discussion_lesson", "lesson_id"),)
+
+
+# ==========================================
+# LMS v2: NOTES + BOOKMARKS
+# ==========================================
+class LessonNote(Base):
+    __tablename__ = "lesson_notes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    lesson_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    timestamp_seconds: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class LessonBookmark(Base):
+    __tablename__ = "lesson_bookmarks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    lesson_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    timestamp_seconds: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("lesson_id", "student_id", name="uq_bookmark"),
+    )
+
+
+# ==========================================
+# LMS v2: COURSE REVIEW
+# ==========================================
+class CourseReview(Base):
+    __tablename__ = "course_reviews"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    course_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)  # 1-5
+    title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    review_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("course_id", "student_id", name="uq_review"),
+    )
+
+
+# ==========================================
+# LMS v2: STUDENT STREAK
+# ==========================================
+class StudentStreak(Base):
+    __tablename__ = "student_streaks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    current_streak_days: Mapped[int] = mapped_column(Integer, default=0)
+    longest_streak_days: Mapped[int] = mapped_column(Integer, default=0)
+    last_activity_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    total_learning_minutes: Mapped[int] = mapped_column(Integer, default=0)
+
+
+# ==========================================
+# LMS v2: ACHIEVEMENT
+# ==========================================
+class Achievement(Base):
+    __tablename__ = "achievements"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=gen_uuid)
+    student_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    badge_type: Mapped[str] = mapped_column(String(50), nullable=False)  # first_lesson, streak_7, course_complete, etc.
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    icon: Mapped[str] = mapped_column(String(50), default="ðŸ†")
+    earned_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (Index("ix_achievements_student", "student_id"),)
