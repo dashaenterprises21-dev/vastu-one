@@ -139,19 +139,34 @@ function loadUser() {
 
 function showSuccessBanner() {
     var params = new URLSearchParams(window.location.search);
-    if (!params.get('success')) return;
     
-    document.getElementById('success-banner-container').innerHTML = 
-        '<div class="success-banner">' +
-        '<div class="success-icon">🎉</div>' +
-        '<div>' +
-        '<div style="font-weight: 600; font-size: 16px; color: var(--success);">Order placed successfully!</div>' +
-        '<div class="text-muted text-sm mt-1">We\'ll notify you when it ships. You can track it below.</div>' +
-        '</div>' +
-        '</div>';
+    // Success case (payment completed)
+    if (params.get('success')) {
+        document.getElementById('success-banner-container').innerHTML = 
+            '<div class="success-banner">' +
+            '<div class="success-icon">🎉</div>' +
+            '<div>' +
+            '<div style="font-weight: 600; font-size: 16px; color: var(--success);">Order placed successfully!</div>' +
+            '<div class="text-muted text-sm mt-1">We\'ll notify you when it ships. You can track it below.</div>' +
+            '</div>' +
+            '</div>';
+        window.history.replaceState({}, '', '/my-orders.html');
+        return;
+    }
     
-    // Clean URL
-    window.history.replaceState({}, '', '/my-orders.html');
+    // Pending case (payment gateway unavailable)
+    if (params.get('pending')) {
+        document.getElementById('success-banner-container').innerHTML = 
+            '<div class="success-banner" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border-color: rgba(251, 191, 36, 0.4);">' +
+            '<div class="success-icon">⏳</div>' +
+            '<div>' +
+            '<div style="font-weight: 600; font-size: 16px; color: var(--warning);">Order saved — PENDING payment</div>' +
+            '<div class="text-muted text-sm mt-1">Our payment gateway is temporarily unavailable. We\'ll contact you shortly to complete your order.</div>' +
+            '</div>' +
+            '</div>';
+        window.history.replaceState({}, '', '/my-orders.html');
+        return;
+    }
 }
 
 function loadOrders() {
