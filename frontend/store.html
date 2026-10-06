@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Store - VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: var(--space);
+    border: 1px solid rgba(248, 247, 242, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.product-image {
+    height: 200px;
+    background: linear-gradient(135deg, var(--deep-space), var(--space-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    color: var(--cosmic-gold);
+    opacity: 0.8;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.06);
+}
+
+.product-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-category {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cosmic-gold);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--starlight);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.product-desc {
+    font-size: 13px;
+    color: var(--muted-white);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(248, 247, 242, 0.06);
+}
+
+.product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cosmic-gold);
+}
+
+.cart-badge {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+    transition: all 0.2s;
+}
+
+.cart-badge:hover { transform: scale(1.08); }
+
+.cart-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    min-width: 22px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/store.html" class="active">Store</a>
+            <a href="/my-orders.html">My Orders</a>
+            <a href="/lms/courses.html">Academy</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">-</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<div class="cart-badge" onclick="goToCart()">
+    🛒
+    <span class="cart-count hidden" id="cart-count">0</span>
+</div>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: 100px;">
+
+    <div class="mb-6">
+        <h1>VASTU ONE Store</h1>
+        <p class="text-muted mt-2">Authentic Vastu products and services</p>
+    </div>
+
+    <div class="card mb-5">
+        <div class="grid grid-3" style="gap: var(--space-4);">
+            <input type="text" class="form-input" id="search-input"
+                   placeholder="Search products..." oninput="filterProducts()">
+            <select class="form-select" id="filter-category" onchange="filterProducts()">
+                <option value="">All Categories</option>
+            </select>
+            <select class="form-select" id="sort-by" onchange="filterProducts()">
+                <option value="recent">Recently Added</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name">Name (A-Z)</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="products-list">
+        <div class="text-muted text-sm">Loading products...</div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+var allProducts = [];
+var filteredProducts = [];
+
+function loadUser() {
+    return VastuAPI.API.auth.me().then(function(me) {
+        document.getElementById('user-name').textContent = me.full_name;
+    }).catch(function(err) { console.error(err); });
+}
+
+function loadProducts() {
+    return VastuAPI.apiCall('/api/ecommerce/v2/products?limit=100').then(function(data) {
+        allProducts = data.items || [];
+        filteredProducts = allProducts.slice();
+        
+        var catEl = document.getElementById('filter-category');
+        var cats = data.categories || [];
+        cats.forEach(function(c) {
+            var opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            catEl.appendChild(opt);
+        });
+        
+        renderProducts();
+    }).catch(function(err) {
+        VastuAPI.UI.toast('Failed to load products: ' + err.message, 'error');
+    });
+}
+
+function filterProducts() {
+    var q = document.getElementById('search-input').value.toLowerCase().trim();
+    var cat = document.getElementById('filter-category').value;
+    var sort = document.getElementById('sort-by').value;
+    
+    filteredProducts = allProducts.filter(function(p) {
+        var matchesSearch = !q || 
+            p.name.toLowerCase().indexOf(q) >= 0 ||
+            (p.description || '').toLowerCase().indexOf(q) >= 0 ||
+            (p.sku || '').toLowerCase().indexOf(q) >= 0;
+        var matchesCat = !cat || p.category === cat;
+        return matchesSearch && matchesCat;
+    });
+    
+    if (sort === 'price-asc') filteredProducts.sort(function(a,b){ return a.price_inr - b.price_inr; });
+    else if (sort === 'price-desc') filteredProducts.sort(function(a,b){ return b.price_inr - a.price_inr; });
+    else if (sort === 'name') filteredProducts.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    
+    renderProducts();
+}
+
+function renderProducts() {
+    var el = document.getElementById('products-list');
+    
+    if (!filteredProducts.length) {
+        el.innerHTML = '<div class="card text-center" style="padding: 60px;">' +
+            '<div style="font-size: 48px; margin-bottom: 16px;">🛍️</div>' +
+            '<h3 class="mb-3">No products found</h3>' +
+            '<p class="text-muted">Try different filters</p>' +
+            '</div>';
+        return;
+    }
+    
+    var html = '<div class="text-muted text-sm mb-4">Showing ' + filteredProducts.length + ' products</div>';
+    html += '<div class="product-grid">';
+    
+    filteredProducts.forEach(function(p) {
+        var emoji = categoryEmoji(p.category);
+        var stockBadge = p.stock_qty > 0 
+            ? '<span class="badge badge-success">IN STOCK</span>' 
+            : '<span class="badge badge-danger">OUT OF STOCK</span>';
+        
+        html += '<div class="product-card">' +
+            '<div class="product-image">' + emoji + '</div>' +
+            '<div class="product-body">' +
+            '<div class="product-category">' + escapeHtml(p.category) + '</div>' +
+            '<h3 class="product-name">' + escapeHtml(p.name) + '</h3>' +
+            '<p class="product-desc">' + escapeHtml(p.description || '') + '</p>' +
+            '<div class="product-footer">' +
+            '<div class="product-price">Rs ' + p.price_inr.toLocaleString('en-IN') + '</div>' +
+            '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\')" ' + (p.stock_qty <= 0 ? 'disabled' : '') + '>Add</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+    });
+    
+    html += '</div>';
+    el.innerHTML = html;
+}
+
+function categoryEmoji(cat) {
+    var map = {
+        'Vastu Yantras': '🔱',
+        'Gemstones': '💎',
+        'Rudraksha': '📿',
+        'Pooja Items': '🪔',
+        'Books': '📖',
+        'Vastu Pyramids': '🔺',
+        'Wall Plates': '🖼️',
+        'Services': '🎯'
+    };
+    return map[cat] || '🛍️';
+}
+
+function getCart() {
+    try {
+        return JSON.parse(localStorage.getItem('vastu_cart') || '[]');
+    } catch (e) { return []; }
+}
+
+function saveCart(cart) {
+    localStorage.setItem('vastu_cart', JSON.stringify(cart));
+    updateCartBadge();
+}
+
+function addToCart(productId) {
+    var product = allProducts.find(function(p) { return p.id === productId; });
+    if (!product) return;
+    
+    var cart = getCart();
+    var existing = cart.find(function(i) { return i.product_id === productId; });
+    
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            product_id: productId,
+            name: product.name,
+            price_inr: product.price_inr,
+            quantity: 1
+        });
+    }
+    
+    saveCart(cart);
+    VastuAPI.UI.toast('Added to cart: ' + product.name, 'success');
+}
+
+function updateCartBadge() {
+    var cart = getCart();
+    var count = cart.reduce(function(sum, i) { return sum + i.quantity; }, 0);
+    var el = document.getElementById('cart-count');
+    if (count > 0) {
+        el.textContent = count;
+        el.classList.remove('hidden');
+    } else {
+        el.classList.add('hidden');
+    }
+}
+
+function goToCart() {
+    window.location.href = '/cart.html';
+}
+
+function init() {
+    if (!requireAuth()) return;
+    loadUser();
+    loadProducts();
+    updateCartBadge();
+}
+
+init();
+</script>
+</body>
+</html>

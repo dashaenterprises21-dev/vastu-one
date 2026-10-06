@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>My Orders - VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+.order-card {
+    background: var(--space);
+    border: 1px solid rgba(248, 247, 242, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+}
+
+.order-card:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.order-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--faint-white);
+}
+
+.order-total {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cosmic-gold);
+}
+
+.order-items-list {
+    padding-top: 16px;
+    border-top: 1px solid rgba(248, 247, 242, 0.06);
+}
+
+.order-item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--muted-white);
+}
+
+.success-banner {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(74, 222, 128, 0.05));
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.success-icon {
+    font-size: 40px;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/store.html">Store</a>
+            <a href="/my-orders.html" class="active">My Orders</a>
+            <a href="/lms/courses.html">Academy</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">-</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: 100px;">
+
+    <div id="success-banner-container"></div>
+
+    <div class="flex-between mb-6" style="flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1>My Orders</h1>
+            <p class="text-muted mt-2">Track your purchases</p>
+        </div>
+        <a href="/store.html" class="btn btn-primary">Continue Shopping</a>
+    </div>
+
+    <div id="orders-list">
+        <div class="text-muted text-sm">Loading orders...</div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+function loadUser() {
+    return VastuAPI.API.auth.me().then(function(me) {
+        document.getElementById('user-name').textContent = me.full_name;
+    }).catch(function(err) { console.error(err); });
+}
+
+function showSuccessBanner() {
+    var params = new URLSearchParams(window.location.search);
+    if (!params.get('success')) return;
+    
+    document.getElementById('success-banner-container').innerHTML = 
+        '<div class="success-banner">' +
+        '<div class="success-icon">🎉</div>' +
+        '<div>' +
+        '<div style="font-weight: 600; font-size: 16px; color: var(--success);">Order placed successfully!</div>' +
+        '<div class="text-muted text-sm mt-1">We\'ll notify you when it ships. You can track it below.</div>' +
+        '</div>' +
+        '</div>';
+    
+    // Clean URL
+    window.history.replaceState({}, '', '/my-orders.html');
+}
+
+function loadOrders() {
+    return VastuAPI.apiCall('/api/ecommerce/v2/orders').then(function(orders) {
+        var el = document.getElementById('orders-list');
+        
+        if (!orders || orders.length === 0) {
+            el.innerHTML = 
+                '<div class="card text-center" style="padding: 60px;">' +
+                '<div style="font-size: 64px; margin-bottom: 20px;">📦</div>' +
+                '<h2 class="mb-3">No orders yet</h2>' +
+                '<p class="text-muted mb-5">Start shopping to see your orders here</p>' +
+                '<a href="/store.html" class="btn btn-primary">Browse Store</a>' +
+                '</div>';
+            return;
+        }
+        
+        var html = '';
+        orders.forEach(function(order) {
+            var statusBadge = getStatusBadge(order.status);
+            var orderDate = VastuAPI.UI.formatDateTime(order.created_at);
+            var itemsHtml = '';
+            
+            (order.items || []).forEach(function(item) {
+                itemsHtml += 
+                    '<div class="order-item-row">' +
+                    '<span>' + escapeHtml(item.name || 'Product') + ' x ' + (item.quantity || 1) + '</span>' +
+                    '<span>Rs ' + ((item.line_total || 0)).toLocaleString('en-IN') + '</span>' +
+                    '</div>';
+            });
+            
+            html += 
+                '<div class="order-card">' +
+                '<div class="order-header">' +
+                '<div>' +
+                '<div class="order-id">Order ID: ' + order.id.slice(0, 12) + '...</div>' +
+                '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 20px; font-weight: 600; margin-top: 4px;">' +
+                'Order #' + order.id.slice(0, 8) +
+                '</div>' +
+                '<div class="text-muted text-sm mt-1">' + orderDate + '</div>' +
+                '</div>' +
+                '<div style="text-align: right;">' +
+                '<div class="order-total">Rs ' + order.total_inr.toLocaleString('en-IN') + '</div>' +
+                '<div style="margin-top: 8px;">' + statusBadge + '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="order-items-list">' +
+                itemsHtml +
+                '<div class="order-item-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(248, 247, 242, 0.06); font-weight: 600; color: var(--starlight);">' +
+                '<span>Delivery to:</span>' +
+                '<span>' + escapeHtml((order.shipping_address || {}).city || 'N/A') + ' - ' + escapeHtml((order.shipping_address || {}).pincode || '') + '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        });
+        
+        el.innerHTML = html;
+    }).catch(function(err) {
+        VastuAPI.UI.toast('Failed to load orders: ' + err.message, 'error');
+    });
+}
+
+function getStatusBadge(status) {
+    var map = {
+        'pending': '<span class="badge badge-warning">PENDING</span>',
+        'paid': '<span class="badge badge-success">PAID</span>',
+        'shipped': '<span class="badge badge-info">SHIPPED</span>',
+        'delivered': '<span class="badge badge-success">DELIVERED</span>',
+        'cancelled': '<span class="badge badge-danger">CANCELLED</span>'
+    };
+    return map[status] || '<span class="badge badge-info">' + status.toUpperCase() + '</span>';
+}
+
+function init() {
+    if (!requireAuth()) return;
+    showSuccessBanner();
+    loadUser();
+    loadOrders();
+}
+
+init();
+</script>
+</body>
+</html>
