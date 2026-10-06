@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Sentinel Security - VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+.security-header {
+    padding: 40px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.08);
+    margin-bottom: 40px;
+}
+
+.shield-icon {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.stat-card-security {
+    padding: 24px;
+    background: var(--space);
+    border: 1px solid rgba(248, 247, 242, 0.08);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.stat-card-security:hover {
+    transform: translateY(-2px);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.stat-card-security.critical::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--danger);
+}
+
+.stat-card-security.warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--warning);
+}
+
+.stat-card-security.success::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--success);
+}
+
+.stat-card-security.info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--info);
+}
+
+.activity-row {
+    display: grid;
+    grid-template-columns: 80px 60px 1fr 80px 80px;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.06);
+    align-items: center;
+    font-size: 13px;
+    transition: background 0.15s;
+}
+
+.activity-row:hover {
+    background: rgba(248, 247, 242, 0.02);
+}
+
+.activity-row:last-child {
+    border-bottom: none;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.status-2xx { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+.status-3xx { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+.status-4xx { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+.status-5xx { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+.ip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(248, 247, 242, 0.06);
+    font-size: 13px;
+}
+
+.ip-row:last-child { border-bottom: none; }
+
+.ip-address {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--starlight);
+}
+
+.suspicious-flag {
+    color: var(--danger);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .activity-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 16px;
+    }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/dashboard.html" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
+        <div class="navbar-nav">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/clients.html">Clients</a>
+            <a href="/properties.html">Properties</a>
+            <a href="/reports.html">Reports</a>
+            <a href="/sentinel.html" class="active">Security</a>
+        </div>
+        <div class="navbar-actions">
+            <span class="text-muted text-sm" id="user-name">-</span>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding-top: var(--space-7); padding-bottom: 100px;">
+
+    <div class="security-header">
+        <span class="shield-icon">🛡️</span>
+        <h1>Sentinel Security Dashboard</h1>
+        <p class="text-muted mt-2">Real-time monitoring &amp; audit logs</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-4 mb-7" id="stats-grid">
+        <div class="stat-card-security info">
+            <div class="metric-label">Requests Today</div>
+            <div class="metric-value" id="stat-requests">-</div>
+        </div>
+        <div class="stat-card-security warning">
+            <div class="metric-label">Failed Logins</div>
+            <div class="metric-value" id="stat-logins">-</div>
+        </div>
+        <div class="stat-card-security critical">
+            <div class="metric-label">Rate Limited</div>
+            <div class="metric-value" id="stat-blocked">-</div>
+        </div>
+        <div class="stat-card-security critical">
+            <div class="metric-label">Suspicious</div>
+            <div class="metric-value" id="stat-suspicious">-</div>
+        </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="card mb-6">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Recent Activity</h3>
+                <p class="card-subtitle">Last 50 API requests</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="loadActivity()">Refresh</button>
+        </div>
+        <div id="activity-feed">
+            <div class="text-muted text-sm" style="padding: 20px;">Loading...</div>
+        </div>
+    </div>
+
+    <!-- TOP IPs -->
+    <div class="card mb-6">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Top IP Addresses</h3>
+                <p class="card-subtitle">By request count today</p>
+            </div>
+        </div>
+        <div id="top-ips">
+            <div class="text-muted text-sm" style="padding: 20px;">Loading...</div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/static/api.js"></script>
+<script>
+function handleLogout() {
+    VastuAPI.Auth.clear();
+    window.location.href = '/login.html';
+}
+
+function requireAuth() {
+    if (!VastuAPI.Auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+function loadUser() {
+    return VastuAPI.API.auth.me().then(function(me) {
+        document.getElementById('user-name').textContent = me.full_name;
+    }).catch(function(err) { console.error(err); });
+}
+
+function loadStats() {
+    return VastuAPI.apiCall('/api/sentinel/stats').then(function(stats) {
+        document.getElementById('stat-requests').textContent = (stats.total_requests_today || 0).toLocaleString('en-IN');
+        document.getElementById('stat-logins').textContent = stats.failed_logins_today || 0;
+        document.getElementById('stat-blocked').textContent = stats.blocked_by_rate_limit_today || 0;
+        document.getElementById('stat-suspicious').textContent = stats.suspicious_requests_today || 0;
+    }).catch(function(err) { console.error('Stats error:', err); });
+}
+
+function loadActivity() {
+    return VastuAPI.apiCall('/api/sentinel/recent-activity?limit=50').then(function(data) {
+        var el = document.getElementById('activity-feed');
+        var acts = data.activities || [];
+        
+        if (!acts.length) {
+            el.innerHTML = '<div class="text-muted text-sm" style="padding: 20px;">No activity yet.</div>';
+            return;
+        }
+        
+        var html = '';
+        acts.forEach(function(a) {
+            var statusClass = 'status-5xx';
+            if (a.status >= 200 && a.status < 300) statusClass = 'status-2xx';
+            else if (a.status >= 300 && a.status < 400) statusClass = 'status-3xx';
+            else if (a.status >= 400 && a.status < 500) statusClass = 'status-4xx';
+            
+            var suspiciousFlag = a.suspicious ? '<span class="suspicious-flag">🚨 SUSPICIOUS</span>' : '';
+            var timestamp = a.created_at ? a.created_at.substring(11, 19) : '-';
+            
+            html += '<div class="activity-row">' +
+                '<span class="text-faint">' + timestamp + '</span>' +
+                '<span style="color: var(--cosmic-gold); font-weight: 600; font-size: 11px;">' + escapeHtml(a.method) + '</span>' +
+                '<span class="truncate" style="font-family: monospace;">' + escapeHtml(a.path) + ' ' + suspiciousFlag + '</span>' +
+                '<span class="status-badge ' + statusClass + '">' + a.status + '</span>' +
+                '<span class="text-faint" style="font-size: 11px;">' + escapeHtml(a.ip_address || '-') + '</span>' +
+                '</div>';
+        });
+        
+        el.innerHTML = html;
+    }).catch(function(err) {
+        console.error('Activity error:', err);
+    });
+}
+
+function loadTopIPs() {
+    return VastuAPI.apiCall('/api/sentinel/top-ips?limit=10').then(function(data) {
+        var el = document.getElementById('top-ips');
+        var ips = data.top_ips || [];
+        
+        if (!ips.length) {
+            el.innerHTML = '<div class="text-muted text-sm" style="padding: 20px;">No data yet.</div>';
+            return;
+        }
+        
+        var html = '';
+        ips.forEach(function(ip) {
+            var susFlag = ip.suspicious_count > 0 
+                ? '<span class="suspicious-flag">🚨 ' + ip.suspicious_count + ' suspicious</span>' 
+                : '';
+            
+            html += '<div class="ip-row">' +
+                '<span class="ip-address">' + escapeHtml(ip.ip_address) + '</span>' +
+                '<div style="display: flex; gap: 12px; align-items: center;">' +
+                '<span class="text-muted text-sm">' + ip.request_count + ' requests</span>' +
+                susFlag +
+                '</div>' +
+                '</div>';
+        });
+        
+        el.innerHTML = html;
+    }).catch(function(err) {
+        console.error('Top IPs error:', err);
+    });
+}
+
+function init() {
+    if (!requireAuth()) return;
+    loadUser();
+    loadStats();
+    loadActivity();
+    loadTopIPs();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(function() {
+        loadStats();
+        loadActivity();
+        loadTopIPs();
+    }, 30000);
+}
+
+init();
+</script>
+</body>
+</html>
