@@ -214,6 +214,7 @@ async def get_course_content(
                     "title": l.title,
                     "duration_minutes": l.duration_minutes,
                     "content_type": l.content_type,
+                    "content_url": l.content_url,
                     "is_preview": l.is_preview,
                     "is_completed": l.id in completed_lesson_ids,
                 }

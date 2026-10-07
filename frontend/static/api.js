@@ -216,10 +216,17 @@ var API = {
         },
         getCourse: async function(id) { return await apiCall('/api/lms/courses/' + id); },
         createCourse: async function(payload) { return await apiCall('/api/lms/courses', { method: 'POST', body: payload }); },
+        // Legacy (purane endpoints — course_modules table)
         listModules: async function(courseId) { return await apiCall('/api/lms/courses/' + courseId + '/modules'); },
         createModule: async function(courseId, payload) { return await apiCall('/api/lms/courses/' + courseId + '/modules', { method: 'POST', body: payload }); },
         listLessons: async function(moduleId) { return await apiCall('/api/lms/modules/' + moduleId + '/lessons'); },
         createLesson: async function(moduleId, payload) { return await apiCall('/api/lms/modules/' + moduleId + '/lessons', { method: 'POST', body: payload }); },
+        // NEW v2 (course_sections + lessons with section_id)
+        listSectionsV2: async function(courseId) { return await apiCall('/api/lms/v2/sections/by-course/' + courseId); },
+        getCourseContent: async function(courseId) { return await apiCall('/api/lms/v2/player/course/' + courseId + '/content'); },
+        getLessonDetail: async function(lessonId) { return await apiCall('/api/lms/v2/player/lesson/' + lessonId); },
+        getLessonResources: async function(lessonId) { return await apiCall('/api/lms/v2/resources/by-lesson/' + lessonId); },
+        // Enrollment aur progress
         enroll: async function(courseId) { return await apiCall('/api/lms/courses/' + courseId + '/enroll', { method: 'POST' }); },
         myEnrollments: async function() { return await apiCall('/api/lms/enrollments'); },
         markProgress: async function(payload) { return await apiCall('/api/lms/progress', { method: 'POST', body: payload }); },

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Course Detail — VASTU ONE LMS</title>
+<title>Course Detail  VASTU ONE LMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/design-system.css">
@@ -21,7 +21,7 @@
             <a href="/lms/courses.html" class="active">LMS</a>
         </div>
         <div class="flex gap-3" style="align-items: center;">
-            <span class="text-muted text-sm" id="user-name">—</span>
+            <span class="text-muted text-sm" id="user-name"></span>
             <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
         </div>
     </div>
@@ -30,7 +30,7 @@
 <main class="container" style="padding-top: var(--space-7); padding-bottom: var(--space-7);">
 
     <!-- BACK -->
-    <a href="/lms/courses.html" class="btn btn-ghost btn-sm mb-5" style="display: inline-flex;">← Back to Courses</a>
+    <a href="/lms/courses.html" class="btn btn-ghost btn-sm mb-5" style="display: inline-flex;"> Back to Courses</a>
 
     <!-- COURSE HEADER -->
     <div class="card mb-6">
@@ -59,7 +59,7 @@
     <div class="modal">
         <div class="flex-between mb-5">
             <h3 class="card-title">New Module</h3>
-            <button class="btn btn-ghost btn-sm" onclick="closeModuleModal()">✕</button>
+            <button class="btn btn-ghost btn-sm" onclick="closeModuleModal()"></button>
         </div>
         
         <form onsubmit="handleModuleSubmit(event)">
@@ -93,7 +93,7 @@
     <div class="modal" style="max-width: 600px;">
         <div class="flex-between mb-5">
             <h3 class="card-title">New Lesson</h3>
-            <button class="btn btn-ghost btn-sm" onclick="closeLessonModal()">✕</button>
+            <button class="btn btn-ghost btn-sm" onclick="closeLessonModal()"></button>
         </div>
         
         <form onsubmit="handleLessonSubmit(event)">
@@ -199,20 +199,27 @@ async function loadCourse() {
 async function loadModules() {
     try {
         VastuAPI.UI.loading(true);
-        modules = await VastuAPI.API.lms.listModules(courseId);
         
-        // Load lessons for each module
+        // NEW v2: Ek hi endpoint se sections + lessons milte hain
+        const data = await VastuAPI.API.lms.getCourseContent(courseId);
+        
+        // Backend response: content: [{section_id, section_title, order_index, lessons: [...]}]
+        modules = (data.content || []).map(s => ({
+            id: s.section_id,
+            title: s.section_title,
+            description: null,
+            order_index: s.order_index,
+        }));
+        
+        // Lessons ko section id se map karo
         lessonsByModule = {};
-        for (const m of modules) {
-            try {
-                lessonsByModule[m.id] = await VastuAPI.API.lms.listLessons(m.id);
-            } catch {
-                lessonsByModule[m.id] = [];
-            }
+        for (const s of (data.content || [])) {
+            lessonsByModule[s.section_id] = s.lessons || [];
         }
         
         renderModules();
     } catch (err) {
+        console.error('loadModules error:', err);
         VastuAPI.UI.toast('Failed to load modules: ' + err.message, 'error');
     } finally {
         VastuAPI.UI.loading(false);
@@ -260,7 +267,7 @@ function renderModules() {
                                         ${l.is_preview ? '<span class="badge badge-info" style="font-size: 9px;">PREVIEW</span>' : ''}
                                     </div>
                                     <div class="text-faint text-xs mt-1">
-                                        📹 ${l.content_type} • ⏱ ${l.duration_minutes} min
+📹 ${l.content_type} • ⏱ ${l.duration_minutes} min
                                     </div>
                                 </div>
                                 <div class="text-faint text-xs">${l.content_url ? '🔗 Linked' : 'No URL'}</div>

@@ -3,16 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login â€” VASTU ONE</title>
+<title>Login — VASTU ONE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/design-system.css">
+  <link rel="stylesheet" href="/static/i18n.css">
 </head>
 <body>
 
 <div class="modal-backdrop" style="background: var(--void-black);">
     <div class="modal" style="max-width: 420px;">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;" data-language-switcher></div>
+
         
         <div class="text-center mb-6">
             <div class="navbar-brand" style="font-size: 32px; justify-content: center;">
@@ -150,5 +153,7 @@ async function handleSignup(e) {
 
 switchTab('login');
 </script>
+  <script src="/static/i18n.js"></script>
+  <script src="/static/language-switcher.js"></script>
 </body>
 </html>

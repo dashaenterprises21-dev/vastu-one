@@ -4,23 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#05060F">
-<meta name="description" content="VASTU ONE â€” Traceable Vastu Intelligence Platform. Every finding has a source. Every recommendation has a reason. Every uncertainty is disclosed.">
+<meta name="description" content="VASTU ONE — Traceable Vastu Intelligence Platform. Every finding has a source. Every recommendation has a reason. Every uncertainty is disclosed.">
 <meta name="keywords" content="Vastu, Vastu Software, Vastu Consultant, Astro Vastu, Vastu Report, Numerology, Vastu Shastra">
 <meta name="author" content="VASTU ONE">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="VASTU ONE â€” Traceable Vastu Intelligence">
+<meta property="og:title" content="VASTU ONE — Traceable Vastu Intelligence">
 <meta property="og:description" content="Every finding has a source. Every decision, a reason.">
 <meta property="og:url" content="https://vastuone.in">
 <meta property="og:site_name" content="VASTU ONE">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VASTU ONE â€” Traceable Vastu Intelligence">
+<meta name="twitter:title" content="VASTU ONE — Traceable Vastu Intelligence">
 <meta name="twitter:description" content="Every finding has a source. Every decision, a reason.">
 
-<title>VASTU ONE â€” Traceable Vastu Intelligence</title>
+<title>VASTU ONE — Traceable Vastu Intelligence</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -416,7 +416,7 @@
 }
 
 .pricing-features li::before {
-    content: "âœ“";
+    content: "✓";
     color: var(--cosmic-gold);
     font-weight: 700;
     flex-shrink: 0;
@@ -672,6 +672,7 @@ footer a:hover { color: var(--cosmic-gold); }
 
 .mobile-cta-bar .btn { flex: 1; }
 </style>
+  <link rel="stylesheet" href="/static/i18n.css">
 </head>
 <body>
 
@@ -681,15 +682,16 @@ footer a:hover { color: var(--cosmic-gold); }
         <a href="/" class="navbar-brand">VASTU <span class="gold">ONE</span></a>
         
         <div class="navbar-nav">
-            <a href="#features">Platform</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#testimonials">Testimonials</a>
-            <a href="#faq">FAQ</a>
+            <a href="#features" data-i18n="landing.nav_platform">Platform</a>
+            <a href="#pricing" data-i18n="landing.nav_pricing">Pricing</a>
+            <a href="#testimonials" data-i18n="landing.nav_testimonials">Testimonials</a>
+            <a href="#faq" data-i18n="landing.nav_faq">FAQ</a>
         </div>
         
         <div class="navbar-actions">
-            <a href="/login.html" class="btn btn-ghost btn-sm">Sign In</a>
-            <a href="/login.html?tab=signup" class="btn btn-primary btn-sm">Get Started</a>
+            <div data-language-switcher style="margin-right: 8px;"></div>
+            <a href="/login.html" class="btn btn-ghost btn-sm" data-i18n="landing.nav_signin">Sign In</a>
+            <a href="/login.html?tab=signup" class="btn btn-primary btn-sm" data-i18n="landing.nav_get_started">Get Started</a>
             <button class="navbar-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -709,7 +711,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- HERO -->
 <section class="hero">
     <div class="container">
-        <div class="hero-eyebrow">â—† Traceable Vastu Intelligence</div>
+        <div class="hero-eyebrow" data-i18n="landing.hero_eyebrow">✦ Traceable Vastu Intelligence</div>
         
         <h1>
             Every finding has a source.
@@ -723,28 +725,28 @@ footer a:hover { color: var(--cosmic-gold); }
         </p>
         
         <div class="hero-ctas">
-            <a href="/login.html?tab=signup" class="btn btn-primary btn-lg">Begin Free Analysis</a>
-            <a href="#features" class="btn btn-secondary btn-lg">Explore the Intelligence</a>
+            <a href="/login.html?tab=signup" class="btn btn-primary btn-lg" data-i18n="landing.hero_cta_primary">Begin Free Analysis</a>
+            <a href="#features" class="btn btn-secondary btn-lg" data-i18n="landing.hero_cta_secondary">Explore the Intelligence</a>
         </div>
         
         <div class="hero-pillars">
             <div class="pillar">
-                <div class="pillar-icon">ðŸ“–</div>
+                <div class="pillar-icon">📖</div>
                 <h4>Source-Traceable</h4>
                 <p>Every rule traced to chapter and verse</p>
             </div>
             <div class="pillar">
-                <div class="pillar-icon">âš™ï¸</div>
+                <div class="pillar-icon">⚙️</div>
                 <h4>Rule-Driven</h4>
                 <p>54 engines in orchestrated harmony</p>
             </div>
             <div class="pillar">
-                <div class="pillar-icon">ðŸ”</div>
+                <div class="pillar-icon">🔍</div>
                 <h4>Expert-Reviewable</h4>
                 <p>Consultant validates before delivery</p>
             </div>
             <div class="pillar">
-                <div class="pillar-icon">ðŸ”’</div>
+                <div class="pillar-icon">🔒</div>
                 <h4>Privacy-First</h4>
                 <p>Multi-tenant isolated by design</p>
             </div>
@@ -768,7 +770,7 @@ footer a:hover { color: var(--cosmic-gold); }
             <div class="stat-label">Devata Audit</div>
         </div>
         <div class="stat">
-            <div class="stat-value">Aâ€“D</div>
+            <div class="stat-value">A→D</div>
             <div class="stat-label">Evidence Levels</div>
         </div>
     </div>
@@ -777,7 +779,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- FEATURES -->
 <section id="features" class="section">
     <div class="container">
-        <h2 class="section-title">Most Vastu software generates reports. VASTU ONE generates decision clarity.</h2>
+        <h2 class="section-title" data-i18n="landing.features_title">Most Vastu software generates reports. VASTU ONE generates decision clarity.</h2>
         <p class="section-sub">
             Built on six foundational pillars that separate traceable Vastu intelligence from traditional PDF generators.
         </p>
@@ -796,7 +798,7 @@ footer a:hover { color: var(--cosmic-gold); }
             <div class="feature-card">
                 <div class="feature-num">03</div>
                 <h3>Three Gunas Profile</h3>
-                <p>Tamas, Rajas, Sattva â€” weighted and explained. The property's character is visible at a glance.</p>
+                <p>Tamas, Rajas, Sattva — weighted and explained. The property's character is visible at a glance.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-num">04</div>
@@ -811,7 +813,7 @@ footer a:hover { color: var(--cosmic-gold); }
             <div class="feature-card">
                 <div class="feature-num">06</div>
                 <h3>Consultant Operating System</h3>
-                <p>Client management, property vault, report generation, and LMS academy â€” all in one workspace.</p>
+                <p>Client management, property vault, report generation, and LMS academy — all in one workspace.</p>
             </div>
         </div>
     </div>
@@ -820,7 +822,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- PRICING -->
 <section id="pricing" class="section">
     <div class="container">
-        <h2 class="section-title">Pricing that scales with your practice</h2>
+        <h2 class="section-title" data-i18n="landing.pricing_title">Pricing that scales with your practice</h2>
         <p class="section-sub">
             From single reports to enterprise portfolios. All plans include source-traceable findings.
         </p>
@@ -870,7 +872,7 @@ footer a:hover { color: var(--cosmic-gold); }
                     <li>SLA guarantee</li>
                 </ul>
                 <a href="https://wa.me/919890602105?text=Hi%2C%20I%27m%20interested%20in%20VASTU%20ONE%20Enterprise" target="_blank" rel="noopener" class="btn btn-whatsapp btn-block">
-                    ðŸ’¬ Contact on WhatsApp
+                    💬 Contact on WhatsApp
                 </a>
             </div>
         </div>
@@ -880,7 +882,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="section">
     <div class="container">
-        <h2 class="section-title">Trusted by consultants and architects</h2>
+        <h2 class="section-title" data-i18n="landing.testimonials_title">Trusted by consultants and architects</h2>
         <p class="section-sub">
             What early adopters say about working with VASTU ONE.
         </p>
@@ -914,7 +916,7 @@ footer a:hover { color: var(--cosmic-gold); }
             
             <div class="testimonial">
                 <div class="testimonial-quote">
-                    "From report generation to student management â€” VASTU ONE is the operating system I've been waiting for."
+                    "From report generation to student management — VASTU ONE is the operating system I've been waiting for."
                 </div>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">AN</div>
@@ -931,7 +933,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- FAQ -->
 <section id="faq" class="section">
     <div class="container">
-        <h2 class="section-title">Frequently asked questions</h2>
+        <h2 class="section-title" data-i18n="landing.faq_title">Frequently asked questions</h2>
         <p class="section-sub">
             Answers to the most common questions about VASTU ONE.
         </p>
@@ -944,7 +946,7 @@ footer a:hover { color: var(--cosmic-gold); }
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-inner">
-                        No. VASTU ONE runs 54 deterministic engines against classical sources. AI is only used for explanation â€” never for generating sources or calculations. Every finding is traceable.
+                        No. VASTU ONE runs 54 deterministic engines against classical sources. AI is only used for explanation — never for generating sources or calculations. Every finding is traceable.
                     </div>
                 </div>
             </div>
@@ -980,7 +982,7 @@ footer a:hover { color: var(--cosmic-gold); }
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-inner">
-                        Never. Sanskrit citations come only from verified textual sources. AI is used for explanation and personalization â€” not for inventing sources.
+                        Never. Sanskrit citations come only from verified textual sources. AI is used for explanation and personalization — not for inventing sources.
                     </div>
                 </div>
             </div>
@@ -1003,13 +1005,13 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- FINAL CTA -->
 <section class="final-cta">
     <div class="container">
-        <h2>From belief to traceability.</h2>
+        <h2 data-i18n="landing.cta_title">From belief to traceability.</h2>
         <p>Explore your property through a system designed to make every important finding understandable, reviewable, and actionable.</p>
         
         <div class="final-cta-buttons">
             <a href="/login.html?tab=signup" class="btn btn-primary btn-lg">Begin Free Analysis</a>
             <a href="https://wa.me/919890602105?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20VASTU%20ONE" target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg">
-                ðŸ’¬ Talk on WhatsApp
+                💬 Talk on WhatsApp
             </a>
         </div>
     </div>
@@ -1025,8 +1027,8 @@ footer a:hover { color: var(--cosmic-gold); }
                     Traceable Vastu Intelligence. Every finding has a source. Every recommendation has a reason.
                 </p>
                 <div class="footer-contact mt-4">
-                    <a href="mailto:hello@vastuone.in">âœ‰ï¸ Email</a>
-                    <a href="https://wa.me/919890602105" target="_blank" rel="noopener">ðŸ’¬ WhatsApp</a>
+                    <a href="mailto:hello@vastuone.in">✉️ Email</a>
+                    <a href="https://wa.me/919890602105" target="_blank" rel="noopener">💬 WhatsApp</a>
                 </div>
             </div>
             <div>
@@ -1059,8 +1061,8 @@ footer a:hover { color: var(--cosmic-gold); }
         </div>
         
         <div class="footer-bottom">
-            <div>Â© 2026 VASTU ONE. All rights reserved.</div>
-            <div>Made with care in India ðŸ‡®ðŸ‡³</div>
+            <div>© 2026 VASTU ONE. All rights reserved.</div>
+            <div>Made with care in India 🇮🇳</div>
         </div>
     </div>
 </footer>
@@ -1068,7 +1070,7 @@ footer a:hover { color: var(--cosmic-gold); }
 <!-- MOBILE CTA BAR -->
 <div class="mobile-cta-bar">
     <a href="https://wa.me/919890602105" target="_blank" rel="noopener" class="btn btn-whatsapp">
-        ðŸ’¬ Chat
+        💬 Chat
     </a>
     <a href="/login.html?tab=signup" class="btn btn-primary">
         Get Started
@@ -1165,12 +1167,16 @@ if (VastuAPI.Auth.isLoggedIn()) {
     // Show "Go to Dashboard" instead of Sign In
     const navActions = document.querySelector('.navbar-actions');
     if (navActions) {
-        navActions.innerHTML = `
+        // Preserve the language switcher
+        const switcher = navActions.querySelector('[data-language-switcher]');
+        navActions.innerHTML = '';
+        if (switcher) navActions.appendChild(switcher);
+        navActions.insertAdjacentHTML('beforeend', `
             <a href="/dashboard.html" class="btn btn-primary btn-sm">Dashboard</a>
             <button class="navbar-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>
-        `;
+        `);
     }
 }
 </script>
@@ -1185,5 +1191,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+  <script src="/static/i18n.js"></script>
+  <script src="/static/language-switcher.js"></script>
 </body>
 </html>

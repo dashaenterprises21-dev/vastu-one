@@ -19,9 +19,18 @@ from database.base import AsyncSessionLocal
 from database.models import Course, CourseSection, Lesson, User
 from sqlalchemy import select
 
+# === ENCODING FIX (Windows PowerShell ke liye) ===
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+# === END ENCODING FIX ===
+
+
 
 # ==========================================
-# COURSE DATA â€” 30 Modules with Lessons
+# COURSE DATA Ã¢â‚¬â€ 30 Modules with Lessons
 # ==========================================
 COURSE_DATA = {
     "title": "Advance Astro Vastu",
@@ -57,14 +66,14 @@ COURSE_DATA = {
             "Practical Entrance Case Examples",
         ]},
         {"title": "Module 3: 16 Directions Detailed Study", "lessons": [
-            "North â€” Meaning & Significance",
-            "North-East â€” Meaning & Significance",
-            "East â€” Meaning & Significance",
-            "South-East â€” Meaning & Significance",
-            "South â€” Meaning & Significance",
-            "South-West â€” Meaning & Significance",
-            "West â€” Meaning & Significance",
-            "North-West â€” Meaning & Significance",
+            "North Ã¢â‚¬â€ Meaning & Significance",
+            "North-East Ã¢â‚¬â€ Meaning & Significance",
+            "East Ã¢â‚¬â€ Meaning & Significance",
+            "South-East Ã¢â‚¬â€ Meaning & Significance",
+            "South Ã¢â‚¬â€ Meaning & Significance",
+            "South-West Ã¢â‚¬â€ Meaning & Significance",
+            "West Ã¢â‚¬â€ Meaning & Significance",
+            "North-West Ã¢â‚¬â€ Meaning & Significance",
             "Understanding Sub-Directions",
             "Direction-wise Element Association",
             "Direction-wise Functional Planning",
@@ -73,7 +82,7 @@ COURSE_DATA = {
         {"title": "Module 4: 45 Energy Fields", "lessons": [
             "Introduction to 45 Energy Fields",
             "Understanding Energy Zones",
-            "45 Energy Fields â€” Basic Identification",
+            "45 Energy Fields Ã¢â‚¬â€ Basic Identification",
             "Direction-wise Energy Field Understanding",
             "Energy Field Activation Concepts",
             "Energy Field Imbalance",
@@ -110,7 +119,7 @@ COURSE_DATA = {
             "Case Study Examples",
         ]},
         {"title": "Module 7: Vastu Purusha & Mandala", "lessons": [
-            "Vastu Purusha â€” Introduction",
+            "Vastu Purusha Ã¢â‚¬â€ Introduction",
             "Vastu Purusha Mandala",
             "Understanding the Grid",
             "Centre & Brahmasthan",
@@ -214,10 +223,10 @@ COURSE_DATA = {
             "Introduction to Astrology",
             "Horoscope Basics",
             "Understanding Lagna",
-            "12 Houses â€” Introduction",
+            "12 Houses Ã¢â‚¬â€ Introduction",
             "12 Rashis",
             "Rashis & Their Lords",
-            "Planets â€” Basic Significance",
+            "Planets Ã¢â‚¬â€ Basic Significance",
             "Direction of Rashis",
             "Planet & Direction Relationship",
             "House & Direction Connection",
@@ -226,18 +235,18 @@ COURSE_DATA = {
             "Astrology & Vastu Integration",
         ]},
         {"title": "Module 14: 12 Houses Detailed Study", "lessons": [
-            "1st House â€” Self & Personality",
-            "2nd House â€” Family & Wealth",
-            "3rd House â€” Communication",
-            "4th House â€” Home & Property",
-            "5th House â€” Education",
-            "6th House â€” Service & Challenges",
-            "7th House â€” Partnership & Marriage",
-            "8th House â€” Transformation",
-            "9th House â€” Fortune & Learning",
-            "10th House â€” Career",
-            "11th House â€” Gains & Networks",
-            "12th House â€” Expenses & Isolation",
+            "1st House Ã¢â‚¬â€ Self & Personality",
+            "2nd House Ã¢â‚¬â€ Family & Wealth",
+            "3rd House Ã¢â‚¬â€ Communication",
+            "4th House Ã¢â‚¬â€ Home & Property",
+            "5th House Ã¢â‚¬â€ Education",
+            "6th House Ã¢â‚¬â€ Service & Challenges",
+            "7th House Ã¢â‚¬â€ Partnership & Marriage",
+            "8th House Ã¢â‚¬â€ Transformation",
+            "9th House Ã¢â‚¬â€ Fortune & Learning",
+            "10th House Ã¢â‚¬â€ Career",
+            "11th House Ã¢â‚¬â€ Gains & Networks",
+            "12th House Ã¢â‚¬â€ Expenses & Isolation",
             "House-wise Practical Interpretation",
             "Property-related Houses",
             "Career-related Houses",
@@ -255,15 +264,15 @@ COURSE_DATA = {
             "Application in Astro Vastu",
         ]},
         {"title": "Module 16: Planets & Directions", "lessons": [
-            "Sun â€” Basic Significance",
-            "Moon â€” Basic Significance",
-            "Mars â€” Basic Significance",
-            "Mercury â€” Basic Significance",
-            "Jupiter â€” Basic Significance",
-            "Venus â€” Basic Significance",
-            "Saturn â€” Basic Significance",
-            "Rahu â€” Basic Significance",
-            "Ketu â€” Basic Significance",
+            "Sun Ã¢â‚¬â€ Basic Significance",
+            "Moon Ã¢â‚¬â€ Basic Significance",
+            "Mars Ã¢â‚¬â€ Basic Significance",
+            "Mercury Ã¢â‚¬â€ Basic Significance",
+            "Jupiter Ã¢â‚¬â€ Basic Significance",
+            "Venus Ã¢â‚¬â€ Basic Significance",
+            "Saturn Ã¢â‚¬â€ Basic Significance",
+            "Rahu Ã¢â‚¬â€ Basic Significance",
+            "Ketu Ã¢â‚¬â€ Basic Significance",
             "Planetary Directions",
             "Planetary Energy & Space",
             "Astro Vastu Application",
@@ -407,11 +416,11 @@ COURSE_DATA = {
             "Client Communication Practice",
         ]},
         {"title": "Module 26: Professional Case Study Work", "lessons": [
-            "Case Study 1 â€” Residential",
-            "Case Study 2 â€” Apartment",
-            "Case Study 3 â€” Commercial",
-            "Case Study 4 â€” Office",
-            "Case Study 5 â€” Astro Vastu",
+            "Case Study 1 Ã¢â‚¬â€ Residential",
+            "Case Study 2 Ã¢â‚¬â€ Apartment",
+            "Case Study 3 Ã¢â‚¬â€ Commercial",
+            "Case Study 4 Ã¢â‚¬â€ Office",
+            "Case Study 5 Ã¢â‚¬â€ Astro Vastu",
             "Case Study Documentation",
             "Floor Plan Marking",
             "Problem Identification",
@@ -495,10 +504,10 @@ async def seed_course():
         )
         instructor = result.scalar_one_or_none()
         if not instructor:
-            print("âŒ No consultant found. Create one first.")
+            print("Ã¢ÂÅ’ No consultant found. Create one first.")
             return
         
-        print(f"âœ… Instructor: {instructor.full_name}")
+        print(f"Ã¢Å“â€¦ Instructor: {instructor.full_name}")
         
         # Check if course exists
         existing = await db.execute(
@@ -507,7 +516,7 @@ async def seed_course():
         course = existing.scalar_one_or_none()
         
         if course:
-            print(f"â„¹ï¸  Course exists: {course.id}")
+            print(f"Ã¢â€žÂ¹Ã¯Â¸Â  Course exists: {course.id}")
         else:
             course = Course(
                 tenant_id=instructor.tenant_id,
@@ -522,7 +531,7 @@ async def seed_course():
             )
             db.add(course)
             await db.flush()
-            print(f"âœ… Course created: {course.id}")
+            print(f"Ã¢Å“â€¦ Course created: {course.id}")
         
         # Create modules + lessons
         total_modules = 0
@@ -548,9 +557,9 @@ async def seed_course():
                 db.add(section)
                 await db.flush()
                 total_modules += 1
-                print(f"\nðŸ“š [{m_idx + 1}/30] {module_data['title']}")
+                print(f"\nÃ°Å¸â€œÅ¡ [{m_idx + 1}/30] {module_data['title']}")
             else:
-                print(f"\nðŸ“š [{m_idx + 1}/30] {module_data['title']} (exists)")
+                print(f"\nÃ°Å¸â€œÅ¡ [{m_idx + 1}/30] {module_data['title']} (exists)")
             
             # Create lessons
             for l_idx, lesson_title in enumerate(module_data["lessons"]):
@@ -569,7 +578,7 @@ async def seed_course():
                     title=lesson_title,
                     content_type="video",
                     content_url="https://www.youtube.com/watch?v=PLACEHOLDER",
-                    text_content=f"{lesson_title} â€” Full lesson content coming soon.",
+                    text_content=f"{lesson_title} Ã¢â‚¬â€ Full lesson content coming soon.",
                     duration_minutes=20 + (l_idx % 3) * 5,  # 20-30 min
                     order_index=l_idx,
                     is_preview=(m_idx == 0 and l_idx < 2),  # First 2 lessons of Module 1 free
@@ -580,7 +589,7 @@ async def seed_course():
         await db.commit()
         
         print(f"\n" + "=" * 60)
-        print(f"ðŸŽ‰ COURSE SEEDED SUCCESSFULLY")
+        print(f"Ã°Å¸Å½â€° COURSE SEEDED SUCCESSFULLY")
         print(f"=" * 60)
         print(f"  Course:        {course.title}")
         print(f"  Course ID:     {course.id}")
@@ -590,7 +599,7 @@ async def seed_course():
         print(f"  Price:         Rs {course.price_inr}")
         print(f"  Published:     {course.is_published}")
         print(f"  Language:      {course.language}")
-        print(f"\nðŸŒ Course URL:")
+        print(f"\nÃ°Å¸Å’Â Course URL:")
         print(f"  http://localhost:8000/lms/course-detail.html?course_id={course.id}")
 
 

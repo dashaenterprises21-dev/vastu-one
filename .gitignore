@@ -80,3 +80,38 @@ private/
 # Temporary
 tmp/
 temp/
+# Sensitive files
+token.txt
+HANDOFF.txt
+SESSION_INFO.txt
+
+# Backup files
+*.backup-*
+*.bak
+*.bak-*
+*.bak2-*
+*.bak3-*
+*.broken-*
+*.corrupt-backup-*
+*.backup-before-*
+*.bak-final-*
+
+# Generated scripts (one-time use)
+add_landing_*.py
+add_star.py
+add_sample_*.py
+add_structured_urls.py
+bulk_url_update*.py
+check_*.py
+cleanup_modules.py
+fix_*.py
+mount_switcher.py
+patch_*.py
+reset_pwd*.py
+seed_log.txt
+test_url_add.py
+interactive_url_add.py
+generate_csv_template.py
+autofill_csv.py
+list_routes*.py
+audit_course.py
