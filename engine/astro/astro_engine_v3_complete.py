@@ -16,6 +16,17 @@ swe.set_ephe_path(EPHE_DIR)
 swe.set_sid_mode(swe.SIDM_LAHIRI)
 
 
+
+# Classical Granthas Engine
+try:
+    from engine.astro.classical_granthas import ClassicalGranthasEngine
+    from engine.astro.life_prediction import LifePredictionEngine
+    from engine.astro.lal_kitab_engine import LalKitabEngine
+    CLASSICAL_AVAILABLE = True
+except ImportError:
+    CLASSICAL_AVAILABLE = False
+
+
 class AstroEngineV3Complete:
     """Complete Vedic Astrology Engine — Top Astrologer Level"""
 
@@ -457,17 +468,55 @@ class AstroEngineV3Complete:
         return doshas
 
     def full_report(self, dob, tob="12:00", place="Unknown"):
+        basic = self.basic_details(dob, tob, place)
+        lagna = self.calculate_lagna(dob, tob, place)
+        positions = self.calculate_positions(dob, tob)
+        bhava_chalit = self.bhava_chalit(dob, tob, place)
+        shodashvarga = self.shodashvarga(dob, tob)
+        dasha = self.vimshottari_dasha(dob, tob)
+        ashtakavarga = self.ashtakavarga(dob, tob)
+        shadbala = self.shadbala(dob, tob)
+        yogas = self.detect_yogas(dob, tob)
+        doshas = self.detect_doshas(dob, tob)
+
+        classical = {"yogas": [], "doshas": [], "predictions": [], "total_yogas": 0, "total_doshas": 0}
+        if CLASSICAL_AVAILABLE:
+            try:
+                classical_engine = ClassicalGranthasEngine(positions, lagna, positions, dasha)
+                classical = classical_engine.analyze_all()
+            except Exception as e:
+                print(f"Classical analysis error: {e}")
+
+        # Life Predictions (deep personal analysis)
+        life_predictions = {}
+        try:
+            life_engine = LifePredictionEngine(positions, lagna, bhava_chalit, dasha)
+            life_predictions = life_engine.analyze_all()
+        except Exception as e:
+            print(f"Life prediction error: {e}")
+
+        # Lal Kitab Analysis
+        lal_kitab = {"findings": [], "remedies": [], "total_findings": 0, "total_remedies": 0}
+        try:
+            lk_engine = LalKitabEngine(positions, lagna)
+            lal_kitab = lk_engine.analyze_all()
+        except Exception as e:
+            print(f"Lal Kitab error: {e}")
+
         return {
-            "basic": self.basic_details(dob, tob, place),
-            "lagna": self.calculate_lagna(dob, tob, place),
-            "positions": self.calculate_positions(dob, tob),
-            "bhava_chalit": self.bhava_chalit(dob, tob, place),
-            "shodashvarga": self.shodashvarga(dob, tob),
-            "dasha": self.vimshottari_dasha(dob, tob),
-            "ashtakavarga": self.ashtakavarga(dob, tob),
-            "shadbala": self.shadbala(dob, tob),
-            "yogas": self.detect_yogas(dob, tob),
-            "doshas": self.detect_doshas(dob, tob)
+            "basic": basic,
+            "lagna": lagna,
+            "positions": positions,
+            "bhava_chalit": bhava_chalit,
+            "shodashvarga": shodashvarga,
+            "dasha": dasha,
+            "ashtakavarga": ashtakavarga,
+            "shadbala": shadbala,
+            "yogas": yogas,
+            "doshas": doshas,
+            "classical": classical,
+            "life_predictions": life_predictions,
+            "lal_kitab": lal_kitab,
         }
 
 

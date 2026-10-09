@@ -1,0 +1,53 @@
+﻿{
+  "version": "1.0",
+  "property_types": {
+    "flat": {
+      "hindi": "फ्लैट",
+      "number_label": "Flat Number",
+      "fields": ["property_number", "entrance_direction", "entrance_width", "rooms", "build_year"],
+      "special_rules": ["building_entrance", "lift", "common_area", "floor_number"]
+    },
+    "house": {
+      "hindi": "स्वतंत्र घर",
+      "number_label": "House Number",
+      "fields": ["property_number", "plot_dimensions", "entrance_direction", "plot_shape", "slope"],
+      "special_rules": ["boundary", "garden", "terrace", "parking"]
+    },
+    "plot": {
+      "hindi": "भूखंड",
+      "number_label": "Plot Number",
+      "fields": ["plot_dimensions", "plot_shape", "road_side", "slope", "soil_quality"],
+      "special_rules": ["bhoomi_pariksha", "surrounding_roads", "corner_plot"]
+    },
+    "commercial": {
+      "hindi": "व्यापारिक दुकान",
+      "number_label": "Shop Number",
+      "fields": ["property_number", "entrance_direction", "cash_counter", "display_area"],
+      "special_rules": ["storage", "owner_seat", "customer_flow"]
+    },
+    "office": {
+      "hindi": "कार्यालय",
+      "number_label": "Office Number",
+      "fields": ["property_number", "entrance_direction", "departments", "cabins"],
+      "special_rules": ["reception", "meeting_room", "server_room", "accounts"]
+    },
+    "industrial": {
+      "hindi": "औद्योगिक इकाई",
+      "number_label": "Unit Number",
+      "fields": ["property_number", "machinery", "storage", "worker_area"],
+      "special_rules": ["production_flow", "loading", "admin_office"]
+    },
+    "hospital": {
+      "hindi": "अस्पताल",
+      "number_label": "Building Number",
+      "fields": ["property_number", "entrance_direction", "departments", "patient_rooms"],
+      "special_rules": ["operation_theater", "emergency", "mortuary", "pharmacy"]
+    },
+    "school": {
+      "hindi": "शिक्षण संस्थान",
+      "number_label": "Building Number",
+      "fields": ["property_number", "entrance_direction", "classrooms", "library"],
+      "special_rules": ["principal_office", "playground", "canteen", "exam_hall"]
+    }
+  }
+}

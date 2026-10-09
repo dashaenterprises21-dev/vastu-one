@@ -81,9 +81,9 @@ let overlayVisible = false;
 
 // ═══ INIT ═══
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
 
@@ -420,7 +420,7 @@ async function analyzeVastu() {
         return;
     }
 
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const btn = document.getElementById("analyzeBtn");
     const overlay = document.getElementById("loadingOverlay");
 

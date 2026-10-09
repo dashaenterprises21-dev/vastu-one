@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>अपना घर बताएँ — VASTU ONE</title>
+<link rel="icon" type="image/png" href="/static/logo/vastu_logo.png">
+<link rel="stylesheet" href="/static/chakra-form.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="/dashboard" class="logo">
+            <img src="/static/logo/vastu_logo.png" alt="Vastu One">
+            <div>
+                <h1>VASTU ONE</h1>
+                <p>India Ka No.1 Vastu Engine</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button class="btn-toolbar" onclick="undo()" title="Undo (Ctrl+Z)">↶ Undo</button>
+            <button class="btn-toolbar" onclick="redo()" title="Redo (Ctrl+Y)">↷ Redo</button>
+            <button class="btn-toolbar" onclick="saveDraft()" title="Save draft">💾 Save</button>
+            <button class="btn-toolbar" onclick="printLayout()" title="Print">🖨️ Print</button>
+            <a href="/dashboard" class="btn-back">← Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<main class="container main">
+
+    <section class="hero">
+        <div class="om-symbol">🕉️</div>
+        <h1>अपने घर के Rooms चक्र पर रखें</h1>
+        <p>हर room को सही जगह पर click करके रखें — जैसे असली वास्तु चक्र में</p>
+    </section>
+
+    <!-- Reference Chakra Preview -->
+    <div class="chakra-preview" onclick="showChakraReference()">
+        <img src="/static/vastu-chakra.jpg" alt="Vastu Chakra Reference">
+        <div class="preview-overlay">
+            <span>🔍 असली वास्तु चक्र देखें</span>
+        </div>
+    </div>
+
+    <div class="layout">
+
+        <!-- LEFT: 9x9 Grid -->
+        <div class="grid-section">
+            <div class="grid-header">
+                <h2>🎯 9×9 वास्तु चक्र</h2>
+                <div class="grid-controls">
+                    <button class="ctrl-btn" onclick="rotateCompass()" title="Compass rotate">🧭 Rotate</button>
+                    <button class="ctrl-btn" onclick="toggleOverlay()" title="Chakra overlay">🎨 Overlay</button>
+                </div>
+            </div>
+
+            <div class="grid-legend">
+                <span class="legend-item"><span class="legend-box" style="background: rgba(16, 185, 129, 0.7);"></span> NE</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(59, 130, 246, 0.7);"></span> N</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(139, 92, 246, 0.7);"></span> NW</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(245, 158, 11, 0.7);"></span> E</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(251, 191, 36, 0.9);"></span> C</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(107, 114, 128, 0.7);"></span> W</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(239, 68, 68, 0.7);"></span> SE</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(234, 88, 12, 0.7);"></span> S</span>
+                <span class="legend-item"><span class="legend-box" style="background: rgba(180, 83, 9, 0.7);"></span> SW</span>
+            </div>
+
+            <div class="chakra-wrapper">
+                <div class="chakra-overlay" id="chakraOverlay" style="display:none;">
+                    <img src="/static/vastu-chakra.jpg" alt="Chakra">
+                </div>
+
+                <div class="compass" id="compass">
+                    <span class="compass-dir north">N ↑</span>
+                    <span class="compass-dir south">S ↓</span>
+                    <span class="compass-dir west">W ←</span>
+                    <span class="compass-dir east">E →</span>
+                </div>
+
+                <div class="chakra-grid" id="chakraGrid"></div>
+            </div>
+
+            <div class="grid-info">
+                <p>💡 <b>Room चुनें → cell पर click करें</b></p>
+                <p>🔄 <b>हटाने के लिए:</b> cell पर दोबारा click</p>
+                <p>📝 <b>Note जोड़ें:</b> filled cell पर right-click</p>
+            </div>
+        </div>
+
+        <!-- RIGHT: Palette -->
+        <div class="palette-section">
+            <h2>🏠 Room चुनें</h2>
+
+            <div class="palette-grid" id="roomPalette">
+                <button class="palette-btn" data-room="kitchen"><span class="palette-icon">🍳</span><span class="palette-label">Kitchen</span><span class="palette-hindi">रसोई</span></button>
+                <button class="palette-btn" data-room="bedroom"><span class="palette-icon">🛏️</span><span class="palette-label">Bedroom</span><span class="palette-hindi">शयनकक्ष</span></button>
+                <button class="palette-btn" data-room="master_bedroom"><span class="palette-icon">🛏️</span><span class="palette-label">Master</span><span class="palette-hindi">मुख्य कक्ष</span></button>
+                <button class="palette-btn" data-room="living"><span class="palette-icon">🛋️</span><span class="palette-label">Living</span><span class="palette-hindi">बैठक</span></button>
+                <button class="palette-btn" data-room="dining"><span class="palette-icon">🍽️</span><span class="palette-label">Dining</span><span class="palette-hindi">भोजन</span></button>
+                <button class="palette-btn" data-room="toilet"><span class="palette-icon">🚿</span><span class="palette-label">Toilet</span><span class="palette-hindi">शौचालय</span></button>
+                <button class="palette-btn" data-room="bathroom"><span class="palette-icon">🛁</span><span class="palette-label">Bathroom</span><span class="palette-hindi">स्नानघर</span></button>
+                <button class="palette-btn" data-room="pooja"><span class="palette-icon">🙏</span><span class="palette-label">Pooja</span><span class="palette-hindi">पूजा</span></button>
+                <button class="palette-btn" data-room="balcony"><span class="palette-icon">🌅</span><span class="palette-label">Balcony</span><span class="palette-hindi">छज्जा</span></button>
+                <button class="palette-btn" data-room="store"><span class="palette-icon">📦</span><span class="palette-label">Store</span><span class="palette-hindi">भंडार</span></button>
+                <button class="palette-btn" data-room="staircase"><span class="palette-icon">🪜</span><span class="palette-label">Stairs</span><span class="palette-hindi">सीढ़ी</span></button>
+                <button class="palette-btn" data-room="main_entry"><span class="palette-icon">🚪</span><span class="palette-label">Entry</span><span class="palette-hindi">मुख्य द्वार</span></button>
+                <button class="palette-btn" data-room="cash_locker"><span class="palette-icon">💰</span><span class="palette-label">Cash</span><span class="palette-hindi">तिजोरी</span></button>
+                <button class="palette-btn" data-room="water_tank"><span class="palette-icon">💧</span><span class="palette-label">Water</span><span class="palette-hindi">जल टंकी</span></button>
+                <button class="palette-btn" data-room="parking"><span class="palette-icon">🚗</span><span class="palette-label">Parking</span><span class="palette-hindi">पार्किंग</span></button>
+            </div>
+
+            <div class="selected-room">
+                <p class="selected-label">चुना गया:</p>
+                <p class="selected-value" id="selectedRoomValue">कुछ नहीं</p>
+            </div>
+
+            <div class="size-picker" id="sizePicker" style="display:none;">
+                <label>Room Size:</label>
+                <div class="size-buttons">
+                    <button class="size-btn" data-size="small" onclick="setRoomSize('small')">S</button>
+                    <button class="size-btn active" data-size="medium" onclick="setRoomSize('medium')">M</button>
+                    <button class="size-btn" data-size="large" onclick="setRoomSize('large')">L</button>
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <div class="stat-row"><span>कुल Rooms:</span><b id="totalRooms">0</b></div>
+                <div class="stat-row"><span>भरे cells:</span><b id="filledCells">0</b></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-clear" onclick="clearAll()">🗑️ Clear</button>
+                <button class="btn-preset" onclick="loadPreset('2bhk')">🏡 2BHK</button>
+                <button class="btn-preset" onclick="loadPreset('3bhk')">🏘️ 3BHK</button>
+                <button class="btn-preset" onclick="loadPreset('villa')">🏛️ Villa</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Options -->
+    <div class="options-card">
+        <h2>⚙️ Property की जानकारी</h2>
+        <div class="options-grid">
+            <div class="option"><label>Property Type</label>
+                <select id="propertyType">
+                    <option value="flat">Flat</option>
+                    <option value="house" selected>House</option>
+                    <option value="villa">Villa</option>
+                    <option value="shop">Shop</option>
+                    <option value="office">Office</option>
+                </select>
+            </div>
+            <div class="option"><label>Floor</label>
+                <select id="floor">
+                    <option value="ground" selected>Ground Floor</option>
+                    <option value="1">1st Floor</option>
+                    <option value="2">2nd Floor</option>
+                    <option value="3">3rd Floor</option>
+                </select>
+            </div>
+            <div class="option"><label>Plot Shape</label>
+                <select id="plotShape">
+                    <option value="square" selected>Square</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="irregular">Irregular</option>
+                </select>
+            </div>
+            <div class="option"><label>Plot Length (ft)</label>
+                <input type="number" id="plotLength" placeholder="30" min="5" max="500">
+            </div>
+            <div class="option"><label>Plot Width (ft)</label>
+                <input type="number" id="plotWidth" placeholder="40" min="5" max="500">
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Panel -->
+    <div class="notes-panel" id="notesPanel" style="display:none;">
+        <h2>📝 Room Note</h2>
+        <div id="noteInfo"></div>
+        <textarea id="noteInput" placeholder="इस room के बारे में कुछ जानकारी लिखें..." rows="3"></textarea>
+        <div class="note-actions">
+            <button class="btn-cancel" onclick="closeNotes()">रद्द करें</button>
+            <button class="btn-save" onclick="saveNote()">सेव करें</button>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+        <button class="btn-analyze" onclick="analyzeVastu()" id="analyzeBtn">
+            🔍 वास्तु विश्लेषण करें
+        </button>
+        <p class="submit-note">🕉️ बृहत्संहिता + समरांगण + मयमतम् + मानसार आधारित</p>
+    </div>
+
+</main>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <h3>🔍 विश्लेषण हो रहा है...</h3>
+        <p>45 देवताओं से check कर रहे हैं</p>
+        <p class="loading-sub">शास्त्र प्रमाण के साथ</p>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>VASTU ONE — India Ka No.1 Vastu Engine</p>
+    <p class="footer-sub">बृहत्संहिता • समरांगण सूत्रधार • मयमतम् • मानसार</p>
+</footer>
+
+<script src="/static/chakra-form.js"></script>
+</body>
+</html>

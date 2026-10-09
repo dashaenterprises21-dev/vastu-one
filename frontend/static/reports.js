@@ -10,16 +10,16 @@ const PACKAGE_ICONS = {
     platinum: "💎"
 };
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
     loadReports();
 });
 
 async function loadReports() {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const grid = document.getElementById("reportsGrid");
 
     try {
@@ -28,8 +28,8 @@ async function loadReports() {
         });
 
         if (response.status === 401) {
-            localStorage.removeItem("vastu_token");
-            window.location.href = "/login";
+            localStorage.removeItem("vastu_access_token");
+            window.location.href = "/login.html";
             return;
         }
 

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify Certificate — Vastu One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<style>
+  :root {
+    --void-black: #05060F;
+    --deep-space: #0A0C1A;
+    --space: #101324;
+    --starlight: #F8F7F2;
+    --muted-white: #8B8B93;
+    --cosmic-gold: #D4AF37;
+    --gold-dim: #8B7020;
+    --border-subtle: 1px solid rgba(212, 175, 55, 0.15);
+    --border-gold: 1px solid rgba(212, 175, 55, 0.4);
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--void-black);
+    color: var(--starlight);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.04) 0%, transparent 40%);
+  }
+
+  .verify-container {
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--starlight);
+  }
+
+  .brand-name .gold {
+    color: var(--cosmic-gold);
+  }
+
+  .brand-tagline {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--muted-white);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .verify-card {
+    background: linear-gradient(180deg, var(--space) 0%, var(--deep-space) 100%);
+    border: var(--border-gold);
+    border-radius: var(--radius-xl);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 175, 55, 0.05) inset;
+  }
+
+  .verify-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--cosmic-gold), transparent);
+  }
+
+  .status-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 36px;
+    position: relative;
+  }
+
+  .status-icon.valid {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+    border: 2px solid var(--cosmic-gold);
+    color: var(--cosmic-gold);
+    box-shadow: 0 0 32px rgba(212, 175, 55, 0.3);
+  }
+
+  .status-icon.invalid {
+    background: linear-gradient(135deg, rgba(220, 60, 60, 0.2), rgba(220, 60, 60, 0.05));
+    border: 2px solid #dc3c3c;
+    color: #dc3c3c;
+  }
+
+  .status-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--starlight);
+  }
+
+  .status-subtitle {
+    text-align: center;
+    color: var(--muted-white);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .certificate-info {
+    border-top: var(--border-subtle);
+    border-bottom: var(--border-subtle);
+    padding: 32px 0;
+    margin-bottom: 32px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    align-items: center;
+  }
+
+  .info-row:not(:last-child) {
+    border-bottom: 1px dashed rgba(212, 175, 55, 0.1);
+  }
+
+  .info-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted-white);
+    font-weight: 600;
+  }
+
+  .info-value {
+    font-size: 16px;
+    color: var(--starlight);
+    font-weight: 500;
+    text-align: right;
+    max-width: 60%;
+  }
+
+  .info-value.gold {
+    color: var(--cosmic-gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--cosmic-gold);
+    color: var(--void-black);
+  }
+
+  .btn-primary:hover {
+    background: #e6c04a;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(212, 175, 55, 0.4);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--cosmic-gold);
+    border: var(--border-gold);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(212, 175, 55, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--cosmic-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    color: var(--muted-white);
+    font-size: 12px;
+  }
+
+  .footer a {
+    color: var(--cosmic-gold);
+    text-decoration: none;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 640px) {
+    .verify-card { padding: 32px 24px; }
+    .info-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .info-value { text-align: left; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="verify-container">
+
+  <div class="brand">
+    <div class="brand-name">VASTU <span class="gold">ONE</span></div>
+    <div class="brand-tagline">Traceable Vastu Intelligence</div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p style="color: var(--muted-white);">Verifying certificate...</p>
+  </div>
+
+  <!-- VALID -->
+  <div class="verify-card hidden" id="valid-card">
+    <div class="status-icon valid">✓</div>
+    <h1 class="status-title">Certificate Verified</h1>
+    <p class="status-subtitle">This is a valid certificate issued by Vastu One Academy.</p>
+
+    <div class="certificate-info">
+      <div class="info-row">
+        <span class="info-label">Student</span>
+        <span class="info-value gold" id="student-name">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Course</span>
+        <span class="info-value" id="course-title">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Issued</span>
+        <span class="info-value" id="issued-at">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Certificate No.</span>
+        <span class="info-value gold" id="cert-number">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Issuer</span>
+        <span class="info-value" id="issuer">—</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+      <button class="btn btn-primary" onclick="shareLinkedIn()">🔗 Share on LinkedIn</button>
+    </div>
+  </div>
+
+  <!-- INVALID -->
+  <div class="verify-card hidden" id="invalid-card">
+    <div class="status-icon invalid">✕</div>
+    <h1 class="status-title">Invalid Certificate</h1>
+    <p class="status-subtitle">We couldn't find a certificate matching this number in our records.</p>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">← Back to Home</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Have questions? Contact <a href="mailto:hello@vastuone.in">hello@vastuone.in</a></p>
+  </div>
+
+</div>
+
+<script>
+// Get certificate number from URL
+const params = new URLSearchParams(window.location.search);
+const certNumber = params.get('cert') || params.get('c') || params.get('number');
+
+async function verifyCertificate() {
+  if (!certNumber) {
+    showInvalid();
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/lms/v2/certificates/verify/${encodeURIComponent(certNumber)}`);
+    if (!res.ok) {
+      showInvalid();
+      return;
+    }
+    const data = await res.json();
+    if (data.valid) {
+      showValid(data);
+    } else {
+      showInvalid();
+    }
+  } catch (e) {
+    console.error('Verify error:', e);
+    showInvalid();
+  }
+}
+
+function showValid(data) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('valid-card').classList.remove('hidden');
+  document.getElementById('student-name').textContent = data.student_name;
+  document.getElementById('course-title').textContent = data.course_title;
+  document.getElementById('cert-number').textContent = data.certificate_number;
+  document.getElementById('issuer').textContent = data.issuer;
+
+  const date = new Date(data.issued_at);
+  document.getElementById('issued-at').textContent = date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  window.certData = data;
+}
+
+function showInvalid() {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('invalid-card').classList.remove('hidden');
+}
+
+function shareLinkedIn() {
+  const data = window.certData;
+  if (!data) return;
+
+  const url = window.location.href;
+  const text = `I'm proud to have completed "${data.course_title}" from VASTU ONE Academy! 🎓`;
+
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  window.open(linkedInUrl, '_blank', 'width=600,height=600');
+}
+
+// Run on load
+verifyCertificate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060F">
+<title>Kundli Pro — VASTU ONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/design-system.css">
+<link rel="stylesheet" href="/static/i18n.css">
+<style>
+:root {
+  --void: #05060F;
+  --deep: #0A0C1A;
+  --space: #101324;
+  --surface: #161A2E;
+  --starlight: #F8F7F2;
+  --muted: #8B8B93;
+  --gold: #D4AF37;
+  --gold-light: #E6C04A;
+  --gold-dim: #8B7020;
+  --border: rgba(212, 175, 55, 0.15);
+  --border-hover: rgba(212, 175, 55, 0.4);
+  --success: #4ADE80;
+  --warning: #FBBF24;
+  --danger: #F87171;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--void);
+  color: var(--starlight);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* NAVBAR */
+.navbar {
+  position: sticky; top: 0; z-index: 1000;
+  background: rgba(5, 6, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.navbar-content {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0; gap: 20px;
+}
+.navbar-left { display: flex; align-items: center; gap: 16px; }
+.hamburger {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--gold); width: 40px; height: 40px;
+  border-radius: 10px; cursor: pointer; font-size: 18px;
+  display: none; align-items: center; justify-content: center;
+}
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700;
+  letter-spacing: 0.15em; color: var(--starlight);
+  text-decoration: none;
+}
+.brand .gold { color: var(--gold); }
+.navbar-nav { display: flex; gap: 4px; }
+.navbar-nav a {
+  color: var(--muted); text-decoration: none;
+  padding: 8px 16px; border-radius: 8px;
+  font-size: 14px; font-weight: 500; transition: all 0.2s;
+}
+.navbar-nav a:hover, .navbar-nav a.active {
+  color: var(--gold); background: rgba(212, 175, 55, 0.08);
+}
+.navbar-actions { display: flex; gap: 12px; align-items: center; }
+
+/* SIDEBAR */
+.sidebar-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  z-index: 1100;
+}
+.sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 300px;
+  background: var(--deep); border-right: 1px solid var(--border);
+  transform: translateX(-100%); transition: transform 0.35s;
+  z-index: 1200; overflow-y: auto;
+}
+.sidebar.open { transform: translateX(0); }
+.sidebar-header {
+  padding: 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.sidebar-close {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); width: 36px; height: 36px;
+  border-radius: 8px; cursor: pointer;
+}
+.sidebar-content { padding: 16px; }
+.sidebar-label {
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.15em; color: var(--muted);
+  margin: 20px 0 8px; padding: 0 12px; font-weight: 700;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; color: var(--starlight);
+  text-decoration: none; border-radius: 10px;
+  font-size: 14px; transition: all 0.2s;
+}
+.sidebar-item:hover { background: rgba(212, 175, 55, 0.08); color: var(--gold); }
+.sidebar-icon { width: 20px; text-align: center; }
+
+/* HERO */
+.hero {
+  padding: 60px 0 40px; text-align: center;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+}
+.hero-eyebrow {
+  display: inline-block; padding: 6px 16px;
+  border: 1px solid var(--border-hover); border-radius: 100px;
+  font-size: 11px; letter-spacing: 0.2em; color: var(--gold);
+  text-transform: uppercase; font-weight: 600;
+  background: rgba(212, 175, 55, 0.05); margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.1; margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.hero h1 .accent { color: var(--gold); font-style: italic; }
+.hero-sub {
+  color: var(--muted); font-size: 16px;
+  max-width: 720px; margin: 0 auto 32px;
+}
+
+/* FORM CARD */
+.form-card {
+  background: linear-gradient(180deg, var(--space) 0%, var(--deep) 100%);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  max-width: 720px;
+  margin: 0 auto 48px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.form-group label {
+  display: block; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--gold); font-weight: 700; margin-bottom: 8px;
+}
+.form-group input {
+  width: 100%; padding: 14px 16px;
+  background: var(--deep); border: 1px solid var(--border);
+  border-radius: var(--radius-md); color: var(--starlight);
+  font-size: 15px; font-family: inherit;
+  transition: all 0.2s;
+}
+.form-group input:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+.btn {
+  padding: 14px 28px; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  border: none; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.25s; text-decoration: none;
+}
+.btn-primary {
+  background: var(--gold); color: var(--void);
+  width: 100%; justify-content: center;
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.3);
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* RESULT SECTIONS */
+.section {
+  margin-bottom: 48px;
+  padding-top: 24px;
+}
+.section-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  border: 1px solid var(--border-hover);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600;
+  color: var(--starlight);
+}
+.section-sub {
+  font-size: 13px; color: var(--muted); margin-top: 2px;
+}
+
+/* GRIDS */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* CARDS */
+.card {
+  background: linear-gradient(180deg, var(--space) 0%, var(--deep) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all 0.25s;
+}
+.card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+.card-label {
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.15em; color: var(--gold);
+  font-weight: 700; margin-bottom: 8px;
+}
+.card-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--starlight); line-height: 1.2;
+  margin-bottom: 4px;
+}
+.card-value.hindi { font-size: 24px; }
+.card-sub {
+  font-size: 12px; color: var(--muted); margin-top: 4px;
+}
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+/* LOADER */
+.loader {
+  text-align: center; padding: 60px 20px;
+  display: none;
+}
+.loader.show { display: block; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(212, 175, 55, 0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ERROR */
+.error-box {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #FCA5A5;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  display: none;
+}
+.error-box.show { display: block; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 60px;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .navbar-nav { display: none; }
+  .hamburger { display: flex; }
+  .form-row { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .hero { padding: 40px 0 24px; }
+  .form-card { padding: 24px; }
+  .section-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container navbar-content">
+    <div class="navbar-left">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <a href="/" class="brand">VASTU <span class="gold">ONE</span></a>
+    </div>
+    <div class="navbar-nav">
+      <a href="/">Home</a>
+      <a href="/kundli-pro.html" class="active">Kundli Pro</a>
+      <a href="/vastu-integration.html">Vastu</a>
+      <a href="/lms/courses.html">Learn</a>
+    </div>
+    <div class="navbar-actions">
+      <div data-language-switcher></div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="brand">VASTU <span class="gold">ONE</span></div>
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  </div>
+  <div class="sidebar-content">
+    <div class="sidebar-label">Main</div>
+    <a href="/" class="sidebar-item"><span class="sidebar-icon">🏠</span> Home</a>
+    <a href="/kundli-pro.html" class="sidebar-item"><span class="sidebar-icon">🔮</span> Kundli Pro</a>
+    <a href="/vastu-integration.html" class="sidebar-item"><span class="sidebar-icon">🏛️</span> Vastu Analysis</a>
+    <a href="/numerology-v3.html" class="sidebar-item"><span class="sidebar-icon">🔢</span> Numerology</a>
+    <a href="/marma-points.html" class="sidebar-item"><span class="sidebar-icon">🧘</span> Marma</a>
+    <div class="sidebar-label">Learn</div>
+    <a href="/lms/courses.html" class="sidebar-item"><span class="sidebar-icon">📚</span> Courses</a>
+    <a href="/lms/my-certificates.html" class="sidebar-item"><span class="sidebar-icon">🎓</span> Certificates</a>
+    <div class="sidebar-label">Account</div>
+    <a href="/dashboard.html" class="sidebar-item"><span class="sidebar-icon">📊</span> Dashboard</a>
+    <a href="/settings.html" class="sidebar-item"><span class="sidebar-icon">⚙️</span> Settings</a>
+  </div>
+</aside>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">✦ Enterprise Jyotish Platform</div>
+    <h1>Complete <span class="accent">Kundli Pro</span></h1>
+    <p class="hero-sub">
+      Swiss Ephemeris • 16 Vargas • 5-Level Dasha • 50+ Yogas • 20+ Doshas<br>
+      Problem Detection • Personalized Remedies • Pooja Guide
+    </p>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="container">
+
+  <!-- FORM -->
+  <div class="form-card" id="inputCard">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Janm Tithi</label>
+        <input type="date" id="dob" value="1990-04-05">
+      </div>
+      <div class="form-group">
+        <label>Janm Samay</label>
+        <input type="time" id="tob" value="21:35">
+      </div>
+      <div class="form-group">
+        <label>Janm Sthan</label>
+        <input type="text" id="place" value="Bhandara, Maharashtra">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeKundli()">
+      🔮 Complete Kundli Pro Dekhein
+    </button>
+    <div class="error-box" id="error"></div>
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader" id="loading">
+    <div class="spinner"></div>
+    <p style="color: var(--muted);">Swiss Ephemeris calculations chal rahi hain...</p>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" style="display: none;">
+
+    <!-- 1. BASIC PANCHANG -->
+    <div class="section" id="sec-basic">
+      <div class="section-header">
+        <div class="section-icon">📅</div>
+        <div>
+          <div class="section-title">Basic Panchang</div>
+          <div class="section-sub">Tithi, Nakshatra, Yoga, Karana, Vaar</div>
+        </div>
+      </div>
+      <div class="grid-4" id="basic-grid"></div>
+    </div>
+
+    <!-- 2. LAGNA -->
+    <div class="section" id="sec-lagna">
+      <div class="section-header">
+        <div class="section-icon">⬆️</div>
+        <div>
+          <div class="section-title">Lagna Analysis</div>
+          <div class="section-sub">Ascendant • Lord • Element • Nakshatra</div>
+        </div>
+      </div>
+      <div class="grid-4" id="lagna-grid"></div>
+    </div>
+
+    <!-- 3. 9 PLANETS -->
+    <div class="section" id="sec-planets">
+      <div class="section-header">
+        <div class="section-icon">🪐</div>
+        <div>
+          <div class="section-title">9 Planets (Grahas)</div>
+          <div class="section-sub">Position • Rashi • Bhava • Nakshatra • Pada</div>
+        </div>
+      </div>
+      <div class="grid-3" id="planets-grid"></div>
+    </div>
+
+    <!-- 4. 12 BHAVAS -->
+    <div class="section" id="sec-bhavas">
+      <div class="section-header">
+        <div class="section-icon">🏛️</div>
+        <div>
+          <div class="section-title">12 Bhavas (Houses)</div>
+          <div class="section-sub">Tanu, Dhan, Sahodar, Sukh, Putra, Rog, Kalatra, Ayu, Bhagya, Karma, Labh, Vyay</div>
+        </div>
+      </div>
+      <div class="grid-3" id="bhavas-grid"></div>
+    </div>
+
+    <!-- 5. 16 VARGAS -->
+    <div class="section" id="sec-vargas">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div>
+          <div class="section-title">16 Vargas (Divisional Charts)</div>
+          <div class="section-sub">D-1, D-2, D-3, D-4, D-7, D-9, D-10, D-12, D-16, D-20, D-24, D-27, D-30, D-40, D-45, D-60</div>
+        </div>
+      </div>
+      <div class="grid-2" id="vargas-grid"></div>
+    </div>
+
+    <!-- 6. DASHA -->
+    <div class="section" id="sec-dasha">
+      <div class="section-header">
+        <div class="section-icon">⏳</div>
+        <div>
+          <div class="section-title">Vimshottari Dasha</div>
+          <div class="section-sub">Maha • Antar • Pratyantar</div>
+        </div>
+      </div>
+      <div id="dasha-content"></div>
+    </div>
+
+    <!-- 7. ASHTAKAVARGA -->
+    <div class="section" id="sec-ashtakavarga">
+      <div class="section-header">
+        <div class="section-icon">🎯</div>
+        <div>
+          <div class="section-title">Ashtakavarga</div>
+          <div class="section-sub">Bhinna • Sarva scores</div>
+        </div>
+      </div>
+      <div id="ashtakavarga-content"></div>
+    </div>
+
+    <!-- 8. SHADBALA -->
+    <div class="section" id="sec-shadbala">
+      <div class="section-header">
+        <div class="section-icon">💪</div>
+        <div>
+          <div class="section-title">Shadbala (6-Fold Strength)</div>
+          <div class="section-sub">Sthana, Dig, Kala, Chesta, Naisargika, Drik</div>
+        </div>
+      </div>
+      <div id="shadbala-content"></div>
+    </div>
+
+    <!-- 9. YOGAS -->
+    <div class="section" id="sec-yogas">
+      <div class="section-header">
+        <div class="section-icon">✨</div>
+        <div>
+          <div class="section-title">Yogas (Auspicious Combinations)</div>
+          <div class="section-sub">50+ combinations detected</div>
+        </div>
+      </div>
+      <div id="yogas-content"></div>
+    </div>
+
+    <!-- 10. DOSHAS -->
+    <div class="section" id="sec-doshas">
+      <div class="section-header">
+        <div class="section-icon">⚠️</div>
+        <div>
+          <div class="section-title">Doshas (Defect Detection)</div>
+          <div class="section-sub">Problem identification with severity</div>
+        </div>
+      </div>
+      <div id="doshas-content"></div>
+    </div>
+
+    <!-- 11. CLASSICAL YOGAS -->
+    <div class="section" id="sec-classical-yogas">
+      <div class="section-header">
+        <div class="section-icon">📜</div>
+        <div>
+          <div class="section-title">Classical Yogas (Granthas)</div>
+          <div class="section-sub">BPHS • Saravali • Phaladeepika • Jaimini Sutras • 500+ Yogas</div>
+        </div>
+      </div>
+      <div id="classical-yogas-grid"></div>
+    </div>
+
+    <!-- 12. CLASSICAL DOSHAS -->
+    <div class="section" id="sec-classical-doshas">
+      <div class="section-header">
+        <div class="section-icon">🔍</div>
+        <div>
+          <div class="section-title">Classical Doshas (Deep Analysis)</div>
+          <div class="section-sub">Pitru • Kaal Sarpa • Grahan • Angarak • Shrapit • Guru Chandal • Nadi</div>
+        </div>
+      </div>
+      <div id="classical-doshas-grid"></div>
+    </div>
+
+    <!-- 13. PREDICTIONS -->
+    <div class="section" id="sec-predictions">
+      <div class="section-header">
+        <div class="section-icon">🔮</div>
+        <div>
+          <div class="section-title">Predictions (Life Path)</div>
+          <div class="section-sub">Marriage • Career • Health • Wealth • with classical sources</div>
+        </div>
+      </div>
+      <div id="predictions-grid"></div>
+    </div>
+
+    <!-- 11. REMEDIES -->
+    <div class="section" id="sec-remedies">
+      <div class="section-header">
+        <div class="section-icon">💊</div>
+        <div>
+          <div class="section-title">Personalized Remedies</div>
+          <div class="section-sub">Mantra • Gemstone • Metal • Day • Charity</div>
+        </div>
+      </div>
+      <div id="remedies-content"></div>
+    </div>
+
+    <!-- 12. POOJA GUIDE -->
+    <div class="section" id="sec-pooja">
+      <div class="section-header">
+        <div class="section-icon">🕉️</div>
+        <div>
+          <div class="section-title">Pooja Guide</div>
+          <div class="section-sub">Specific pooja with muhurat</div>
+        </div>
+      </div>
+      <div id="pooja-content"></div>
+    </div>
+
+  </div>
+
+    <!-- 14. EDUCATION -->
+    <div class="section"><div class="section-header"><div class="section-icon">📚</div><div><div class="section-title">Education</div><div class="section-sub">Field • Higher studies • Obstacles</div></div></div><div id="education-grid"></div></div>
+    <!-- 15. CAREER -->
+    <div class="section"><div class="section-header"><div class="section-icon">💼</div><div><div class="section-title">Career Analysis</div><div class="section-sub">Field • Job vs Business • Timing</div></div></div><div id="career-grid"></div></div>
+    <!-- 16. BUSINESS -->
+    <div class="section"><div class="section-header"><div class="section-icon">📈</div><div><div class="section-title">Business Guidance</div><div class="section-sub">Type • Partner • Alone vs Together</div></div></div><div id="business-grid"></div></div>
+    <!-- 17. PERSONAL LIFE -->
+    <div class="section"><div class="section-header"><div class="section-icon">👤</div><div><div class="section-title">Personal Life</div><div class="section-sub">Personality • Strengths • Weaknesses</div></div></div><div id="personal-grid"></div></div>
+    <!-- 18. MARRIAGE -->
+    <div class="section"><div class="section-header"><div class="section-icon">💑</div><div><div class="section-title">Marriage</div><div class="section-sub">Timing • Partner • Happiness</div></div></div><div id="marriage-grid"></div></div>
+    <!-- 19. CHILDREN -->
+    <div class="section"><div class="section-header"><div class="section-icon">👶</div><div><div class="section-title">Children</div><div class="section-sub">Count • Timing • Nature</div></div></div><div id="children-grid"></div></div>
+    <!-- 20. LOCATION -->
+    <div class="section"><div class="section-header"><div class="section-icon">🌍</div><div><div class="section-title">Location</div><div class="section-sub">City • Country • Direction</div></div></div><div id="location-grid"></div></div>
+    <!-- 21. WEALTH -->
+    <div class="section"><div class="section-header"><div class="section-icon">💰</div><div><div class="section-title">Wealth Analysis</div><div class="section-sub">Level • Source • Timing</div></div></div><div id="wealth-grid"></div></div>
+    <!-- 22. HEALTH -->
+    <div class="section"><div class="section-header"><div class="section-icon">🏥</div><div><div class="section-title">Health</div><div class="section-sub">Weak organs • Prevention</div></div></div><div id="health-grid"></div></div>
+    <!-- 23. SPIRITUAL -->
+    <div class="section"><div class="section-header"><div class="section-icon">🕉️</div><div><div class="section-title">Spiritual Path</div><div class="section-sub">Bhakti • Gyan • Dhyan</div></div></div><div id="spiritual-grid"></div></div>
+    <!-- 24. DREAMS -->
+    <div class="section"><div class="section-header"><div class="section-icon">🌟</div><div><div class="section-title">Dreams Fulfillment</div><div class="section-sub">Timing • Best period</div></div></div><div id="dreams-grid"></div></div>
+
+    <!-- 25. LAL KITAB -->
+    <div class="section"><div class="section-header"><div class="section-icon">📕</div><div><div class="section-title">Lal Kitab Analysis</div><div class="section-sub">Unique Totke • Low-Cost Remedies</div></div></div><div id="lal-kitab-grid"></div></div>
+
+</main>
+
+<footer>
+  <div class="container">
+    VASTU ONE — Complete Jyotish Platform<br>
+    <span style="color: var(--gold);">Swiss Ephemeris • 16 Vargas • 5-Level Dasha</span>
+  </div>
+</footer>
+
+<script src="/static/i18n.js"></script>
+<script src="/static/language-switcher.js"></script>
+<script>
+var API_BASE = window.location.origin;
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('open');
+}
+
+function showError(msg) {
+  var el = document.getElementById('error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function analyzeKundli() {
+  var dob = document.getElementById('dob').value;
+  var tob = document.getElementById('tob').value;
+  var place = document.getElementById('place').value || 'Unknown';
+
+  if (!dob) { showError('Kripya janm tithi daalein'); return; }
+
+  var btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('error').classList.remove('show');
+  document.getElementById('result').style.display = 'none';
+
+  try {
+    var response = await fetch(API_BASE + '/api/astro-v3/full-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dob: dob, tob: tob, place: place })
+    });
+    if (!response.ok) throw new Error('API error: ' + response.status);
+    var data = await response.json();
+
+    renderBasic(data.basic || {}, data.lagna || {});
+    renderLagna(data.lagna || {});
+    renderPlanets(data.positions || {});
+    renderBhavas(data.bhava_chalit || {}, data.positions || {});
+    renderVargas(data.shodashvarga || {});
+    renderDasha(data.dasha || {});
+    renderAshtakavarga(data.ashtakavarga || {});
+    renderShadbala(data.shadbala || {});
+    renderYogas(data.yogas || []);
+    renderDoshas(data.doshas || []);
+    renderClassicalYogas(data.classical ? data.classical.yogas : []);
+    renderClassicalDoshas(data.classical ? data.classical.doshas : []);
+    renderPredictions(data.classical ? data.classical.predictions : []);
+    renderLifePredictions(data.life_predictions || {});
+    renderLalKitab(data.lal_kitab || {});
+    renderRemedies(data.positions || {}, data.doshas || []);
+    renderPooja(data.doshas || []);
+    renderClassicalYogas(data.classical ? data.classical.yogas : []);
+    renderClassicalDoshas(data.classical ? data.classical.doshas : []);
+    renderPredictions(data.classical ? data.classical.predictions : []);
+
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('inputCard').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    showError('Error: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    document.getElementById('loading').classList.remove('show');
+  }
+}
+
+function card(label, value, sub, hindi) {
+  return '<div class="card"><div class="card-label">' + label + '</div>' +
+    '<div class="card-value' + (hindi ? ' hindi' : '') + '">' + (value || '-') + '</div>' +
+    '<div class="card-sub">' + (sub || '') + '</div></div>';
+}
+
+function renderBasic(basic, lagna) {
+  document.getElementById('basic-grid').innerHTML =
+    card('Tithi', basic.tithi + ' (' + basic.paksha + ')', 'Vaar: ' + (basic.vaar_hindi || basic.vaar)) +
+    card('Nakshatra', basic.nakshatra_hindi || basic.nakshatra, 'Lord: ' + basic.nakshatra_lord, true) +
+    card('Yoga', basic.yoga, 'Karana: ' + basic.karana) +
+    card('Rashi', basic.rashi_hindi || basic.rashi, basic.rashi, true);
+}
+
+function renderLagna(lagna) {
+  document.getElementById('lagna-grid').innerHTML =
+    card('Lagna', lagna.lagna_hindi || lagna.lagna_rashi, lagna.lagna_rashi, true) +
+    card('Lagna Lord', lagna.lagna_lord, (lagna.lagna_element || '') + ' element') +
+    card('Lagna Degree', (lagna.lagna_degree || 0) + '°', 'Pada ' + (lagna.lagna_pada || '-')) +
+    card('Ayanamsa', lagna.ayanamsa, (lagna.ayanamsa_value || 0) + '°');
+}
+
+function renderPlanets(positions) {
+  var html = '';
+  var order = ['Surya', 'Chandra', 'Mangal', 'Budh', 'Guru', 'Shukra', 'Shani', 'Rahu', 'Ketu'];
+  for (var i = 0; i < order.length; i++) {
+    var p = positions[order[i]];
+    if (!p) continue;
+    var retro = p.retrograde ? ' 🔄' : '';
+    html += card(p.hindi + ' (' + p.planet + ')' + retro,
+      p.rashi_hindi + ' • Bhava ' + p.bhav,
+      p.nakshatra_hindi + ' • Pada ' + p.pada + ' • ' + p.degree.toFixed(2) + '°',
+      true);
+  }
+  document.getElementById('planets-grid').innerHTML = html;
+}
+
+function renderBhavas(bhava_chalit, positions) {
+  var html = '';
+  for (var i = 1; i <= 12; i++) {
+    var b = bhava_chalit[String(i)];
+    if (!b) continue;
+    var planetsInHouse = [];
+    for (var k in positions) {
+      if (positions[k].bhav === i) planetsInHouse.push(positions[k].hindi);
+    }
+    html += card('Bhava ' + i + ' — ' + b.hindi, b.cusp_rashi_hindi,
+      b.meaning + (planetsInHouse.length ? ' • ' + planetsInHouse.join(', ') : ''), true);
+  }
+  document.getElementById('bhavas-grid').innerHTML = html;
+}
+
+function renderVargas(vargas) {
+  var html = '';
+  for (var v in vargas) {
+    var data = vargas[v];
+    var rows = '';
+    for (var p in data) {
+      var d = data[p];
+      rows += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">' +
+        '<span style="color:var(--muted);">' + p + '</span>' +
+        '<span style="color:var(--gold);">' + (d.hindi || d.rashi) + ' <span style="color:var(--muted);font-size:11px;">(' + d.lord + ')</span></span></div>';
+    }
+    html += '<div class="card"><div class="card-label">' + v + '</div><div style="margin-top:12px;">' + rows + '</div></div>';
+  }
+  document.getElementById('vargas-grid').innerHTML = html;
+}
+
+function renderDasha(dasha) {
+  var maha = dasha.mahadashas || [];
+  var current = dasha.current_mahadasha || {};
+  var currentAd = dasha.current_antardasha || {};
+  var html = '';
+
+  html += '<div class="grid-3" style="margin-bottom:24px;">' +
+    card('Current Mahadasha', current.hindi + ' (' + current.planet + ')',
+      current.start_date + ' → ' + current.end_date, true) +
+    card('Current Antardasha', currentAd.hindi + ' (' + currentAd.planet + ')',
+      currentAd.start_date + ' → ' + currentAd.end_date, true) +
+    card('Moon Nakshatra', dasha.moon_nakshatra, 'Lord: ' + dasha.moon_nakshatra_lord) +
+    '</div>';
+
+  html += '<div class="card" style="padding:0;overflow:hidden;"><div style="padding:20px;border-bottom:1px solid var(--border);"><div class="card-label">Full Vimshottari Cycle (120 Years)</div></div>';
+  html += '<div style="max-height:500px;overflow-y:auto;">';
+  for (var i = 0; i < maha.length; i++) {
+    var m = maha[i];
+    var isCurrent = m.planet === current.planet;
+    var highlight = isCurrent ? 'background: rgba(212, 175, 55, 0.08);' : '';
+    html += '<div style="padding:16px 20px;border-bottom:1px solid var(--border);' + highlight + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">' +
+      '<div><span style="font-family:Cormorant Garamond,serif;font-size:18px;color:var(--gold);">' + m.hindi + '</span> ' +
+      '<span style="color:var(--muted);font-size:12px;">(' + m.duration_years.toFixed(2) + ' yrs)</span></div>' +
+      '<div style="color:var(--muted);font-size:12px;">' + m.start_date + ' → ' + m.end_date + '</div>' +
+      '</div></div>';
+  }
+  html += '</div></div>';
+  document.getElementById('dasha-content').innerHTML = html;
+}
+
+function renderAshtakavarga(av) {
+  var sarva = av.sarvashtakavarga || {};
+  var scores = sarva.scores || [];
+  var html = '<div class="grid-3" style="margin-bottom:24px;">' +
+    card('Sarva Total', sarva.total, 'Average: ' + sarva.average) +
+    card('Strongest Bhava', 'Bhava ' + sarva.max_bhav, 'Score: ' + (scores[sarva.max_bhav - 1] || 0)) +
+    card('Weakest Bhava', 'Bhava ' + sarva.min_bhav, 'Score: ' + (scores[sarva.min_bhav - 1] || 0)) +
+    '</div>';
+  html += '<div class="card"><div class="card-label">Sarvashtakavarga — 12 Bhavas</div>';
+  for (var i = 0; i < scores.length; i++) {
+    var pct = (scores[i] / 60) * 100;
+    html += '<div style="margin-top:12px;">' +
+      '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">' +
+      '<span style="color:var(--muted);">Bhava ' + (i + 1) + '</span>' +
+      '<span style="color:var(--gold);font-weight:600;">' + scores[i] + '</span></div>' +
+      '<div style="height:8px;background:var(--deep);border-radius:4px;overflow:hidden;">' +
+      '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));"></div>' +
+      '</div></div>';
+  }
+  html += '</div>';
+  document.getElementById('ashtakavarga-content').innerHTML = html;
+}
+
+function renderShadbala(sb) {
+  var order = ['Shukra', 'Mangal', 'Surya', 'Guru', 'Budh', 'Chandra', 'Shani'];
+  var html = '<div class="grid-3">';
+  for (var i = 0; i < order.length; i++) {
+    var p = sb[order[i]];
+    if (!p) continue;
+    html += card('Rank ' + p.rank + ' — ' + p.hindi + ' (' + p.planet + ')',
+      p.total.toFixed(2) + ' rupas',
+      'Sthana ' + p.sthana_bala + ' • Dig ' + p.dig_bala, true);
+  }
+  html += '</div>';
+  document.getElementById('shadbala-content').innerHTML = html;
+}
+
+function renderYogas(yogas) {
+  if (!yogas.length) {
+    document.getElementById('yogas-content').innerHTML = '<div class="card">Koi auspicious yoga detect nahi hua.</div>';
+    return;
+  }
+  var html = '<div class="grid-2">';
+  for (var i = 0; i < yogas.length; i++) {
+    var y = yogas[i];
+    html += '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">' +
+      '<div><div class="card-value hindi">' + y.hindi + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);margin-top:4px;">' + y.name + '</div></div>' +
+      '<span style="background:rgba(74,222,128,0.15);color:var(--success);font-size:10px;padding:4px 8px;border-radius:6px;font-weight:700;">' + (y.type || 'YOGA') + '</span>' +
+      '</div>' +
+      '<div style="margin-top:12px;font-size:13px;color:var(--muted);">' + y.description + '</div>' +
+      '<div style="margin-top:8px;font-size:11px;color:var(--gold);">Strength: ' + y.strength + '</div>' +
+      '</div>';
+  }
+  html += '</div>';
+  document.getElementById('yogas-content').innerHTML = html;
+}
+
+function renderDoshas(doshas) {
+  if (!doshas.length) {
+    document.getElementById('doshas-content').innerHTML = '<div class="card">🎉 Koi dosha detect nahi hua! Aapki kundli shubh hai.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < doshas.length; i++) {
+    var d = doshas[i];
+    var sevColor = d.severity === 'High' ? 'var(--danger)' : d.severity === 'Medium' ? 'var(--warning)' : 'var(--success)';
+    html += '<div class="card" style="margin-bottom:16px;border-color:' + sevColor + '30;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">' +
+      '<div><div class="card-value hindi">' + d.hindi + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);">' + d.name + '</div></div>' +
+      '<span style="background:' + sevColor + '20;color:' + sevColor + ';font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;text-transform:uppercase;">' + d.severity + '</span>' +
+      '</div>' +
+      '<div style="margin-top:12px;font-size:13px;color:var(--muted);">' + d.description + '</div>' +
+      '<div style="margin-top:12px;padding:12px;background:rgba(212,175,55,0.05);border-radius:8px;">' +
+      '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:4px;">REMEDY</div>' +
+      '<div style="font-size:13px;">' + d.remedy + '</div>' +
+      '</div>' +
+      '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Affected: ' + (d.affected_areas || []).join(', ') + '</div>' +
+      '</div>';
+  }
+  document.getElementById('doshas-content').innerHTML = html;
+}
+
+function renderRemedies(positions, doshas) {
+  var html = '<div class="grid-3">';
+  for (var k in positions) {
+    var p = positions[k];
+    if (!p.mantra) continue;
+    html += '<div class="card">' +
+      '<div class="card-label">' + p.hindi + ' (' + p.planet + ')</div>' +
+      '<div style="margin-top:12px;font-size:13px;">' +
+      '<div style="margin-bottom:6px;">🕉️ <strong>' + p.mantra + '</strong></div>' +
+      '<div style="color:var(--muted);margin-bottom:4px;">💎 ' + (p.gemstone || '-') + '</div>' +
+      '<div style="color:var(--muted);margin-bottom:4px;">🔩 ' + (p.metal || '-') + '</div>' +
+      '<div style="color:var(--muted);">📅 ' + (p.day || '-') + '</div>' +
+      '</div></div>';
+  }
+  html += '</div>';
+  document.getElementById('remedies-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+// CLASSICAL GRANTHAS SECTIONS
+// ══════════════════════════════════════════
+
+function renderClassicalYogas(yogas) {
+  if (!yogas || !yogas.length) {
+    document.getElementById('classical-yogas-grid').innerHTML = '<div class="card">Koi classical yoga detect nahi hua.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < yogas.length; i++) {
+    var y = yogas[i];
+    html += '<div class="card" style="margin-bottom:16px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">' +
+      '<div><div class="card-value hindi">' + y.hindi + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);">' + y.name + '</div></div>' +
+      '<div style="text-align:right;">' +
+      '<span style="background:rgba(212,175,55,0.15);color:var(--gold);font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;">' + y.type + '</span>' +
+      '<div style="font-size:10px;color:var(--muted);margin-top:4px;">' + (y.source || '') + '</div>' +
+      '</div></div>' +
+      '<div style="margin-top:12px;font-size:13px;color:var(--muted);">' + y.description + '</div>' +
+      '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">' +
+      (y.effects || []).map(function (e) { return '<span style="font-size:10px;padding:3px 8px;background:rgba(74,222,128,0.1);color:var(--success);border-radius:6px;">' + e + '</span>'; }).join('') +
+      '</div>' +
+      '<div style="margin-top:8px;font-size:11px;color:var(--gold);">Strength: ' + (y.strength || '-') + '</div>' +
+      '</div>';
+  }
+  document.getElementById('classical-yogas-grid').innerHTML = html;
+}
+
+function renderClassicalDoshas(doshas) {
+  if (!doshas || !doshas.length) {
+    document.getElementById('classical-doshas-grid').innerHTML = '<div class="card">Koi classical dosha detect nahi hua!</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < doshas.length; i++) {
+    var d = doshas[i];
+    var sevColor = d.severity === 'High' ? 'var(--danger)' : d.severity === 'Medium' ? 'var(--warning)' : 'var(--success)';
+    html += '<div class="card" style="margin-bottom:20px;border-color:' + sevColor + '40;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">' +
+      '<div><div class="card-value hindi">' + d.hindi + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);">' + d.name + '</div>' +
+      '<div style="font-size:10px;color:var(--gold);margin-top:4px;">Source: ' + (d.source || '-') + '</div></div>' +
+      '<span style="background:' + sevColor + '20;color:' + sevColor + ';font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;">' + d.severity + '</span>' +
+      '</div>' +
+      '<div style="margin-top:12px;font-size:13px;color:var(--muted);">' + d.description + '</div>' +
+      '<div style="margin-top:10px;font-size:11px;color:var(--muted);">Effects: ' + (d.effects || []).join(', ') + '</div>';
+    if (d.remedies && d.remedies.length) {
+      html += '<div style="margin-top:16px;padding:16px;background:rgba(212,175,55,0.05);border-radius:10px;">' +
+        '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px;">REMEDIES (' + d.remedies.length + ')</div>';
+      for (var j = 0; j < d.remedies.length; j++) {
+        var r = d.remedies[j];
+        html += '<div style="padding:8px 0;border-bottom:1px solid rgba(212,175,55,0.1);">' +
+          '<span style="font-size:10px;color:var(--gold);text-transform:uppercase;font-weight:700;">' + r.type + '</span>' +
+          '<div style="font-size:13px;margin-top:4px;">' + r.text + '</div>' +
+          (r.count ? '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + r.count + '</div>' : '') +
+          (r.day ? '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + r.day + '</div>' : '') +
+          '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('classical-doshas-grid').innerHTML = html;
+}
+
+function renderPredictions(predictions) {
+  if (!predictions || !predictions.length) {
+    document.getElementById('predictions-grid').innerHTML = '<div class="card">Koi specific prediction nahi.</div>';
+    return;
+  }
+  var html = '<div class="grid-2">';
+  for (var i = 0; i < predictions.length; i++) {
+    var p = predictions[i];
+    html += '<div class="card">' +
+      '<div class="card-label">' + p.area + '</div>' +
+      '<div style="font-size:14px;margin-top:8px;">' + p.prediction + '</div>' +
+      (p.source ? '<div style="font-size:11px;color:var(--gold);margin-top:8px;">Source: ' + p.source + '</div>' : '') +
+      (p.timing ? '<div style="font-size:12px;color:var(--muted);margin-top:6px;">Timing: ' + p.timing + '</div>' : '') +
+      (p.remedy ? '<div style="font-size:12px;color:var(--gold);margin-top:8px;">Remedy: ' + p.remedy + '</div>' : '') +
+      '</div>';
+  }
+  html += '</div>';
+  document.getElementById('predictions-grid').innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+
+function renderPooja(doshas) {
+  var poojaMap = {
+    'Mangal Dosha': 'Hanuman Chalisa paath, Mangal Shanti Pooja, Kumbh Vivah',
+    'Shani Dosha': 'Shani Shanti Pooja, Hanuman Chalisa, Shani mantra jaap',
+    'Rahu-Ketu Dosha': 'Rahu-Ketu Shanti Pooja, Durga Saptashati paath',
+    'Chandra Dosha': 'Chandra Shanti Pooja, Shiv Abhishek',
+    'Shrapit Dosha': 'Pitru Dosh Nivaran Pooja, Shani-Rahu mantra jaap'
+  };
+  var html = '';
+  var hasPooja = false;
+  for (var i = 0; i < doshas.length; i++) {
+    var d = doshas[i];
+    var pooja = poojaMap[d.name];
+    if (!pooja) continue;
+    hasPooja = true;
+    html += '<div class="card" style="margin-bottom:16px;">' +
+      '<div class="card-label">' + d.hindi + ' — Pooja</div>' +
+      '<div style="margin-top:8px;font-size:14px;">' + pooja + '</div>' +
+      '</div>';
+  }
+  if (!hasPooja) {
+    html = '<div class="card">🎉 Aapki kundli mein koi dosha nahi hai — koi specific pooja ki zaroorat nahi. Regular puja aur mantra jaap se aapka jeevan shubh rahega.</div>';
+  }
+  document.getElementById('pooja-content').innerHTML = html;
+}
+
+function renderLifePredictions(life) {
+  if (!life) return;
+
+  function card2(label, value, sub) {
+    return '<div class="card"><div class="card-label">' + label + '</div><div class="card-value hindi" style="font-size:18px;">' + value + '</div><div class="card-sub">' + (sub || '') + '</div></div>';
+  }
+
+  // Education
+  if (life.education) {
+    var e = life.education;
+    document.getElementById('education-grid').innerHTML = '<div class="grid-4">' +
+      card2('Best Field', e.best_field, e.higher_education) +
+      card2('Subjects', (e.subjects || []).slice(0,3).join(', '), 'Recommended') +
+      card2('Obstacles', (e.obstacles || []).join(', '), '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Career
+  if (life.career) {
+    var e = life.career;
+    document.getElementById('career-grid').innerHTML = '<div class="grid-4">' +
+      card2('Best Field', e.best_field, '') +
+      card2('Job vs Business', e.job_vs_business, '') +
+      card2('Timing', e.timing, '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Business
+  if (life.business) {
+    var e = life.business;
+    document.getElementById('business-grid').innerHTML = '<div class="grid-4">' +
+      card2('Business Type', e.best_business_type, '') +
+      card2('Alone or Partner', e.partner_or_alone, '') +
+      card2('Partner Nature', e.partner_nature, '') +
+      card2('Expansion', e.expansion_timing, '') +
+      '</div>';
+  }
+
+  // Personal
+  if (life.personal_life) {
+    var e = life.personal_life;
+    document.getElementById('personal-grid').innerHTML = '<div class="grid-4">' +
+      card2('Personality', e.personality, '') +
+      card2('Strengths', (e.strengths || []).join(', '), '') +
+      card2('Weaknesses', (e.weaknesses || []).join(', '), '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Marriage
+  if (life.marriage) {
+    var e = life.marriage;
+    document.getElementById('marriage-grid').innerHTML = '<div class="grid-4">' +
+      card2('Timing', e.timing, '') +
+      card2('Type', e.marriage_type, '') +
+      card2('Partner Nature', e.partner_nature, '') +
+      card2('Happiness', e.happiness, (e.warnings || []).join(' • ')) +
+      '</div>';
+  }
+
+  // Children
+  if (life.children) {
+    var e = life.children;
+    document.getElementById('children-grid').innerHTML = '<div class="grid-4">' +
+      card2('Count', e.count, '') +
+      card2('Timing', e.timing, '') +
+      card2('Nature', e.nature, '') +
+      card2('Warnings', (e.warnings || []).join(', '), '') +
+      '</div>';
+  }
+
+  // Location
+  if (life.location) {
+    var e = life.location;
+    document.getElementById('location-grid').innerHTML = '<div class="grid-4">' +
+      card2('Best Direction', e.best_direction, '') +
+      card2('Best Country', e.best_country, '') +
+      card2('City Type', e.best_city_type, '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Wealth
+  if (life.wealth) {
+    var e = life.wealth;
+    document.getElementById('wealth-grid').innerHTML = '<div class="grid-4">' +
+      card2('Wealth Level', e.wealth_level, '') +
+      card2('Source', e.source, '') +
+      card2('Timing', e.timing, '') +
+      card2('Source Text', e.source_text, '') +
+      '</div>';
+  }
+
+  // Health
+  if (life.health) {
+    var e = life.health;
+    document.getElementById('health-grid').innerHTML = '<div class="grid-4">' +
+      card2('Weak Organs', (e.weak_organs || []).join(', '), '') +
+      card2('Preventions', (e.preventions || []).join(', '), '') +
+      card2('Recommendation', e.recommendation, '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Spiritual
+  if (life.spiritual) {
+    var e = life.spiritual;
+    document.getElementById('spiritual-grid').innerHTML = '<div class="grid-4">' +
+      card2('Path', e.path, '') +
+      card2('Guru', e.guru, '') +
+      card2('Practice', e.practice, '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+
+  // Dreams
+  if (life.dreams) {
+    var e = life.dreams;
+    document.getElementById('dreams-grid').innerHTML = '<div class="grid-4">' +
+      card2('Best Period', e.best_period, '') +
+      card2('Current Dasha', e.current_dasha, '') +
+      card2('Recommendation', e.recommendation, '') +
+      card2('Source', e.source, '') +
+      '</div>';
+  }
+}
+
+function renderLalKitab(lk) {
+  if (!lk || !lk.findings || !lk.findings.length) {
+    document.getElementById('lal-kitab-grid').innerHTML = '<div class="card">Koi Lal Kitab finding nahi.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < lk.findings.length; i++) {
+    var f = lk.findings[i];
+    html += '<div class="card" style="margin-bottom:20px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">' +
+      '<div><div class="card-value hindi">' + f.title + '</div>' +
+      '<div style="font-size:11px;color:var(--gold);margin-top:4px;">Lal Kitab 1952</div></div>' +
+      '<span style="background:rgba(212,175,55,0.15);color:var(--gold);font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;">BHAV ' + f.bhav + '</span>' +
+      '</div>' +
+      '<div style="margin-top:14px;font-size:14px;color:var(--muted);line-height:1.7;">' + f.detail + '</div>' +
+      '<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">' +
+      (f.effects || []).map(function (e) { return '<span style="font-size:10px;padding:3px 8px;background:rgba(248,113,113,0.1);color:var(--danger);border-radius:6px;">' + e + '</span>'; }).join('') +
+      '</div>';
+
+    if (f.remedies && f.remedies.length) {
+      html += '<div style="margin-top:16px;padding:16px;background:rgba(212,175,55,0.05);border-radius:10px;">' +
+        '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px;">LAL KITAB TOTKE (' + f.remedies.length + ')</div>';
+      for (var j = 0; j < f.remedies.length; j++) {
+        var r = f.remedies[j];
+        html += '<div style="padding:10px 0;border-bottom:1px solid rgba(212,175,55,0.1);">' +
+          '<span style="font-size:10px;color:var(--gold);text-transform:uppercase;font-weight:700;">' + r.type + '</span>' +
+          '<div style="font-size:14px;margin-top:4px;color:var(--starlight);">' + r.text + '</div>' +
+          (r.detail ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">' + r.detail + '</div>' : '') +
+          '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('lal-kitab-grid').innerHTML = html;
+}
+
+// Init i18n
+if (window.I18n) window.I18n.init();
+</script>
+
+</body>
+</html>

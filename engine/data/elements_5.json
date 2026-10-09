@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "elements": [
+    {"name":"Earth","hindi":"पृथ्वी","directions":["SW","S","W","NW"],"color":["yellow","brown","beige"],"positive_objects":["heavy furniture","storage","crystals"],"negative_objects":["water","fire","clutter"],"remedies":["yellow color","earth crystals","heavy objects","salt lamp"]},
+    {"name":"Water","hindi":"जल","directions":["N","NE","W"],"color":["blue","white","black"],"positive_objects":["water fountain","aquarium","blue decor"],"negative_objects":["fire","red","heavy"],"remedies":["water fountain","blue color","aquarium","silver items"]},
+    {"name":"Fire","hindi":"अग्नि","directions":["SE","E","S"],"color":["red","orange","pink"],"positive_objects":["kitchen","lights","red decor"],"negative_objects":["water","blue","heavy"],"remedies":["red color","candles","light","copper items"]},
+    {"name":"Air","hindi":"वायु","directions":["NW","W","N"],"color":["green","grey","white"],"positive_objects":["windows","plants","wind chimes"],"negative_objects":["clutter","heavy","dark"],"remedies":["wind chime","green color","plants","open windows"]},
+    {"name":"Space","hindi":"आकाश","directions":["CENTER","NE","E"],"color":["white","light blue","gold"],"positive_objects":["open space","prayer","light"],"negative_objects":["clutter","toilet","heavy"],"remedies":["keep empty","white color","light","prayer items"]}
+  ]
+}

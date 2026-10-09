@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerology Analysis — Vastu One</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; color: #333; }
+        .header { background: rgba(255,255,255,0.95); padding: 20px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo h1 { color: #f5576c; font-size: 28px; }
+        .logo p { color: #666; font-size: 12px; }
+        .nav a { color: #f5576c; text-decoration: none; margin-left: 20px; font-weight: 600; }
+        .nav a:hover { color: #f093fb; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h2 { color: #f5576c; margin-bottom: 20px; font-size: 32px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
+        input, select { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; }
+        input:focus, select:focus { border-color: #f5576c; outline: none; }
+        .btn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 16px 40px; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,87,108,0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .result { margin-top: 30px; padding: 30px; background: #fff5f7; border-radius: 15px; display: none; }
+        .result.show { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .result-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #f5576c; }
+        .result-card h4 { color: #f5576c; margin-bottom: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .result-card .value { font-size: 32px; font-weight: 700; color: #333; }
+        .result-card .value.hindi { font-size: 22px; color: #f093fb; }
+        .result-card .sub { font-size: 13px; color: #999; margin-top: 5px; }
+        .compat { padding: 15px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 18px; margin-top: 20px; }
+        .compat.good { background: #d4edda; color: #155724; }
+        .compat.bad { background: #fff3cd; color: #856404; }
+        .error { background: #fee; color: #c00; padding: 15px; border-radius: 10px; margin-top: 20px; display: none; }
+        .error.show { display: block; }
+        .loading { text-align: center; padding: 40px; display: none; }
+        .loading.show { display: block; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f5576c; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <h1>🔢 NUMEROLOGY</h1>
+            <p>Mulank • Bhagyank • Name Number</p>
+        </div>
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/astro-analysis.html">Astro</a>
+            <a href="/marma-points.html">Marma</a>
+            <a href="/packages.html">Packages</a>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>🔢 अपना Numerology देखें</h2>
+        <p class="subtitle">नाम, जन्म तिथि और प्रॉपर्टी नंबर डालें — Mulank, Bhagyank, Name Number और Compatibility देखें</p>
+
+        <div class="form-group">
+            <label>पूरा नाम</label>
+            <input type="text" id="name" value="Rajesh Kumar">
+        </div>
+
+        <div class="form-group">
+            <label>जन्म तिथि (DOB)</label>
+            <input type="date" id="dob" value="1990-05-15">
+        </div>
+
+        <div class="form-group">
+            <label>प्रॉपर्टी नंबर (Flat/House/Shop)</label>
+            <input type="text" id="property" value="B-204">
+        </div>
+
+        <div class="form-group">
+            <label>Name System</label>
+            <select id="system">
+                <option value="chaldean">Chaldean</option>
+                <option value="pythagorean">Pythagorean</option>
+            </select>
+        </div>
+
+        <button class="btn" id="analyzeBtn" onclick="analyzeNumerology()">🔢 Numerology देखें</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>गणना हो रही है...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3 style="color:#f5576c;margin-bottom:20px;">📋 Numerology परिणाम</h3>
+            <div class="result-grid" id="resultGrid"></div>
+            <div id="compatBox"></div>
+            <div id="vastuBox" style="margin-top:20px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8001';
+
+async function analyzeNumerology() {
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
+    const property = document.getElementById('property').value;
+    const system = document.getElementById('system').value;
+
+    if (!name || !dob || !property) {
+        showError('कृपया सभी फ़ील्ड भरें');
+        return;
+    }
+
+    document.getElementById('analyzeBtn').disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('error').classList.remove('show');
+    document.getElementById('result').classList.remove('show');
+
+    try {
+        const [mulankRes, bhagyankRes, nameRes, propRes, fullRes] = await Promise.all([
+            fetch(`${API_BASE}/api/numerology/mulank`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({dob}) }).then(r => r.json()),
+            fetch(`${API_BASE}/api/numerology/bhagyank`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({dob}) }).then(r => r.json()),
+            fetch(`${API_BASE}/api/numerology/name-number`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, system}) }).then(r => r.json()),
+            fetch(`${API_BASE}/api/numerology/property`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({property_number: property}) }).then(r => r.json()),
+            fetch(`${API_BASE}/api/numerology/full-report`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({dob, name, property_number: property}) }).then(r => r.json())
+        ]);
+
+        displayResults(mulankRes, bhagyankRes, nameRes, propRes, fullRes);
+        document.getElementById('result').classList.add('show');
+    } catch (err) {
+        showError('Error: ' + err.message);
+    } finally {
+        document.getElementById('analyzeBtn').disabled = false;
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+function displayResults(m, b, n, p, full) {
+    const grid = document.getElementById('resultGrid');
+    grid.innerHTML = `
+        <div class="result-card">
+            <h4>Mulank (Root)</h4>
+            <div class="value">${m.mulank || '-'}</div>
+            <div class="value hindi">${m.hindi || ''}</div>
+            <div class="sub">${m.planet || ''} — ${m.traits || ''}</div>
+            <div class="sub">Lucky: ${m.lucky_direction || ''} • ${m.lucky_color || ''} • ${m.lucky_day || ''}</div>
+        </div>
+        <div class="result-card">
+            <h4>Bhagyank (Destiny)</h4>
+            <div class="value">${b.bhagyank || '-'}</div>
+            <div class="value hindi">${b.hindi || ''}</div>
+            <div class="sub">${b.planet || ''} — ${b.traits || ''}</div>
+        </div>
+        <div class="result-card">
+            <h4>Name Number</h4>
+            <div class="value">${n.name_number || '-'}</div>
+            <div class="value hindi">${n.hindi || ''}</div>
+            <div class="sub">${n.planet || ''} — ${n.traits || ''}</div>
+            <div class="sub">System: ${n.system || ''}</div>
+        </div>
+        <div class="result-card">
+            <h4>Property Number</h4>
+            <div class="value">${p.numerology_number || '-'}</div>
+            <div class="value hindi">${p.hindi || ''}</div>
+            <div class="sub">${p.planet || ''} — ${p.verdict || ''}</div>
+        </div>
+    `;
+
+    // Compatibility
+    const comp = full.compatibility || {};
+    const compatBox = document.getElementById('compatBox');
+    compatBox.innerHTML = `
+        <div class="compat ${comp.compatible ? 'good' : 'bad'}">
+            Mulank ${comp.num1} vs Bhagyank ${comp.num2}: ${comp.verdict || 'N/A'}
+            ${comp.remedy ? '<br><small>' + comp.remedy + '</small>' : ''}
+        </div>
+    `;
+
+    // Vastu Integration
+    const v = full.vastu_integration || {};
+    document.getElementById('vastuBox').innerHTML = `
+        <div class="result-card">
+            <h4>Vastu Remedy</h4>
+            <div class="sub">${v.vastu_remedy || 'No remedy needed'}</div>
+        </div>
+    `;
+}
+
+function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('show');
+}
+
+window.addEventListener('load', () => {
+    setTimeout(analyzeNumerology, 500);
+});
+</script>
+
+</body>
+</html>

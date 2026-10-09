@@ -1,0 +1,271 @@
+{
+  "version": "1.0",
+  "source": "Samarangana Sutradhara, Brihat Samhita 53",
+  "total_padas": 32,
+  "directions": {
+    "East": [
+      {
+        "pada": 1,
+        "name": "Shikhi",
+        "hindi": "शिखी",
+        "best": false,
+        "effect": "Loss of wealth, obstacles",
+        "shastra": "BS 53.70"
+      },
+      {
+        "pada": 2,
+        "name": "Parjanya",
+        "hindi": "पर्जन्य",
+        "best": false,
+        "effect": "Health issues, fear",
+        "shastra": "BS 53.70"
+      },
+      {
+        "pada": 3,
+        "name": "Jayanta",
+        "hindi": "जयन्त",
+        "best": true,
+        "effect": "Victory, prosperity, all desires fulfilled",
+        "shastra": "BS 53.71"
+      },
+      {
+        "pada": 4,
+        "name": "Indra",
+        "hindi": "इन्द्र",
+        "best": true,
+        "effect": "Power, leadership, wealth",
+        "shastra": "BS 53.71"
+      },
+      {
+        "pada": 5,
+        "name": "Surya",
+        "hindi": "सूर्य",
+        "best": true,
+        "effect": "Fame, vitality, health",
+        "shastra": "BS 53.71"
+      },
+      {
+        "pada": 6,
+        "name": "Satya",
+        "hindi": "सत्य",
+        "best": true,
+        "effect": "Truth, clarity, success",
+        "shastra": "BS 53.72"
+      },
+      {
+        "pada": 7,
+        "name": "Bhusha",
+        "hindi": "भूष",
+        "best": false,
+        "effect": "Financial loss, theft",
+        "shastra": "BS 53.72"
+      },
+      {
+        "pada": 8,
+        "name": "Akasha",
+        "hindi": "आकाश",
+        "best": false,
+        "effect": "Loss of children, grief",
+        "shastra": "BS 53.72"
+      }
+    ],
+    "South": [
+      {
+        "pada": 1,
+        "name": "Anila",
+        "hindi": "अनिल",
+        "best": false,
+        "effect": "Fear of enemies, quarrel",
+        "shastra": "BS 53.73"
+      },
+      {
+        "pada": 2,
+        "name": "Pusha",
+        "hindi": "पूषा",
+        "best": true,
+        "effect": "Nourishment, peace, wealth",
+        "shastra": "BS 53.73"
+      },
+      {
+        "pada": 3,
+        "name": "Vitatha",
+        "hindi": "वितथ",
+        "best": false,
+        "effect": "Obstacles, poverty",
+        "shastra": "BS 53.73"
+      },
+      {
+        "pada": 4,
+        "name": "Grihakshata",
+        "hindi": "गृहक्षत",
+        "best": true,
+        "effect": "BEST - Good food, children, wealth",
+        "shastra": "BS 53.74"
+      },
+      {
+        "pada": 5,
+        "name": "Yama",
+        "hindi": "यम",
+        "best": false,
+        "effect": "Death, negativity, fear",
+        "shastra": "BS 53.74"
+      },
+      {
+        "pada": 6,
+        "name": "Gandharva",
+        "hindi": "गन्धर्व",
+        "best": true,
+        "effect": "Luxury, comfort, music",
+        "shastra": "BS 53.74"
+      },
+      {
+        "pada": 7,
+        "name": "Bhrungaraja",
+        "hindi": "भृंगराज",
+        "best": false,
+        "effect": "Fear, anxiety, quarrel",
+        "shastra": "BS 53.75"
+      },
+      {
+        "pada": 8,
+        "name": "Mriga",
+        "hindi": "मृग",
+        "best": false,
+        "effect": "Fear, weapons, accidents",
+        "shastra": "BS 53.75"
+      }
+    ],
+    "West": [
+      {
+        "pada": 1,
+        "name": "Pitara",
+        "hindi": "पितर",
+        "best": false,
+        "effect": "Ancestral issues, obstacles",
+        "shastra": "BS 53.76"
+      },
+      {
+        "pada": 2,
+        "name": "Dauvarika",
+        "hindi": "दौवारिक",
+        "best": false,
+        "effect": "Guests, hospitality issues",
+        "shastra": "BS 53.76"
+      },
+      {
+        "pada": 3,
+        "name": "Sugriva",
+        "hindi": "सुग्रीव",
+        "best": true,
+        "effect": "BEST - Money, profits, success",
+        "shastra": "BS 53.76"
+      },
+      {
+        "pada": 4,
+        "name": "Pushpadanta",
+        "hindi": "पुष्पदन्त",
+        "best": true,
+        "effect": "Finance, income, wealth",
+        "shastra": "BS 53.77"
+      },
+      {
+        "pada": 5,
+        "name": "Varuna",
+        "hindi": "वरुण",
+        "best": true,
+        "effect": "Rain, purification, water",
+        "shastra": "BS 53.77"
+      },
+      {
+        "pada": 6,
+        "name": "Asura",
+        "hindi": "असुर",
+        "best": false,
+        "effect": "Strength, fear, negativity",
+        "shastra": "BS 53.77"
+      },
+      {
+        "pada": 7,
+        "name": "Shesha",
+        "hindi": "शेष",
+        "best": true,
+        "effect": "Savings, serpent, wealth",
+        "shastra": "BS 53.78"
+      },
+      {
+        "pada": 8,
+        "name": "Rajayakshma",
+        "hindi": "राजयक्ष्मा",
+        "best": false,
+        "effect": "Disease, health issues",
+        "shastra": "BS 53.78"
+      }
+    ],
+    "North": [
+      {
+        "pada": 1,
+        "name": "Roga",
+        "hindi": "रोग",
+        "best": false,
+        "effect": "Disease, health issues",
+        "shastra": "BS 53.79"
+      },
+      {
+        "pada": 2,
+        "name": "Ahi",
+        "hindi": "अहि",
+        "best": false,
+        "effect": "Fear, serpent, anxiety",
+        "shastra": "BS 53.79"
+      },
+      {
+        "pada": 3,
+        "name": "Mukhya",
+        "hindi": "मुख्य",
+        "best": true,
+        "effect": "Career, clarity, success",
+        "shastra": "BS 53.79"
+      },
+      {
+        "pada": 4,
+        "name": "Bhallataka",
+        "hindi": "भल्लाटक",
+        "best": true,
+        "effect": "BEST - Career, growth, wealth",
+        "shastra": "BS 53.80"
+      },
+      {
+        "pada": 5,
+        "name": "Soma",
+        "hindi": "सोम",
+        "best": true,
+        "effect": "Wealth, prosperity, peace",
+        "shastra": "BS 53.80"
+      },
+      {
+        "pada": 6,
+        "name": "Sarpa",
+        "hindi": "सर्प",
+        "best": false,
+        "effect": "Fear, kundalini issues",
+        "shastra": "BS 53.80"
+      },
+      {
+        "pada": 7,
+        "name": "Aditi",
+        "hindi": "अदिति",
+        "best": true,
+        "effect": "Creativity, children, growth",
+        "shastra": "BS 53.81"
+      },
+      {
+        "pada": 8,
+        "name": "Diti",
+        "hindi": "दिति",
+        "best": false,
+        "effect": "Creativity issues, obstacles",
+        "shastra": "BS 53.81"
+      }
+    ]
+  }
+}

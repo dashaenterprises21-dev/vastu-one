@@ -35,6 +35,10 @@ from api.routes.analytics_routes import router as analytics_router
 from api.routes.ecommerce_v2 import router as ecommerce_v2_router
 from api.routes.admin_routes import router as admin_router
 from api.routes.i18n_routes import router as i18n_router
+from api.routes.astro_routes import router as astro_router
+from api.routes.astro_v3_routes import router as astro_v3_router
+from api.routes.advanced_kundli_routes import router as advanced_kundli_router
+from api.routes.advanced_astro_routes import router as advanced_astro_router
 from database.base import init_db
 
 # Sentinel
@@ -107,6 +111,10 @@ app.include_router(analytics_router)
 app.include_router(ecommerce_v2_router)
 app.include_router(admin_router)
 app.include_router(i18n_router)
+app.include_router(astro_router)
+app.include_router(astro_v3_router)
+app.include_router(advanced_kundli_router)
+app.include_router(advanced_astro_router)
 
 
 @app.get("/api")

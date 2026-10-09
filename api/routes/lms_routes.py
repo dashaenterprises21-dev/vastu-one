@@ -363,8 +363,45 @@ async def mark_progress(
         )
         db.add(progress)
     
+    # Auto-recalculate enrollment progress
+    total_lessons_stmt = select(func.count(Lesson.id)).where(
+        Lesson.module_id.in_(
+            select(CourseModule.id).where(CourseModule.course_id == enrollment.course_id)
+        )
+    )
+    total_lessons = (await db.execute(total_lessons_stmt)).scalar() or 1
+
+    completed_stmt = select(func.count(LessonProgress.id)).where(
+        LessonProgress.enrollment_id == enrollment.id,
+        LessonProgress.is_completed == True,
+    )
+    completed_count = (await db.execute(completed_stmt)).scalar() or 0
+
+    enrollment.progress_pct = (completed_count / total_lessons) * 100.0
+
+    # Auto-generate certificate on 100% completion
+    if enrollment.progress_pct >= 100 and not enrollment.completed_at:
+        enrollment.completed_at = datetime.utcnow()
+        existing_cert = (await db.execute(
+            select(Certificate).where(Certificate.enrollment_id == enrollment.id)
+        )).scalar_one_or_none()
+        if not existing_cert:
+            import secrets as _secrets
+            cert_num = "V1-" + str(datetime.utcnow().year) + "-" + _secrets.token_hex(4).upper()
+            cert = Certificate(
+                enrollment_id=enrollment.id,
+                certificate_number=cert_num,
+            )
+            db.add(cert)
+            await db.flush()
+
     await db.commit()
-    return {"status": "ok", "lesson_id": req.lesson_id}
+    return {
+        "status": "ok",
+        "lesson_id": req.lesson_id,
+        "progress_pct": enrollment.progress_pct,
+        "certificate_available": enrollment.progress_pct >= 100.0,
+    }
 
 
 # ==========================================

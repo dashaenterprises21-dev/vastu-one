@@ -44,7 +44,7 @@ async function handleLogin(event) {
         }
 
         // Success — save token
-        localStorage.setItem("vastu_token", data.access_token || data.token);
+        localStorage.setItem("vastu_access_token", data.access_token || data.token);
         localStorage.setItem("vastu_user", JSON.stringify(data.user || {}));
 
         showSuccess("स्वागत है, " + (data.user?.name || "User") + "!");
@@ -117,7 +117,7 @@ async function handleSignup(event) {
         showSuccess("खाता बन गया! अब प्रवेश करें...");
 
         setTimeout(() => {
-            window.location.href = "/login";
+            window.location.href = "/login.html";
         }, 1200);
 
     } catch (err) {
@@ -164,16 +164,16 @@ function showSuccess(msg) {
 
 // ═══ LOGOUT ═══
 function logout() {
-    localStorage.removeItem("vastu_token");
+    localStorage.removeItem("vastu_access_token");
     localStorage.removeItem("vastu_user");
-    window.location.href = "/login";
+    window.location.href = "/login.html";
 }
 
 // ═══ CHECK AUTH (for protected pages) ═══
 function requireAuth() {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return false;
     }
     return true;
@@ -181,7 +181,7 @@ function requireAuth() {
 
 // ═══ GET AUTH HEADERS ═══
 function getAuthHeaders() {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     return {
         "Content-Type": "application/json",
         "Authorization": token ? `Bearer ${token}` : ""
@@ -210,8 +210,8 @@ document.addEventListener("DOMContentLoaded", () => {
     createParticles();
 
     // Auto-redirect if already logged in
-    if (window.location.pathname === "/login" || window.location.pathname === "/signup") {
-        const token = localStorage.getItem("vastu_token");
+    if (window.location.pathname === "/login.html" || window.location.pathname === "/signup") {
+        const token = localStorage.getItem("vastu_access_token");
         if (token) {
             // Optional: uncomment if you want auto-redirect
             // window.location.href = "/dashboard";

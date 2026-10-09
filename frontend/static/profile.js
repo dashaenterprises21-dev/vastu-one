@@ -3,9 +3,9 @@
 let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
 
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ═══ LOAD PROFILE ═══
 async function loadProfile() {
     try {
-        const token = localStorage.getItem("vastu_token");
+        const token = localStorage.getItem("vastu_access_token");
         const response = await fetch("/api/user/profile", {
             headers: { "Authorization": "Bearer " + token }
         });
@@ -46,7 +46,7 @@ async function loadProfile() {
 // ═══ UPDATE PROFILE ═══
 async function updateProfile(event) {
     event.preventDefault();
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const btn = document.getElementById("saveBtn");
     btn.disabled = true;
     btn.textContent = "सेव हो रहा है...";
@@ -113,7 +113,7 @@ function loadBirthInfo() {
 // ═══ CHANGE PASSWORD ═══
 async function changePassword(event) {
     event.preventDefault();
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const oldPass = document.getElementById("oldPassword").value;
     const newPass = document.getElementById("newPassword").value;
 
@@ -158,14 +158,14 @@ function toggleSidebar() {
 
 // ═══ LOGOUT ═══
 async function logout() {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     try {
         await fetch("/api/auth/logout", {
             method: "POST",
             headers: { "Authorization": "Bearer " + token }
         });
     } catch (err) { console.error(err); }
-    localStorage.removeItem("vastu_token");
+    localStorage.removeItem("vastu_access_token");
     localStorage.removeItem("vastu_user");
-    window.location.href = "/login";
+    window.location.href = "/login.html";
 }

@@ -10,6 +10,17 @@
 <link rel="stylesheet" href="/static/design-system.css">
   <link rel="stylesheet" href="/static/i18n.css">
 </head>
+<script>
+function toggleUserMenu() {
+    const menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('user-menu');
+    const dropdown = e.target.closest('.user-dropdown');
+    if (menu && !dropdown) menu.style.display = 'none';
+});
+</script>
 <body>
 
 <!-- NAVBAR -->
@@ -25,11 +36,23 @@
             <a href="/reports.html">Reports</a>
             <a href="/lms/courses.html">LMS</a>
         </div>
-        <div class="flex gap-3" style="align-items: center;">
-            <div data-language-switcher></div>
-            <span class="text-muted text-sm" id="user-name">—</span>
-            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+        <div class="flex gap-3" style="align-items: center; position: relative;">
+    <div data-language-switcher></div>
+    <div class="user-dropdown" style="position: relative;">
+        <button class="btn btn-ghost btn-sm" onclick="toggleUserMenu()" style="display: flex; align-items: center; gap: 6px;">
+            <span id="user-name">Test User</span>
+            <span style="font-size: 10px;">▼</span>
+        </button>
+        <div id="user-menu" class="user-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: var(--deep-space); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 8px; min-width: 200px; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+            <a href="/profile.html" style="display: block; padding: 10px 14px; color: var(--starlight); text-decoration: none; border-radius: 8px; font-size: 14px;" onmouseover="this.style.background='rgba(212,175,55,0.08)'" onmouseout="this.style.background='transparent'">👤 Profile</a>
+            <a href="/settings.html" style="display: block; padding: 10px 14px; color: var(--starlight); text-decoration: none; border-radius: 8px; font-size: 14px;" onmouseover="this.style.background='rgba(212,175,55,0.08)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
+            <a href="/lms/my-certificates.html" style="display: block; padding: 10px 14px; color: var(--starlight); text-decoration: none; border-radius: 8px; font-size: 14px;" onmouseover="this.style.background='rgba(212,175,55,0.08)'" onmouseout="this.style.background='transparent'">🎓 My Certificates</a>
+            <a href="/sessions.html" style="display: block; padding: 10px 14px; color: var(--starlight); text-decoration: none; border-radius: 8px; font-size: 14px;" onmouseover="this.style.background='rgba(212,175,55,0.08)'" onmouseout="this.style.background='transparent'">📱 Sessions</a>
+            <div style="height: 1px; background: rgba(212,175,55,0.15); margin: 6px 0;"></div>
+            <a href="#" onclick="handleLogout(); return false;" style="display: block; padding: 10px 14px; color: #ff6b6b; text-decoration: none; border-radius: 8px; font-size: 14px;" onmouseover="this.style.background='rgba(255,107,107,0.08)'" onmouseout="this.style.background='transparent'">🚪 Logout</a>
         </div>
+    </div>
+</div>
     </div>
 </nav>
 

@@ -36,11 +36,11 @@ function updateBuyButtons() {
 
 // ═══ RAZORPAY PAYMENT ═══
 async function buyPackage(packageName, price) {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
 
     if (!token) {
         if (confirm("पहले login करें, फिर package खरीदें?\n\nLogin page पर जाएँ?")) {
-            window.location.href = "/login";
+            window.location.href = "/login.html";
         }
         return;
     }

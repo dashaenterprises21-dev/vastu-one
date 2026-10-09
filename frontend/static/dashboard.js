@@ -1,11 +1,11 @@
 // ═══ VASTU ONE — Dashboard ═══
 
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const userJson = localStorage.getItem("vastu_user");
 
     if (!token || !userJson) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("welcomeDate").textContent = today.toLocaleDateString('hi-IN', options);
     } catch (err) {
         console.error(err);
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
 
@@ -54,7 +54,7 @@ document.addEventListener("click", (e) => {
 // ═══ LOAD STATS ═══
 async function loadStats() {
     try {
-        const token = localStorage.getItem("vastu_token");
+        const token = localStorage.getItem("vastu_access_token");
         const response = await fetch("/api/user/reports", {
             headers: { "Authorization": "Bearer " + token }
         });
@@ -128,7 +128,7 @@ async function loadRecentReports() {
     const tbody = document.getElementById("reportsBody");
 
     try {
-        const token = localStorage.getItem("vastu_token");
+        const token = localStorage.getItem("vastu_access_token");
         const response = await fetch("/api/user/reports", {
             headers: { "Authorization": "Bearer " + token }
         });
@@ -170,7 +170,7 @@ async function loadRecentReports() {
 
 // ═══ LOGOUT ═══
 async function logout() {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     try {
         await fetch("/api/auth/logout", {
             method: "POST",
@@ -178,9 +178,9 @@ async function logout() {
         });
     } catch (err) { console.error(err); }
 
-    localStorage.removeItem("vastu_token");
+    localStorage.removeItem("vastu_access_token");
     localStorage.removeItem("vastu_user");
-    window.location.href = "/login";
+    window.location.href = "/login.html";
 }
 
 
@@ -237,7 +237,7 @@ function filterReports(query) {
 // ═══ NOTIFICATIONS ═══
 async function loadNotifications() {
     try {
-        const token = localStorage.getItem("vastu_token");
+        const token = localStorage.getItem("vastu_access_token");
         const response = await fetch("/api/user/reports", {
             headers: { "Authorization": "Bearer " + token }
         });

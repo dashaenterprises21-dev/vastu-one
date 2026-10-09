@@ -1,0 +1,86 @@
+﻿{
+  "version": "1.0",
+  "packages": {
+    "bronze": {
+      "name": "Bronze",
+      "hindi": "कांस्य",
+      "price": 999,
+      "price_display": "₹999",
+      "color": "#CD7F32",
+      "features": [
+        "Plan upload (PDF/Image)",
+        "Room detection (YOLO + OCR)",
+        "81 Pad Grid Overlay",
+        "Basic Dosh Detection",
+        "Basic Remedies",
+        "PDF Report"
+      ],
+      "delivery": "Instant (automated)",
+      "support": "Email only",
+      "validity": "1 report"
+    },
+    "silver": {
+      "name": "Silver",
+      "hindi": "रजत",
+      "price": 2999,
+      "price_display": "₹2,999",
+      "color": "#C0C0C0",
+      "features": [
+        "Sab Bronze +",
+        "Astro Layer (Kundli + Planets + Dasha)",
+        "32 Entrance Padas (Exact)",
+        "Ayadi Shadvarga",
+        "7-Component Score",
+        "Detailed Remedies",
+        "Pooja Suggestions",
+        "PDF Report"
+      ],
+      "delivery": "Instant (automated)",
+      "support": "Email + WhatsApp",
+      "validity": "1 report"
+    },
+    "gold": {
+      "name": "Gold",
+      "hindi": "स्वर्ण",
+      "price": 7999,
+      "price_display": "₹7,999",
+      "color": "#FFD700",
+      "features": [
+        "Sab Silver +",
+        "Numerology Layer (Mulank + Bhagyank + Name)",
+        "5-Tier Remedies (MahaVastu)",
+        "Pooja + Mantra",
+        "Disha Bal Audit (16 zones)",
+        "AUO Analysis",
+        "21-Day Schedule",
+        "Purchase List",
+        "Premium PDF Report"
+      ],
+      "delivery": "Instant (automated)",
+      "support": "Email + WhatsApp + Call",
+      "validity": "1 report"
+    },
+    "platinum": {
+      "name": "Platinum",
+      "hindi": "प्लेटिनम",
+      "price": 19999,
+      "price_display": "₹19,999",
+      "color": "#E5E4E2",
+      "features": [
+        "Sab Gold +",
+        "Owner/Tenant Layer",
+        "Safe Occult Remedies",
+        "Marma Points (Exact)",
+        "Personalized Matrix",
+        "1:1 Consultation (60 min)",
+        "Video Call with Expert",
+        "Lifetime Support",
+        "2 Free Revisions",
+        "White-glove Service"
+      ],
+      "delivery": "48 hours (personalized)",
+      "support": "Dedicated Manager",
+      "validity": "Lifetime"
+    }
+  }
+}

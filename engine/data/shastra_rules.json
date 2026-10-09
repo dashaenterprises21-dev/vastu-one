@@ -1,0 +1,151 @@
+{
+  "version": "1.0",
+  "sources": [
+    "Brihat Samhita Ch. 53 (Varahamihira, 6th century CE)",
+    "Samarangana Sutradhara Ch. 39 (King Bhoja, 11th century CE)",
+    "Mayamata (Mayamuni)",
+    "Manasara"
+  ],
+  "rules": [
+    {
+      "id": "BST-53-45",
+      "source": "Brihat Samhita",
+      "chapter": 53,
+      "verse": 45,
+      "sanskrit_ref": "वास्तुज्ञानमथातः कमलभवान् मुनिपरं परायातम्",
+      "meaning": "81 पद वास्तु मंडल — 13 देवता भीतर, 32 बाहर, 45 कुल",
+      "category": "mandala",
+      "impact": "structural"
+    },
+    {
+      "id": "BST-53-67",
+      "source": "Brihat Samhita",
+      "chapter": 53,
+      "verse": 67,
+      "meaning": "यदि वास्तु पुरुष का दाहिना हाथ कटा हो (घर का ग्रिड टूटा हो) → धन और पत्नी की हानि",
+      "category": "grid_completeness",
+      "impact": "wealth_spouse"
+    },
+    {
+      "id": "BST-53-68",
+      "source": "Brihat Samhita",
+      "chapter": 53,
+      "verse": 68,
+      "meaning": "अगर वास्तु पुरुष असमान हो (घर असममित) → पत्नी दोष, पुत्र मृत्यु, दासता",
+      "category": "grid_symmetry",
+      "impact": "progeny_spouse"
+    },
+    {
+      "id": "SAM-39-35-38",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": "35-38",
+      "sanskrit": "सुस्थितं चतुरश्रं च कान्तं स्वद्रव्ययोजितम्। ऋजु स्वकीयदिग्भागे...",
+      "meaning": "द्वार स्थिर, चतुष्कोण, सुंदर, सही दिशा में, न बहुत छोटा न बहुत ऊँचा हो",
+      "category": "door_quality",
+      "impact": "wealth"
+    },
+    {
+      "id": "SAM-39-53",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": 53,
+      "sanskrit": "रथ्याविद्धे भवेद्रोगो मरणं चत्वरेण च",
+      "meaning": "द्वार सड़क/चौराहे से विद्ध (कटा) हो → रोग और मृत्यु",
+      "category": "door_vedha",
+      "impact": "health_death"
+    },
+    {
+      "id": "SAM-39-58",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": 58,
+      "meaning": "घर के कुक्षि (पेट/मध्य) में द्वार → सर्वरोग",
+      "category": "door_location",
+      "impact": "health"
+    },
+    {
+      "id": "SAM-39-59",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": 59,
+      "sanskrit": "पूर्वद्वारं तु माहेन्द्रं प्रशस्तं सर्वकामदम्",
+      "meaning": "पूर्व द्वार (महेन्द्र पद) → सर्व कामनाओं की पूर्ति",
+      "category": "door_auspicious",
+      "impact": "all_desires"
+    },
+    {
+      "id": "SAM-39-60",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": 60,
+      "sanskrit": "गृहक्षतं तु विहितं दक्षिणेन शुभावहम्",
+      "meaning": "दक्षिण द्वार (गृहक्षत पद) → शुभ",
+      "category": "door_auspicious",
+      "impact": "auspicious"
+    },
+    {
+      "id": "SAM-39-63",
+      "source": "Samarangana Sutradhara",
+      "chapter": 39,
+      "verse": 63,
+      "sanskrit": "भल्लाटमुत्तरे द्वारं प्रशस्तं स्याद्गृहेशितुः",
+      "meaning": "उत्तर द्वार (भल्लाट पद) → गृहस्वामी के लिए प्रशस्त",
+      "category": "door_auspicious",
+      "impact": "owner_benefit"
+    },
+    {
+      "id": "MAY-26-18",
+      "source": "Mayamata",
+      "chapter": 26,
+      "verse": 18,
+      "sanskrit": "प्रागुदक्प्रागवाक्प्रवगुदग्गेहे तु लाङ्गले। स्वामिनो मरणं स्याद्धि श्रिये याम्ये प्रतीच्यपि॥",
+      "meaning": "लांगल (L-shape) घर उत्तर या पूर्व से सटा बनाया तो स्वामी की मृत्यु। दक्षिण या पश्चिम से सटा बनाया तो श्री (धन) प्राप्ति।",
+      "category": "house_shape",
+      "impact": "death_wealth"
+    },
+    {
+      "id": "MAY-27-द्वार",
+      "source": "Mayamata",
+      "chapter": 27,
+      "meaning": "मुख्य प्रवेशद्वार राक्षस, पुष्पदन्त, भल्लाट या महेन्द्र पद पर → धन, वंश, पशु वृद्धि",
+      "category": "door_pada",
+      "impact": "wealth_progeny"
+    },
+    {
+      "id": "MAY-वास-योजना",
+      "source": "Mayamata",
+      "meaning": "गृहस्वामी का कक्ष दाहिनी ओर, पत्नी का बाँयीं ओर। विपरीत → मनोदुःख",
+      "category": "room_placement",
+      "impact": "mental_peace"
+    },
+    {
+      "id": "SAM-48-2",
+      "source": "Samarangana Sutradhara",
+      "chapter": 48,
+      "verse": 2,
+      "sanskrit": "रक्षोम्बुनाथकीनाशमरुद्दहनदिक्प्रवा। मध्यप्प्रवा च भूत्यांधिदारिग्रमरकावहा॥",
+      "meaning": "दिशा-प्रवा (दिशा का झुकाव): पूर्व-प्रवा शुभ, दक्षिण-प्रवा मृत्यु, पश्चिम-प्रवा धन-धान्य नाश, उत्तर-प्रवा कलह-प्रवास-रोग, मध्य-प्रवा सर्वनाश",
+      "category": "direction_slope",
+      "impact": "multiple"
+    },
+    {
+      "id": "SAM-48-5",
+      "source": "Samarangana Sutradhara",
+      "chapter": 48,
+      "verse": 5,
+      "meaning": "दुष्ट भूमि — कंकड़, हड्डी, कीड़े, शंख, भस्म, ऊषर, कोयला → त्याज्य",
+      "category": "land_quality",
+      "impact": "inauspicious"
+    },
+    {
+      "id": "SAM-48-8",
+      "source": "Samarangana Sutradhara",
+      "chapter": 48,
+      "verse": 8,
+      "meaning": "पावक (अग्नि) पद पर पृष्ठ (पीठ) → वंश नाश। पश्चिम में → पुरग्रास (नगर निगलना)। कर्ण (कोण) में → कौलादि दोष",
+      "category": "pada_placement",
+      "impact": "progeny_city"
+    }
+  ]
+}

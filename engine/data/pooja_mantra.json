@@ -1,0 +1,97 @@
+{
+  "version": "1.0",
+  "description": "Pooja & mantra database for Vastu remedies",
+  "poojas": {
+    "Ganesh_Pooja": {
+      "hindi": "गणेश पूजा",
+      "purpose": "Remove obstacles, start new work",
+      "samagri": [
+        "Modak",
+        "Durva grass",
+        "Red flowers",
+        "Coconut",
+        "Ganesh idol"
+      ],
+      "direction": "North-East",
+      "timing": "Morning, Chaturthi tithi",
+      "mantra": "Om Gan Ganpataye Namaha",
+      "count": 108,
+      "cost": "₹500"
+    },
+    "Navagrah_Shanti": {
+      "hindi": "नवग्रह शांति",
+      "purpose": "Planetary peace, remove astro dosh",
+      "samagri": [
+        "9 grains",
+        "9 colors cloth",
+        "Navagraha yantra",
+        "Ghee lamp"
+      ],
+      "direction": "East",
+      "timing": "Brahma muhurat",
+      "mantra": "Om Navagrahaya Namaha",
+      "count": 108,
+      "cost": "₹2000"
+    },
+    "Vastu_Purush_Pooja": {
+      "hindi": "वास्तु पुरुष पूजा",
+      "purpose": "Vastu dosh nivaran",
+      "samagri": [
+        "Vastu Purush yantra",
+        "45 devta idols",
+        "Yellow cloth",
+        "Havan samagri"
+      ],
+      "direction": "Center",
+      "timing": "Any auspicious day",
+      "mantra": "Om Namo Bhagvati Vaastu Devtay Namah",
+      "count": 108,
+      "cost": "₹5000"
+    },
+    "Agni_Pooja": {
+      "hindi": "अग्नि पूजा",
+      "purpose": "Kitchen dosh nivaran",
+      "samagri": [
+        "Red flowers",
+        "Copper vessel",
+        "Ghee",
+        "Havan samagri"
+      ],
+      "direction": "South-East",
+      "timing": "Sunrise",
+      "mantra": "Om Agnaye Namaha",
+      "count": 108,
+      "cost": "₹1000"
+    },
+    "Varuna_Pooja": {
+      "hindi": "वरुण पूजा",
+      "purpose": "Water dosh nivaran, NE toilet",
+      "samagri": [
+        "Blue flowers",
+        "Silver vessel",
+        "Water",
+        "Coconut"
+      ],
+      "direction": "North-East",
+      "timing": "Evening",
+      "mantra": "Om Varunaya Namaha",
+      "count": 108,
+      "cost": "₹800"
+    },
+    "Brahma_Pooja": {
+      "hindi": "ब्रह्मा पूजा",
+      "purpose": "Center dosh nivaran",
+      "samagri": [
+        "White flowers",
+        "White cloth",
+        "Ghee lamp",
+        "Crystal"
+      ],
+      "direction": "Center",
+      "timing": "Brahma muhurat",
+      "mantra": "Om Brahmane Namaha",
+      "count": 108,
+      "cost": "₹1500"
+    }
+  }
+}

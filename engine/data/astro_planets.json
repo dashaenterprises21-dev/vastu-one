@@ -1,0 +1,28 @@
+﻿{
+  "version": "1.0",
+  "planets": {
+    "Surya": {"hindi": "सूर्य", "direction": "E", "element": "fire", "day": "Sunday", "mantra": "ॐ सूर्याय नमः", "gemstone": "Ruby", "metal": "Gold", "color": "Red"},
+    "Chandra": {"hindi": "चन्द्र", "direction": "NW", "element": "water", "day": "Monday", "mantra": "ॐ चन्द्राय नमः", "gemstone": "Pearl", "metal": "Silver", "color": "White"},
+    "Mangal": {"hindi": "मंगल", "direction": "S", "element": "fire", "day": "Tuesday", "mantra": "ॐ मंगलाय नमः", "gemstone": "Red Coral", "metal": "Copper", "color": "Red"},
+    "Budh": {"hindi": "बुध", "direction": "N", "element": "earth", "day": "Wednesday", "mantra": "ॐ बुधाय नमः", "gemstone": "Emerald", "metal": "Bronze", "color": "Green"},
+    "Guru": {"hindi": "गुरु", "direction": "NE", "element": "space", "day": "Thursday", "mantra": "ॐ गुरवे नमः", "gemstone": "Yellow Sapphire", "metal": "Gold", "color": "Yellow"},
+    "Shukra": {"hindi": "शुक्र", "direction": "SE", "element": "water", "day": "Friday", "mantra": "ॐ शुक्राय नमः", "gemstone": "Diamond", "metal": "Silver", "color": "White"},
+    "Shani": {"hindi": "शनि", "direction": "W", "element": "air", "day": "Saturday", "mantra": "ॐ शनैश्चराय नमः", "gemstone": "Blue Sapphire", "metal": "Iron", "color": "Black"},
+    "Rahu": {"hindi": "राहु", "direction": "SW", "element": "air", "day": "Saturday", "mantra": "ॐ राहवे नमः", "gemstone": "Hessonite", "metal": "Lead", "color": "Smoke"},
+    "Ketu": {"hindi": "केतु", "direction": "NW", "element": "fire", "day": "Tuesday", "mantra": "ॐ केतवे नमः", "gemstone": "Cat's Eye", "metal": "Mixed", "color": "Grey"}
+  },
+  "houses": {
+    "1": {"hindi": "तनु", "meaning": "Self, Health"},
+    "2": {"hindi": "धन", "meaning": "Wealth, Family"},
+    "3": {"hindi": "सहज", "meaning": "Siblings, Courage"},
+    "4": {"hindi": "सुख", "meaning": "Home, Mother"},
+    "5": {"hindi": "पुत्र", "meaning": "Children, Education"},
+    "6": {"hindi": "रोग", "meaning": "Disease, Enemies"},
+    "7": {"hindi": "कलत्र", "meaning": "Spouse, Partnership"},
+    "8": {"hindi": "आयु", "meaning": "Longevity, Death"},
+    "9": {"hindi": "भाग्य", "meaning": "Luck, Father"},
+    "10": {"hindi": "कर्म", "meaning": "Career, Status"},
+    "11": {"hindi": "लाभ", "meaning": "Gains, Friends"},
+    "12": {"hindi": "व्यय", "meaning": "Loss, Liberation"}
+  }
+}

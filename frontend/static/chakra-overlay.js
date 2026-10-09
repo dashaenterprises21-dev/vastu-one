@@ -39,9 +39,9 @@ let placedRooms = []; // { pada, row, col, zone, type, markerX, markerY }
 
 // ═══ INIT ═══
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login.html";
         return;
     }
     initCanvas();
@@ -359,7 +359,7 @@ async function analyzeVastu() {
         return;
     }
 
-    const token = localStorage.getItem("vastu_token");
+    const token = localStorage.getItem("vastu_access_token");
     const btn = document.getElementById("analyzeBtn");
     const overlay = document.getElementById("loadingOverlay");
 
