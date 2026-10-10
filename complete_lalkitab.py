@@ -1,23 +1,7 @@
-"""
-VASTU ONE — Lal Kitab Engine
-==============================
-Unique Lal Kitab analysis + remedies (totke)
-Based on: Lal Kitab 1952 (Rooplal Nagar)
-"""
+from pathlib import Path
 
-from typing import Dict, List, Any
-
-
-class LalKitabEngine:
-    """Lal Kitab analysis with unique remedies."""
-
-    def __init__(self, positions: Dict, lagna: Dict):
-        self.pos = positions
-        self.lagna = lagna
-        self.findings = []
-        self.remedies = []
-
-
+# Complete Lal Kitab rules — all planets × all bhavas
+LAL_KITAB_RULES = '''
     def analyze_all(self) -> Dict[str, Any]:
         """Run complete Lal Kitab analysis — all planets, all bhavas."""
         # Mangal — all bhavas
@@ -193,3 +177,31 @@ class LalKitabEngine:
         self.findings.append(finding)
         for r in rule.get("remedies", []):
             self.remedies.append({"planet": planet_name, **r})
+'''
+
+# Write complete engine
+p = Path("engine/astro/lal_kitab_engine.py")
+
+# Read original header (up to analyze_all)
+original = p.read_text(encoding="utf-8")
+header_end = original.find("    def analyze_all(self)")
+if header_end == -1:
+    print("ERROR: analyze_all not found")
+else:
+    header = original[:header_end]
+    # Find _lal_kitab_planet old method end
+    old_method_start = original.find("    def _lal_kitab_planet(self")
+    old_method_end = -1
+    if old_method_start != -1:
+        # Find next def after this
+        next_def = original.find("    def ", old_method_start + 10)
+        if next_def != -1:
+            old_method_end = next_def
+        else:
+            old_method_end = len(original)
+    
+    # New content
+    new_content = header + LAL_KITAB_RULES
+    p.write_text(new_content, encoding="utf-8")
+    print("DONE - Lal Kitab engine completed!")
+    print(f"File size: {len(new_content)} chars")
