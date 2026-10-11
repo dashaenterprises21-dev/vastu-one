@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 router = APIRouter(prefix="/api/i18n", tags=["i18n"])
 
 TRANSLATIONS_DIR = Path(__file__).parent.parent / "data" / "translations"
-SUPPORTED_LANGS = ["en", "hi", "hinglish"]
+SUPPORTED_LANGS = ["en", "hi", "hinglish", "mr", "gu", "ta", "te", "kn", "bn", "pa", "ml"]
 DEFAULT_LANG = "en"
 
 

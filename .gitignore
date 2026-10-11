@@ -1,117 +1,102 @@
-# ============================================================
-# VASTU ONE — .gitignore
-# ============================================================
-
-# Environment (NEVER commit)
-.env
-.env.*
-!.env.example
-
-# Python
+﻿# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-dist/
-*.egg-info/
-.eggs/
+*.pyc
 venv/
-.venv/
 env/
-ENV/
+.venv/
 .pytest_cache/
-.coverage
-htmlcov/
 .mypy_cache/
 .ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary scripts (development only)
+add_*.py
+fix_*.py
+test_*.py
+check_*.py
+patch_*.py
+integrate_*.py
+update_*.py
+cleanup_*.py
+bulk_*.py
+remove_*.py
+mount_*.py
+register_*.py
+disable_*.py
+audit_*.py
+autofill_*.py
+generate_*.py
+interactive_*.py
+list_routes*.py
+reset_pwd*.py
+
+# Backups
+*.backup
+*.backup-*
+*.bak
+*.bak-*
+*.bak2-*
+*.bak3-*
+*.bak-final-*
+*.broken-*
+*.corrupt-*
+*.old
+*.orig
+
+# Session files
+HANDOFF.txt
+SESSION_INFO.txt
+seed_log.txt
+
+# Models (large)
+models/
+!models/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-Desktop.ini
 
 # Logs
-logs/
+logs/*.log
 *.log
-npm-debug.log*
 
-# Database
-*.db
-*.sqlite3
+# Data
+data/uploads/
+data/temp/
 
-# Large files (keep in git-lfs if needed)
-models/*.pt
-models/*.pth
-*.onnx
-
-# Uploads
-uploads/
-temp_uploads/
-
-# PDF test outputs
-test_report.pdf
-*.pdf
-!docs/**/*.pdf
-
-# Audit outputs
-audit_output/
-forensic_audit.py.bak
-
-# Backup files
-*.backup
-*.bak
-*.OLD*
-.env.OLD*
-.env.backup*
-
-# Sensitive
-secrets/
-private/
-
-# Temporary
-tmp/
-temp/
-# Sensitive files
+# Sensitive/Test files
 token.txt
-HANDOFF.txt
-SESSION_INFO.txt
+*.pdf
+!requirements.pdf
 
-# Backup files
-*.backup-*
-*.bak
-*.bak-*
-*.bak2-*
-*.bak3-*
-*.broken-*
-*.corrupt-backup-*
-*.backup-before-*
-*.bak-final-*
+# Tokens/Secrets
+token.txt
+*.token
+secrets.json
+credentials.json
 
-# Generated scripts (one-time use)
-add_landing_*.py
-add_star.py
-add_sample_*.py
-add_structured_urls.py
-bulk_url_update*.py
-check_*.py
-cleanup_modules.py
-fix_*.py
-mount_switcher.py
-patch_*.py
-reset_pwd*.py
-seed_log.txt
-test_url_add.py
-interactive_url_add.py
-generate_csv_template.py
-autofill_csv.py
-list_routes*.py
-audit_course.py
+# Test/Sensitive files
+token.txt
+*.pdf
+!requirements.pdf
+certificate*.pdf
+test_report.pdf
+
+# Temp scripts
+clean_css.py
+complete_legal.py

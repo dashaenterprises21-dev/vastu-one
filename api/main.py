@@ -61,6 +61,8 @@ async def lifespan(app: FastAPI):
     yield
 
 
+from api.routes import payments_routes
+
 app = FastAPI(
     title="VASTU ONE",
     description="Traceable Vastu Intelligence Platform",
@@ -115,6 +117,7 @@ app.include_router(astro_router)
 app.include_router(astro_v3_router)
 app.include_router(advanced_kundli_router)
 app.include_router(advanced_astro_router)
+app.include_router(payments_routes.router)
 
 
 @app.get("/api")
@@ -132,6 +135,7 @@ async def health():
 # ==========================================
 if (FRONTEND_DIR / "static").exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
+app.mount("/legal", StaticFiles(directory=str(FRONTEND_DIR / "legal"), html=True), name="legal")
 
 
 # ==========================================

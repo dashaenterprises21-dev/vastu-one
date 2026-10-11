@@ -306,6 +306,19 @@ footer {
   .section-title { font-size: 22px; }
 }
 </style>
+  <script src="/static/north-indian-chart.js"></script>
+  <script src="/static/south-indian-chart.js"></script>
+  <script src="/static/dasha-timeline.js"></script>
+  <script src="/static/vimshottari-tree.js"></script>
+  <script src="/static/ashtakavarga-grid.js"></script>
+  <script src="/static/pdf-export-v2.js"></script>
+  <script src="/static/gps-location.js"></script>
+  <script src="/static/location-search.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/royal-theme.css">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -367,25 +380,58 @@ footer {
 <main class="container">
 
   <!-- FORM -->
-  <div class="form-card" id="inputCard">
-    <div class="form-row">
-      <div class="form-group">
-        <label>Janm Tithi</label>
-        <input type="date" id="dob" value="1990-04-05">
+  <!-- FORM -->
+  <div class="form-card" id="inputCard" style="max-width:1000px;margin:0 auto;padding:40px;background:linear-gradient(135deg,rgba(20,20,28,0.98),rgba(15,15,22,0.98));border:1px solid rgba(212,175,55,0.25);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,0.5);">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid rgba(212,175,55,0.15);">
+      <div style="font-size:10px;letter-spacing:4px;color:#D4AF37;font-weight:700;margin-bottom:10px;">KUNDLI PRO</div>
+      <h2 style="font-family:Cormorant Garamond,Georgia,serif;font-size:34px;color:#fff;margin:0;font-weight:600;">जन्म विवरण भरें</h2>
+      <p style="font-size:13px;color:#888;margin-top:10px;font-family:Inter,sans-serif;">Enter your birth details for accurate Vedic analysis</p>
+    </div>
+
+    <!-- Name -->
+    <div style="margin-bottom:24px;">
+      <label style="display:block;font-size:11px;color:#D4AF37;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;font-family:Inter,sans-serif;">NAME / नाम</label>
+      <input type="text" id="name" placeholder="Your full name" style="width:100%;padding:15px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.25);border-radius:10px;color:#fff;font-size:14px;outline:none;transition:all 0.2s;font-family:Inter,sans-serif;box-sizing:border-box;" onfocus="this.style.borderColor='#D4AF37';this.style.background='rgba(212,175,55,0.06)'" onblur="this.style.borderColor='rgba(212,175,55,0.25)';this.style.background='rgba(255,255,255,0.04)'">
+    </div>
+
+    <!-- DOB + TOB -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div>
+        <label style="display:block;font-size:11px;color:#D4AF37;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;font-family:Inter,sans-serif;">JANM TITHI / जन्म तिथि</label>
+        <input type="date" id="dob" value="1990-04-05" style="width:100%;padding:15px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.25);border-radius:10px;color:#fff;font-size:14px;outline:none;cursor:pointer;font-family:Inter,sans-serif;box-sizing:border-box;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='rgba(212,175,55,0.25)'">
       </div>
-      <div class="form-group">
-        <label>Janm Samay</label>
-        <input type="time" id="tob" value="21:35">
-      </div>
-      <div class="form-group">
-        <label>Janm Sthan</label>
-        <input type="text" id="place" value="Bhandara, Maharashtra">
+      <div>
+        <label style="display:block;font-size:11px;color:#D4AF37;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;font-family:Inter,sans-serif;">JANM SAMAY / जन्म समय</label>
+        <input type="time" id="tob" value="21:35" style="width:100%;padding:15px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.25);border-radius:10px;color:#fff;font-size:14px;outline:none;cursor:pointer;font-family:Inter,sans-serif;box-sizing:border-box;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='rgba(212,175,55,0.25)'">
       </div>
     </div>
-    <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeKundli()">
+
+    <!-- Place + GPS -->
+    <div style="margin-bottom:24px;">
+      <label style="display:block;font-size:11px;color:#D4AF37;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;font-family:Inter,sans-serif;">JANM STHAN / जन्म स्थान</label>
+      <div style="display:flex;gap:12px;">
+        <input type="text" id="place" value="Bhandara, Maharashtra" placeholder="Type city name..." style="flex:1;padding:15px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.25);border-radius:10px;color:#fff;font-size:14px;outline:none;font-family:Inter,sans-serif;box-sizing:border-box;min-width:0;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='rgba(212,175,55,0.25)'">
+        <button type="button" onclick="if(typeof useGPSLocation==='function')useGPSLocation('place');" style="padding:0 22px;background:linear-gradient(135deg,#D4AF37,#B8941F);color:#000;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;font-family:Inter,sans-serif;transition:all 0.2s;" onmouseenter="this.style.transform='translateY(-1px)'" onmouseleave="this.style.transform='translateY(0)'">
+          <span style="font-size:16px;">📍</span> GPS
+        </button>
+      </div>
+    </div>
+
+    <!-- Map (full width) -->
+    <div id="kundli-map-wrapper" style="margin-bottom:28px;display:none;">
+      <div style="font-size:11px;color:#D4AF37;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;font-family:Inter,sans-serif;">📍 SELECT LOCATION ON MAP</div>
+      <div id="kundli-map-container" style="width:100%;height:300px;border-radius:12px;border:1px solid rgba(212,175,55,0.3);background:#1a1a24;overflow:hidden;"></div>
+      <div id="kundli-coord-display" style="display:none;margin-top:14px;padding:16px 20px;background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.04));border:1px solid rgba(212,175,55,0.3);border-radius:10px;font-family:monospace;"></div>
+    </div>
+
+    <!-- Submit -->
+    <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeKundli()" style="width:100%;padding:18px 24px;background:linear-gradient(135deg,#D4AF37,#B8941F);color:#000;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:1px;box-shadow:0 8px 24px rgba(212,175,55,0.3);transition:all 0.2s;font-family:Inter,sans-serif;" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(212,175,55,0.4)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px rgba(212,175,55,0.3)'">
       🔮 Complete Kundli Pro Dekhein
     </button>
     <div class="error-box" id="error"></div>
+  </div>
   </div>
 
   <!-- LOADER -->
@@ -605,6 +651,686 @@ footer {
     <!-- 25. LAL KITAB -->
     <div class="section"><div class="section-header"><div class="section-icon">📕</div><div><div class="section-title">Lal Kitab Analysis</div><div class="section-sub">Unique Totke • Low-Cost Remedies</div></div></div><div id="lal-kitab-grid"></div></div>
 
+    <!-- 27. LIFE ELABORATION -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📖</div>
+        <div>
+          <div class="section-title">Detailed Life Analysis</div>
+          <div class="section-sub">Deep Elaboration • Reason • Effect • Timing • Case Study • Remedies</div>
+        </div>
+      </div>
+      <div id="life-elaborated-grid"></div>
+    </div>
+
+    <!-- 28. TIME PREDICTION -->
+    
+    <!-- NORTH INDIAN CHART -->
+    <div class="section" id="north-indian-chart-section">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div>
+          <div class="section-title">Birth Chart — North Indian</div>
+          <div class="section-sub">Lagna + 9 Planets + 12 Bhavas</div>
+        </div>
+      </div>
+      <div id="north-indian-chart-container" style="display:flex;justify-content:center;padding:20px;"></div>
+    </div>
+
+
+    <!-- SOUTH INDIAN CHART -->
+    <div class="section" id="south-indian-chart-section">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div>
+          <div class="section-title">Birth Chart — South Indian</div>
+          <div class="section-sub">Rashi-based layout, traditional South Indian format</div>
+        </div>
+      </div>
+      <div id="south-indian-chart-container" style="display:flex;justify-content:center;padding:20px;"></div>
+    </div>
+
+
+    <!-- DASHA TIMELINE -->
+    <div class="section" id="dasha-timeline-section">
+      <div class="section-header">
+        <div class="section-icon">⏳</div>
+        <div>
+          <div class="section-title">Vimshottari Dasha Timeline</div>
+          <div class="section-sub">120 Years — Past • Present • Future Mahadasha</div>
+        </div>
+      </div>
+      <div id="dasha-timeline-container" style="padding:20px 0;"></div>
+    </div>
+
+
+    <!-- VIMSHOTTARI NESTED TREE -->
+    <div class="section" id="vimshottari-tree-section">
+      <div class="section-header">
+        <div class="section-icon">🌳</div>
+        <div>
+          <div class="section-title">Vimshottari Nested Tree</div>
+          <div class="section-sub">Maha → Antar → Pratyantar — Click to expand</div>
+        </div>
+      </div>
+      <div id="vimshottari-tree-container" style="padding:8px 0;"></div>
+    </div>
+
+
+    <!-- ASHTAKAVARGA GRID -->
+    <div class="section" id="ashtakavarga-grid-section">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div>
+          <div class="section-title">Ashtakavarga Grid</div>
+          <div class="section-sub">Planet-wise + Total strength per Rashi</div>
+        </div>
+      </div>
+      <div id="ashtakavarga-grid-container" style="padding:8px 0;"></div>
+    </div>
+
+
+    
+    <!-- ══════════════════════════════════════════
+         EXTENDED 16 CARDS — NEW FEATURES
+         ══════════════════════════════════════════ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🌟</div>
+        <div>
+          <div class="section-title">Advanced Astro Analysis</div>
+          <div class="section-sub">16 New Features — Panchang · KP · Medical · Varshphal</div>
+        </div>
+      </div>
+
+      <!-- 16 Mini Cards -->
+      <div class="extended-grid">
+        <div class="ext-card" onclick="scrollToPanel('panchang')">
+          <span class="ext-card-icon">📅</span>
+          <div class="ext-card-title">Panchang</div>
+          <div class="ext-card-desc">Tithi · Nakshatra · Yoga · Karana · Rahu Kaal</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('graha-maitri')">
+          <span class="ext-card-icon">🔗</span>
+          <div class="ext-card-title">Graha Maitri</div>
+          <div class="ext-card-desc">Planetary friendships — natural & temporal</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('aspects')">
+          <span class="ext-card-icon">👁️</span>
+          <div class="ext-card-title">Planetary Aspects</div>
+          <div class="ext-card-desc">Full Vedic Drishti table</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('gemstone')">
+          <span class="ext-card-icon">💎</span>
+          <div class="ext-card-title">Gemstone Report</div>
+          <div class="ext-card-desc">Ratna with weight · metal · day</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('nakshatra')">
+          <span class="ext-card-icon">⭐</span>
+          <div class="ext-card-title">Nakshatra Report</div>
+          <div class="ext-card-desc">27 Nakshatras · devta · gana · yoni</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('sade-sati')">
+          <span class="ext-card-icon">🪐</span>
+          <div class="ext-card-title">Sade Sati</div>
+          <div class="ext-card-desc">Shani transit · 3 phases · remedies</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('kaal-sarp')">
+          <span class="ext-card-icon">��</span>
+          <div class="ext-card-title">Kaal Sarp Dosha</div>
+          <div class="ext-card-desc">Check · type · remedies</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('transit')">
+          <span class="ext-card-icon">🌍</span>
+          <div class="ext-card-title">Transit (Gochar)</div>
+          <div class="ext-card-desc">12-month planetary forecast</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('yogini-dasha')">
+          <span class="ext-card-icon">🎭</span>
+          <div class="ext-card-title">Yogini Dasha</div>
+          <div class="ext-card-desc">8 Yogini periods · effects</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('pitru-dosha')">
+          <span class="ext-card-icon">👴</span>
+          <div class="ext-card-title">Pitru Dosha</div>
+          <div class="ext-card-desc">Ancestral karma · remedies</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('yogas-extended')">
+          <span class="ext-card-icon">🌟</span>
+          <div class="ext-card-title">Extended Yogas</div>
+          <div class="ext-card-desc">Raja · Dhana · Mahapurusha · Chandra</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('doshas-extended')">
+          <span class="ext-card-icon">⚠️</span>
+          <div class="ext-card-title">Extended Doshas</div>
+          <div class="ext-card-desc">Grahan · Guru Chandal · Shrapit</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('sudarshan')">
+          <span class="ext-card-icon">🌀</span>
+          <div class="ext-card-title">Sudarshan Chakra</div>
+          <div class="ext-card-desc">Lagna + Chandra + Surya combined</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('kp-system')">
+          <span class="ext-card-icon">🔮</span>
+          <div class="ext-card-title">KP System</div>
+          <div class="ext-card-desc">Sub-lord · Sub-sub · Ruling Planets</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('varshphal')">
+          <span class="ext-card-icon">🎂</span>
+          <div class="ext-card-title">Varshphal</div>
+          <div class="ext-card-desc">Annual chart · Muntha · Year Lord</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        
+        <div class="ext-card" onclick="scrollToPanel('shadvarga')">
+          <span class="ext-card-icon">📐</span>
+          <div class="ext-card-title">Shadvarga Charts</div>
+          <div class="ext-card-desc">D-1 · D-2 · D-3 · D-4 · D-7 · D-9 · D-10</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('guna-milan')">
+          <span class="ext-card-icon">💑</span>
+          <div class="ext-card-title">Guna Milan</div>
+          <div class="ext-card-desc">Ashtakoota · 36-point matching</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('numerology')">
+          <span class="ext-card-icon">🔢</span>
+          <div class="ext-card-title">Numerology</div>
+          <div class="ext-card-desc">Mulank · Bhagyank · Chaldean</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('classical-refs')">
+          <span class="ext-card-icon">��</span>
+          <div class="ext-card-title">Classical References</div>
+          <div class="ext-card-desc">BPHS shloka numbers</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+
+        
+        <div class="ext-card" onclick="scrollToPanel('nakshatra-nadi')">
+          <span class="ext-card-icon">🔱</span>
+          <div class="ext-card-title">Nakshatra Nadi</div>
+          <div class="ext-card-desc">27 Nakshatras · Nadi · Devta · Gana</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('jaimini')">
+          <span class="ext-card-icon">🎯</span>
+          <div class="ext-card-title">Jaimini System</div>
+          <div class="ext-card-desc">Char Dasha · Karakamsha · Atmakaraka</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('kp-enhanced')">
+          <span class="ext-card-icon">🔮</span>
+          <div class="ext-card-title">KP Enhanced</div>
+          <div class="ext-card-desc">Sub-Sub Lord · Ruling Planets</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('varshphal-enhanced')">
+          <span class="ext-card-icon">📅</span>
+          <div class="ext-card-title">Varshphal 5-Year</div>
+          <div class="ext-card-desc">5 saal ka annual forecast</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('transit-enhanced')">
+          <span class="ext-card-icon">🌐</span>
+          <div class="ext-card-title">Transit Enhanced</div>
+          <div class="ext-card-desc">12-month detailed forecast</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+        <div class="ext-card" onclick="scrollToPanel('lalkitab-enhanced')">
+          <span class="ext-card-icon">📕</span>
+          <div class="ext-card-title">Lal Kitab Enhanced</div>
+          <div class="ext-card-desc">3 Teva · House-wise remedies</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+
+        <div class="ext-card" onclick="scrollToPanel('medical')">
+          <span class="ext-card-icon">🏥</span>
+          <div class="ext-card-title">Medical Astrology</div>
+          <div class="ext-card-desc">Weak organs · longevity · care</div>
+          <span class="ext-card-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         16 DETAIL PANELS
+         ══════════════════════════════════════════ -->
+    <div class="section" id="extended-details">
+      <div class="section-header">
+        <div class="section-icon">📖</div>
+        <div>
+          <div class="section-title">Detailed Analysis</div>
+          <div class="section-sub">Click any card above to jump to detail</div>
+        </div>
+      </div>
+
+      <div class="detail-nav">
+        <button class="detail-nav-item active" onclick="showPanel('panchang', this)">📅 Panchang</button>
+        <button class="detail-nav-item" onclick="showPanel('graha-maitri', this)">🔗 Graha Maitri</button>
+        <button class="detail-nav-item" onclick="showPanel('aspects', this)">👁️ Aspects</button>
+        <button class="detail-nav-item" onclick="showPanel('gemstone', this)">💎 Gemstone</button>
+        <button class="detail-nav-item" onclick="showPanel('nakshatra', this)">⭐ Nakshatra</button>
+        <button class="detail-nav-item" onclick="showPanel('sade-sati', this)">🪐 Sade Sati</button>
+        <button class="detail-nav-item" onclick="showPanel('kaal-sarp', this)">🐍 Kaal Sarp</button>
+        <button class="detail-nav-item" onclick="showPanel('transit', this)">🌍 Transit</button>
+        <button class="detail-nav-item" onclick="showPanel('yogini-dasha', this)">🎭 Yogini</button>
+        <button class="detail-nav-item" onclick="showPanel('pitru-dosha', this)">👴 Pitru</button>
+        <button class="detail-nav-item" onclick="showPanel('yogas-extended', this)">🌟 Yogas</button>
+        <button class="detail-nav-item" onclick="showPanel('doshas-extended', this)">⚠️ Doshas</button>
+        <button class="detail-nav-item" onclick="showPanel('sudarshan', this)">🌀 Sudarshan</button>
+        <button class="detail-nav-item" onclick="showPanel('kp-system', this)">🔮 KP System</button>
+        <button class="detail-nav-item" onclick="showPanel('varshphal', this)">🎂 Varshphal</button>
+<button class="detail-nav-item" onclick="showPanel('shadvarga', this)">📐 Shadvarga</button>
+        <button class="detail-nav-item" onclick="showPanel('guna-milan', this)">💑 Guna Milan</button>
+        <button class="detail-nav-item" onclick="showPanel('numerology', this)">🔢 Numerology</button>
+        <button class="detail-nav-item" onclick="showPanel('classical-refs', this)">📜 Classical</button>
+        <button class="detail-nav-item" onclick="showPanel('nakshatra-nadi', this)">🔱 Nadi</button>
+        <button class="detail-nav-item" onclick="showPanel('jaimini', this)">🎯 Jaimini</button>
+        <button class="detail-nav-item" onclick="showPanel('kp-enhanced', this)">🔮 KP+</button>
+        <button class="detail-nav-item" onclick="showPanel('varshphal-enhanced', this)">📅 Varshphal</button>
+        <button class="detail-nav-item" onclick="showPanel('transit-enhanced', this)">🌐 Transit</button>
+        <button class="detail-nav-item" onclick="showPanel('lalkitab-enhanced', this)">📕 LK+</button>
+                        <button class="detail-nav-item" onclick="showPanel('medical', this)">🏥 Medical</button>
+      </div>
+
+      <div class="detail-panel active" id="panel-panchang">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">📅</span>
+          <div>
+            <div class="detail-section-title">Panchang</div>
+            <div class="detail-section-sub">Tithi · Nakshatra · Yoga · Karana · Rahu Kaal</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="panchang-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-graha-maitri">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🔗</span>
+          <div>
+            <div class="detail-section-title">Graha Maitri</div>
+            <div class="detail-section-sub">Planetary friendships</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="graha-maitri-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-aspects">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">👁️</span>
+          <div>
+            <div class="detail-section-title">Planetary Aspects</div>
+            <div class="detail-section-sub">Full Vedic Drishti</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="aspects-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-gemstone">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">💎</span>
+          <div>
+            <div class="detail-section-title">Gemstone Report</div>
+            <div class="detail-section-sub">Ratna recommendations</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="gemstone-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-nakshatra">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">⭐</span>
+          <div>
+            <div class="detail-section-title">Nakshatra Report</div>
+            <div class="detail-section-sub">27 Nakshatras</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="nakshatra-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-sade-sati">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🪐</span>
+          <div>
+            <div class="detail-section-title">Sade Sati</div>
+            <div class="detail-section-sub">Shani transit analysis</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="sade-sati-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-kaal-sarp">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🐍</span>
+          <div>
+            <div class="detail-section-title">Kaal Sarp Dosha</div>
+            <div class="detail-section-sub">Check · type · remedies</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="kaal-sarp-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-transit">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🌍</span>
+          <div>
+            <div class="detail-section-title">Transit (Gochar)</div>
+            <div class="detail-section-sub">12-month forecast</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="transit-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-yogini-dasha">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🎭</span>
+          <div>
+            <div class="detail-section-title">Yogini Dasha</div>
+            <div class="detail-section-sub">8 Yogini periods</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="yogini-dasha-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-pitru-dosha">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">👴</span>
+          <div>
+            <div class="detail-section-title">Pitru Dosha</div>
+            <div class="detail-section-sub">Ancestral karma</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="pitru-dosha-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-yogas-extended">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🌟</span>
+          <div>
+            <div class="detail-section-title">Extended Yogas</div>
+            <div class="detail-section-sub">All auspicious combinations</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="yogas-extended-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-doshas-extended">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">⚠️</span>
+          <div>
+            <div class="detail-section-title">Extended Doshas</div>
+            <div class="detail-section-sub">All challenging combinations</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="doshas-extended-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-sudarshan">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🌀</span>
+          <div>
+            <div class="detail-section-title">Sudarshan Chakra</div>
+            <div class="detail-section-sub">Lagna + Chandra + Surya</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="sudarshan-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-kp-system">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🔮</span>
+          <div>
+            <div class="detail-section-title">KP System</div>
+            <div class="detail-section-sub">Sub-lord · Ruling Planets</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="kp-system-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-varshphal">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🎂</span>
+          <div>
+            <div class="detail-section-title">Varshphal</div>
+            <div class="detail-section-sub">Annual chart</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="varshphal-container"></div>
+      </div>
+
+      
+      <div class="detail-panel" id="panel-shadvarga">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">📐</span>
+          <div>
+            <div class="detail-section-title">Shadvarga Charts</div>
+            <div class="detail-section-sub">7 divisional charts</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="shadvarga-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-guna-milan">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">💑</span>
+          <div>
+            <div class="detail-section-title">Guna Milan</div>
+            <div class="detail-section-sub">Ashtakoota 36-point matching</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="guna-milan-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-numerology">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🔢</span>
+          <div>
+            <div class="detail-section-title">Numerology</div>
+            <div class="detail-section-sub">Mulank · Bhagyank · Naamank</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="numerology-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-classical-refs">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">📜</span>
+          <div>
+            <div class="detail-section-title">Classical References</div>
+            <div class="detail-section-sub">BPHS shloka numbers</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="classical-refs-container"></div>
+      </div>
+
+      
+      <div class="detail-panel" id="panel-nakshatra-nadi">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🔱</span>
+          <div>
+            <div class="detail-section-title">Nakshatra Nadi</div>
+            <div class="detail-section-sub">27 Nakshatras · Full details</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="nakshatra-nadi-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-jaimini">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🎯</span>
+          <div>
+            <div class="detail-section-title">Jaimini System</div>
+            <div class="detail-section-sub">Char Dasha · Karakamsha</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="jaimini-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-kp-enhanced">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🔮</span>
+          <div>
+            <div class="detail-section-title">KP Enhanced</div>
+            <div class="detail-section-sub">Sub-Sub Lord · Ruling Planets</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="kp-enhanced-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-varshphal-enhanced">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">📅</span>
+          <div>
+            <div class="detail-section-title">Varshphal 5-Year</div>
+            <div class="detail-section-sub">Annual forecast 5 saal</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="varshphal-enhanced-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-transit-enhanced">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🌐</span>
+          <div>
+            <div class="detail-section-title">Transit Enhanced</div>
+            <div class="detail-section-sub">12-month detailed forecast</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="transit-enhanced-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-lalkitab-enhanced">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">📕</span>
+          <div>
+            <div class="detail-section-title">Lal Kitab Enhanced</div>
+            <div class="detail-section-sub">3 Teva · House-wise remedies</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="lalkitab-enhanced-container"></div>
+      </div>
+
+      <div class="detail-panel" id="panel-medical">
+        <div class="detail-section-header">
+          <span class="detail-section-icon">🏥</span>
+          <div>
+            <div class="detail-section-title">Medical Astrology</div>
+            <div class="detail-section-sub">Health analysis</div>
+          </div>
+        </div>
+        <div class="detail-section-body" id="medical-container"></div>
+      </div>
+    </div>
+
+
+    
+    <!-- ══════════════════════════════════════════
+         PREMIUM REPORT PAYMENT
+         ══════════════════════════════════════════ -->
+    <div class="section" id="premium-payment-section">
+      <div class="section-header">
+        <div class="section-icon">💎</div>
+        <div>
+          <div class="section-title">Premium PDF Report</div>
+          <div class="section-sub">Complete 50+ page report · All charts · WhatsApp delivery</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+        <!-- Free Tier -->
+        <div class="ext-card" style="cursor:default;opacity:0.85;">
+          <span class="ext-card-icon">📄</span>
+          <div class="ext-card-title">Basic Report</div>
+          <div style="font-size:28px;color:var(--gold);font-weight:700;margin:12px 0;">FREE</div>
+          <div class="ext-card-desc" style="margin-bottom:16px;">Charts + Time Prediction + Marriage Analysis on screen</div>
+          <ul style="list-style:none;padding:0;font-size:12px;color:var(--ivory-muted);">
+            <li>✓ On-screen charts</li>
+            <li>✓ Basic predictions</li>
+            <li>✓ No PDF download</li>
+          </ul>
+          <button disabled style="width:100%;margin-top:16px;padding:14px;background:rgba(212,169,97,0.15);color:var(--gold);border:1px solid var(--line-gold);border-radius:10px;font-weight:600;cursor:not-allowed;">Current Plan</button>
+        </div>
+
+        <!-- Premium Tier -->
+        <div class="ext-card" style="cursor:default;border:2px solid var(--gold);background:linear-gradient(135deg,rgba(212,169,97,0.15),rgba(90,20,32,0.6));">
+          <div style="position:absolute;top:12px;right:12px;padding:4px 12px;background:var(--gold);color:var(--maroon-bg);border-radius:100px;font-size:10px;font-weight:700;letter-spacing:0.1em;">PREMIUM</div>
+          <span class="ext-card-icon">💎</span>
+          <div class="ext-card-title">Premium PDF Report</div>
+          <div style="font-size:28px;color:var(--gold);font-weight:700;margin:12px 0;">505</div>
+          <div class="ext-card-desc" style="margin-bottom:16px;">Complete 50+ page report with all 4 phases</div>
+          <ul style="list-style:none;padding:0;font-size:12px;color:var(--ivory-muted);">
+            <li>✓ 50+ page PDF report</li>
+            <li>✓ All 15+ engines (Panchang, KP, Medical, etc.)</li>
+            <li>✓ Removed watermark</li>
+            <li>✓ WhatsApp delivery</li>
+            <li>✓ Print-ready format</li>
+          </ul>
+          
+          <div id="no-refund-notice" style="margin-top:16px;padding:12px 16px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;font-size:11.5px;color:var(--ivory-muted);line-height:1.6;">
+            <strong style="color:#f59e0b;">⚠ No Refund Policy:</strong> All sales are final. Please verify your birth details before payment. Digital reports cannot be refunded once generated.
+            <br><span style="color:var(--ivory-dim);font-size:10.5px;">By clicking Buy Now, you agree to our <a href="/legal/refund.html" target="_blank" style="color:var(--gold);">Refund Policy</a>.</span>
+          </div>
+
+          <button id="buyPremiumBtn" onclick="buyPremiumReport()" style="width:100%;margin-top:16px;padding:14px;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-deep));color:var(--maroon-bg);border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">💳 Buy Now 505</button>
+        </div>
+      </div>
+
+      <!-- Payment status -->
+      <div id="paymentStatus" style="display:none;margin-top:24px;padding:16px;border-radius:10px;font-size:13px;"></div>
+    </div>
+
+    <!-- PDF EXPORT -->
+    
+    <!-- MARRIAGE ANALYSIS -->
+    <div class="section" id="marriage-section">
+      <div class="section-header">
+        <div class="section-icon">💑</div>
+        <div>
+          <div class="section-title">विवाह विश्लेषण — Marriage Analysis</div>
+          <div class="section-sub">विवाह योग • जीवनसाथी • दांपत्य सुख • मंगल दोष • समय</div>
+        </div>
+      </div>
+      <div id="marriage-analysis-container" style="padding:8px 0;"></div>
+    </div>
+
+<div class="section" id="pdf-export-section">
+      <div class="section-header">
+        <div class="section-icon">📄</div>
+        <div>
+          <div class="section-title">Download Report</div>
+          <div class="section-sub">Complete kundli report as PDF</div>
+        </div>
+      </div>
+      <div id="pdf-export-container"></div>
+    </div>
+
+<div class="section">
+      <div class="section-header">
+        <div class="section-icon">⏰</div>
+        <div>
+          <div class="section-title">Time-Based Prediction</div>
+          <div class="section-sub">Past • Present Situation • Future • Karma • Blocked Areas • Timing</div>
+        </div>
+      </div>
+      <div id="time-prediction-grid"></div>
+    </div>
+
 </main>
 
 <footer>
@@ -667,6 +1393,17 @@ async function analyzeKundli() {
     renderPredictions(data.classical ? data.classical.predictions : []);
     renderLifePredictions(data.life_predictions || {});
     renderLalKitab(data.lal_kitab || {});
+    renderLifeElaborated(data.life_elaborated || {});
+    renderTimePrediction(data.time_prediction || {});
+    renderNorthIndianChart(data, 'north-indian-chart-container');
+    renderSouthIndianChart(data, 'south-indian-chart-container');
+    renderDashaTimeline(data, 'dasha-timeline-container');
+    renderVimshottariTree(data, 'vimshottari-tree-container');
+    renderAshtakavargaGrid(data, 'ashtakavarga-grid-container');
+    window.vastuOneLastData = data;
+    renderPDFExportButton(data, 'pdf-export-container');
+    if (typeof renderExtendedSections === 'function') renderExtendedSections(data);
+    renderMarriageAnalysis(data, 'marriage-analysis-container');
     renderRemedies(data.positions || {}, data.doshas || []);
     renderPooja(data.doshas || []);
     renderClassicalYogas(data.classical ? data.classical.yogas : []);
@@ -1131,45 +1868,426 @@ function renderLifePredictions(life) {
 }
 
 function renderLalKitab(lk) {
-  if (!lk || !lk.findings || !lk.findings.length) {
+  var elaborated = (lk && lk.elaborated) ? lk.elaborated : [];
+  if (!elaborated.length && lk && lk.findings) {
+    elaborated = lk.findings;
+  }
+  if (!elaborated.length) {
     document.getElementById('lal-kitab-grid').innerHTML = '<div class="card">Koi Lal Kitab finding nahi.</div>';
     return;
   }
   var html = '';
-  for (var i = 0; i < lk.findings.length; i++) {
-    var f = lk.findings[i];
-    html += '<div class="card" style="margin-bottom:20px;">' +
-      '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">' +
-      '<div><div class="card-value hindi">' + f.title + '</div>' +
-      '<div style="font-size:11px;color:var(--gold);margin-top:4px;">Lal Kitab 1952</div></div>' +
-      '<span style="background:rgba(212,175,55,0.15);color:var(--gold);font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;">BHAV ' + f.bhav + '</span>' +
-      '</div>' +
-      '<div style="margin-top:14px;font-size:14px;color:var(--muted);line-height:1.7;">' + f.detail + '</div>' +
-      '<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">' +
-      (f.effects || []).map(function (e) { return '<span style="font-size:10px;padding:3px 8px;background:rgba(248,113,113,0.1);color:var(--danger);border-radius:6px;">' + e + '</span>'; }).join('') +
-      '</div>';
+  for (var i = 0; i < elaborated.length; i++) {
+    var f = elaborated[i];
+    var urgencyColor = (f.urgency || '').indexOf('HIGH') >= 0 ? 'var(--danger)' : 'var(--warning)';
+    html += '<div class="card" style="margin-bottom:24px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;">';
+    html += '<div><div class="card-value hindi">' + (f.title || f.planet) + '</div>';
+    html += '<div style="font-size:12px;color:var(--gold);margin-top:4px;">' + (f.planet_nature || 'Lal Kitab 1952') + '</div></div>';
+    html += '<div style="text-align:right;">';
+    html += '<span style="background:' + urgencyColor + '20;color:' + urgencyColor + ';font-size:10px;padding:4px 10px;border-radius:6px;font-weight:700;">' + (f.urgency || 'REMEDY') + '</span>';
+    html += '<div style="font-size:10px;color:var(--muted);margin-top:4px;">Success: ' + (f.success_rate || '80%+') + '</div>';
+    html += '</div></div>';
+
+    html += '<div style="margin-top:16px;padding:14px;background:rgba(212,175,55,0.05);border-left:3px solid var(--gold);border-radius:6px;">';
+    html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">SUMMARY</div>';
+    html += '<div style="font-size:14px;color:var(--starlight);line-height:1.7;">' + (f.summary || f.detail || '') + '</div>';
+    html += '</div>';
+
+    if (f.reason) {
+      html += '<div style="margin-top:16px;"><div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">REASON (Kyun Ho Raha Hai)</div>';
+      html += '<div style="font-size:14px;color:var(--muted);line-height:1.7;">' + f.reason + '</div></div>';
+    }
+
+    if (f.bhav_info) {
+      html += '<div style="margin-top:12px;font-size:13px;color:var(--muted);"><strong style="color:var(--gold);">Bhav:</strong> ' + f.bhav_info + '</div>';
+    }
+
+    if (f.short_term_effect) {
+      html += '<div style="margin-top:16px;padding:12px;background:rgba(248,113,113,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--danger);font-weight:700;margin-bottom:6px;">SHORT-TERM (1-3 Years)</div>';
+      html += '<div style="font-size:13px;">' + f.short_term_effect + '</div></div>';
+    }
+
+    if (f.long_term_effect) {
+      html += '<div style="margin-top:12px;padding:12px;background:rgba(74,222,128,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--success);font-weight:700;margin-bottom:6px;">LONG-TERM (5-10 Years)</div>';
+      html += '<div style="font-size:13px;">' + f.long_term_effect + '</div></div>';
+    }
+
+    if (f.timing) {
+      html += '<div style="margin-top:12px;padding:12px;background:rgba(212,175,55,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">TIMING</div>';
+      html += '<div style="font-size:13px;">' + f.timing + ' | ' + (f.age_range || '') + '</div></div>';
+    }
 
     if (f.remedies && f.remedies.length) {
-      html += '<div style="margin-top:16px;padding:16px;background:rgba(212,175,55,0.05);border-radius:10px;">' +
-        '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px;">LAL KITAB TOTKE (' + f.remedies.length + ')</div>';
+      html += '<div style="margin-top:20px;padding:16px;background:rgba(212,175,55,0.08);border-radius:10px;">';
+      html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px;">LAL KITAB TOTKE (' + f.remedies.length + ')</div>';
       for (var j = 0; j < f.remedies.length; j++) {
         var r = f.remedies[j];
-        html += '<div style="padding:10px 0;border-bottom:1px solid rgba(212,175,55,0.1);">' +
-          '<span style="font-size:10px;color:var(--gold);text-transform:uppercase;font-weight:700;">' + r.type + '</span>' +
-          '<div style="font-size:14px;margin-top:4px;color:var(--starlight);">' + r.text + '</div>' +
-          (r.detail ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">' + r.detail + '</div>' : '') +
-          '</div>';
+        html += '<div style="padding:12px 0;border-bottom:1px solid rgba(212,175,55,0.1);">';
+        html += '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">';
+        html += '<span style="font-size:10px;color:var(--gold);text-transform:uppercase;font-weight:700;">' + (r.type || 'Totka') + '</span>';
+        html += '<span style="font-size:10px;color:var(--muted);">' + (r.cost || '') + ' | ' + (r.time_required || '') + ' | ' + (r.difficulty || '') + '</span>';
+        html += '</div>';
+        html += '<div style="font-size:14px;margin-top:6px;color:var(--starlight);font-weight:600;">' + (r.text || '') + '</div>';
+        if (r.detail) html += '<div style="font-size:12px;color:var(--muted);margin-top:4px;">' + r.detail + '</div>';
+        html += '</div>';
       }
       html += '</div>';
     }
+
+    if (f.case_study) {
+      html += '<div style="margin-top:16px;padding:14px;background:rgba(212,175,55,0.03);border-radius:8px;border:1px dashed rgba(212,175,55,0.3);">';
+      html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">CASE STUDY</div>';
+      html += '<div style="font-size:13px;color:var(--muted);line-height:1.7;font-style:italic;">' + f.case_study + '</div></div>';
+    }
+
+    if (f.do_list || f.dont_list) {
+      html += '<div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">';
+      html += '<div style="padding:12px;background:rgba(74,222,128,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--success);font-weight:700;margin-bottom:8px;">✓ KARO</div>';
+      (f.do_list || []).forEach(function (d) { html += '<div style="font-size:12px;color:var(--muted);padding:3px 0;">• ' + d + '</div>'; });
+      html += '</div>';
+      html += '<div style="padding:12px;background:rgba(248,113,113,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--danger);font-weight:700;margin-bottom:8px;">✕ NA KARO</div>';
+      (f.dont_list || []).forEach(function (d) { html += '<div style="font-size:12px;color:var(--muted);padding:3px 0;">• ' + d + '</div>'; });
+      html += '</div></div>';
+    }
+
+    if (f.cost_estimate) {
+      html += '<div style="margin-top:12px;font-size:11px;color:var(--muted);text-align:right;">Total Cost: <strong style="color:var(--gold);">' + f.cost_estimate + '</strong></div>';
+    }
+
     html += '</div>';
   }
   document.getElementById('lal-kitab-grid').innerHTML = html;
+}
+
+function renderLifeElaborated(le) {
+  if (!le || Object.keys(le).length === 0) return;
+
+  function sectionCard(title, icon, data) {
+    if (!data || !data.summary) return '';
+    var html = '<div class="card" style="margin-bottom:20px;">';
+    html += '<div class="section-header" style="margin-bottom:16px;padding-bottom:12px;">';
+    html += '<div class="section-icon">' + icon + '</div>';
+    html += '<div><div class="section-title" style="font-size:20px;">' + title + '</div></div>';
+    html += '</div>';
+
+    // Summary
+    html += '<div style="padding:14px;background:rgba(212,175,55,0.05);border-left:3px solid var(--gold);border-radius:6px;">';
+    html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">SUMMARY</div>';
+    html += '<div style="font-size:14px;color:var(--starlight);line-height:1.7;">' + data.summary + '</div></div>';
+
+    // Reason
+    if (data.reason) {
+      html += '<div style="margin-top:14px;"><div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">REASON</div>';
+      html += '<div style="font-size:13px;color:var(--muted);line-height:1.7;">' + data.reason + '</div></div>';
+    }
+
+    // Detailed Analysis
+    if (data.detailed_analysis && data.detailed_analysis.length) {
+      html += '<div style="margin-top:14px;"><div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:8px;">DETAILED ANALYSIS</div>';
+      data.detailed_analysis.forEach(function (d) {
+        html += '<div style="font-size:13px;color:var(--muted);padding:4px 0;line-height:1.6;">• ' + d + '</div>';
+      });
+      html += '</div>';
+    }
+
+    // Effects
+    if (data.effect_short_term || data.effect_long_term) {
+      html += '<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">';
+      if (data.effect_short_term) {
+        html += '<div style="padding:10px;background:rgba(248,113,113,0.05);border-radius:8px;">';
+        html += '<div style="font-size:10px;color:var(--danger);font-weight:700;margin-bottom:4px;">SHORT-TERM</div>';
+        html += '<div style="font-size:12px;">' + data.effect_short_term + '</div></div>';
+      }
+      if (data.effect_long_term) {
+        html += '<div style="padding:10px;background:rgba(74,222,128,0.05);border-radius:8px;">';
+        html += '<div style="font-size:10px;color:var(--success);font-weight:700;margin-bottom:4px;">LONG-TERM</div>';
+        html += '<div style="font-size:12px;">' + data.effect_long_term + '</div></div>';
+      }
+      html += '</div>';
+    }
+
+    // Timing
+    if (data.timing) {
+      html += '<div style="margin-top:14px;padding:10px;background:rgba(212,175,55,0.05);border-radius:8px;">';
+      html += '<span style="font-size:11px;color:var(--gold);font-weight:700;">TIMING: </span>';
+      html += '<span style="font-size:13px;">' + data.timing + '</span></div>';
+    }
+
+    // Case Study
+    if (data.case_study) {
+      html += '<div style="margin-top:14px;padding:12px;background:rgba(212,175,55,0.03);border-radius:8px;border:1px dashed rgba(212,175,55,0.3);">';
+      html += '<div style="font-size:10px;color:var(--gold);font-weight:700;margin-bottom:4px;">CASE STUDY</div>';
+      html += '<div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.6;">' + data.case_study + '</div></div>';
+    }
+
+    // Remedies
+    if (data.remedies && data.remedies.length) {
+      html += '<div style="margin-top:14px;padding:12px;background:rgba(212,175,55,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:8px;">REMEDIES (' + data.remedies.length + ')</div>';
+      data.remedies.forEach(function (r) {
+        html += '<div style="padding:6px 0;border-bottom:1px solid rgba(212,175,55,0.1);font-size:12px;">';
+        html += '<strong style="color:var(--gold);">' + (r.name || '') + '</strong> — ' + (r.when || '') + ' | ' + (r.cost || '') + ' | ' + (r.difficulty || '');
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+
+    // Do / Dont
+    if (data.do_and_dont) {
+      html += '<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">';
+      html += '<div style="padding:10px;background:rgba(74,222,128,0.05);border-radius:8px;">';
+      html += '<div style="font-size:10px;color:var(--success);font-weight:700;margin-bottom:6px;">✓ KARO</div>';
+      (data.do_and_dont.do || []).forEach(function (d) { html += '<div style="font-size:11px;color:var(--muted);padding:2px 0;">• ' + d + '</div>'; });
+      html += '</div>';
+      html += '<div style="padding:10px;background:rgba(248,113,113,0.05);border-radius:8px;">';
+      html += '<div style="font-size:10px;color:var(--danger);font-weight:700;margin-bottom:6px;">✕ NA KARO</div>';
+      (data.do_and_dont.dont || []).forEach(function (d) { html += '<div style="font-size:11px;color:var(--muted);padding:2px 0;">• ' + d + '</div>'; });
+      html += '</div></div>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  // Generate HTML for all sections
+  var html = '';
+  html += sectionCard('Career Analysis', '💼', le.elaborated_career);
+  html += sectionCard('Marriage Analysis', '💑', le.elaborated_marriage);
+  html += sectionCard('Wealth Analysis', '💰', le.elaborated_wealth);
+  html += sectionCard('Health Analysis', '🏥', le.elaborated_health);
+  html += sectionCard('Education Analysis', '📚', le.elaborated_education);
+  html += sectionCard('Business Analysis', '📈', le.elaborated_business);
+  html += sectionCard('Children Analysis', '👶', le.elaborated_children);
+  html += sectionCard('Location Analysis', '🌍', le.elaborated_location);
+  html += sectionCard('Personal Analysis', '👤', le.elaborated_personal);
+
+  document.getElementById('life-elaborated-grid').innerHTML = html;
+}
+
+function renderTimePrediction(tp) {
+  if (!tp || Object.keys(tp).length === 0) {
+    document.getElementById('time-prediction-grid').innerHTML = '<div class="card">Koi time prediction nahi.</div>';
+    return;
+  }
+  var html = '';
+
+  function cardBlock(label, value) {
+    if (!value) return '';
+    return '<div style="padding:12px;background:rgba(212,175,55,0.05);border-radius:8px;margin-bottom:12px;">' +
+      '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">' + label + '</div>' +
+      '<div style="font-size:13px;color:var(--starlight);line-height:1.7;">' + value + '</div>' +
+      '</div>';
+  }
+
+  // 1) PAST PREDICTION
+  if (tp.past_prediction) {
+    var pp = tp.past_prediction;
+    html += '<div class="card" style="margin-bottom:24px;border-left:3px solid var(--gold);">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--gold);margin-bottom:16px;">📜 Past Prediction (Pichle 20-30 Saal)</h3>';
+    html += '<div style="font-size:14px;color:var(--starlight);margin-bottom:16px;">' + (pp.summary || '') + '</div>';
+
+    if (pp.dasha_periods && pp.dasha_periods.length) {
+      html += '<div style="font-size:12px;color:var(--gold);font-weight:700;margin:16px 0 8px;">DASHA PERIODS</div>';
+      pp.dasha_periods.forEach(function (d) {
+        html += '<div style="padding:10px;background:rgba(212,175,55,0.03);border-radius:6px;margin-bottom:8px;">';
+        html += '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">';
+        html += '<strong style="color:var(--gold);">' + (d.hindi || '') + ' (' + d.planet + ')</strong>';
+        html += '<span style="font-size:11px;color:var(--muted);">' + d.period + '</span>';
+        html += '</div>';
+        html += '<div style="font-size:12px;color:var(--muted);margin-top:6px;">' + (d.what_happened || '') + '</div>';
+        html += '<div style="font-size:11px;color:var(--gold);margin-top:4px;">Age: ' + (d.age || '') + '</div>';
+        html += '</div>';
+      });
+    }
+
+    if (pp.life_milestones) {
+      html += '<div style="font-size:12px;color:var(--gold);font-weight:700;margin:16px 0 8px;">LIFE MILESTONES</div>';
+      pp.life_milestones.forEach(function (m) {
+        html += '<div style="font-size:12px;padding:4px 0;color:var(--muted);"><strong style="color:var(--starlight);">' + m.year + ':</strong> ' + m.event + '</div>';
+      });
+    }
+
+    if (pp.lessons_learned) {
+      html += '<div style="font-size:12px;color:var(--gold);font-weight:700;margin:16px 0 8px;">LESSONS LEARNED</div>';
+      pp.lessons_learned.forEach(function (l) {
+        html += '<div style="font-size:12px;color:var(--muted);padding:3px 0;">• ' + l + '</div>';
+      });
+    }
+
+    html += '</div>';
+  }
+
+  // 2) PRESENT SITUATION
+  if (tp.present_situation) {
+    var ps = tp.present_situation;
+    html += '<div class="card" style="margin-bottom:24px;border-left:3px solid var(--success);">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--success);margin-bottom:16px;">🎯 Present Situation (Abhi Kya Ho Raha Hai)</h3>';
+    html += '<div style="font-size:14px;color:var(--starlight);margin-bottom:16px;">' + (ps.summary || '') + '</div>';
+
+    if (ps.current_mahadasha) {
+      html += cardBlock('CURRENT MAHADASHA', ps.current_mahadasha.planet + ' — ' + (ps.current_mahadasha.period || '') + '<br><span style="color:var(--muted);font-size:12px;">' + (ps.current_mahadasha.general_effects || '') + '</span>');
+    }
+
+    if (ps.current_antardasha) {
+      html += cardBlock('CURRENT ANTARDASHA', ps.current_antardasha.planet + ' — ' + (ps.current_antardasha.period || '') + '<br><span style="color:var(--muted);font-size:12px;">' + (ps.current_antardasha.general_effects || '') + '</span>');
+    }
+
+    html += cardBlock('WHAT IS HAPPENING NOW', ps.what_is_happening_now || '');
+
+    if (ps.why_things_are_blocked && ps.why_things_are_blocked.length) {
+      html += cardBlock('WHY THINGS ARE BLOCKED', ps.why_things_are_blocked.join('<br>'));
+    }
+
+    if (ps.how_long_blocks_will_last) {
+      html += cardBlock('HOW LONG BLOCKS WILL LAST', ps.how_long_blocks_will_last);
+    }
+
+    if (ps.immediate_actions && ps.immediate_actions.length) {
+      html += cardBlock('IMMEDIATE ACTIONS', ps.immediate_actions.join('<br>'));
+    }
+
+    if (ps.current_opportunities && ps.current_opportunities.length) {
+      html += cardBlock('CURRENT OPPORTUNITIES', ps.current_opportunities.join('<br>'));
+    }
+
+    if (ps.current_warnings && ps.current_warnings.length) {
+      html += cardBlock('CURRENT WARNINGS', ps.current_warnings.join('<br>'));
+    }
+
+    html += '</div>';
+  }
+
+  // 3) FUTURE PREDICTION
+  if (tp.future_prediction) {
+    var fp = tp.future_prediction;
+    html += '<div class="card" style="margin-bottom:24px;border-left:3px solid var(--gold);">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--gold);margin-bottom:16px;">🔮 Future Prediction (Agle 5-10 Saal)</h3>';
+    html += '<div style="font-size:14px;color:var(--starlight);margin-bottom:16px;">' + (fp.summary || '') + '</div>';
+
+    if (fp.next_mahadashas && fp.next_mahadashas.length) {
+      html += '<div style="font-size:12px;color:var(--gold);font-weight:700;margin:16px 0 8px;">UPCOMING MAHADASHAS</div>';
+      fp.next_mahadashas.forEach(function (m) {
+        html += '<div style="padding:10px;background:rgba(212,175,55,0.03);border-radius:6px;margin-bottom:8px;">';
+        html += '<strong style="color:var(--gold);">' + (m.hindi || '') + ' (' + m.planet + ')</strong>';
+        html += '<span style="font-size:11px;color:var(--muted);margin-left:8px;">' + m.period + '</span>';
+        html += '<div style="font-size:12px;color:var(--muted);margin-top:6px;">' + (m.what_will_happen || '') + '</div>';
+        html += '<div style="font-size:11px;color:var(--success);margin-top:4px;">Opportunities: ' + (m.opportunities || '') + '</div>';
+        html += '<div style="font-size:11px;color:var(--danger);margin-top:2px;">Warnings: ' + (m.warnings || '') + '</div>';
+        html += '</div>';
+      });
+    }
+
+    if (fp.next_5_years) {
+      html += '<div style="font-size:12px;color:var(--gold);font-weight:700;margin:16px 0 8px;">NEXT 5 YEARS</div>';
+      fp.next_5_years.forEach(function (y) {
+        html += '<div style="font-size:12px;padding:4px 0;color:var(--muted);"><strong style="color:var(--starlight);">' + y.year + ':</strong> ' + y.prediction + ' — <em style="color:var(--gold);">' + y.action + '</em></div>';
+      });
+    }
+
+    html += '</div>';
+  }
+
+  // 4) KARMIC ANALYSIS
+  if (tp.karmic_analysis) {
+    var ka = tp.karmic_analysis;
+    html += '<div class="card" style="margin-bottom:24px;border-left:3px solid #A855F7;">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:#A855F7;margin-bottom:16px;">🕉️ Karmic Analysis (Pichle Janm Ka Karma)</h3>';
+    html += cardBlock('PURVA PUNYA (5th House)', ka.purva_punya || '');
+    html += cardBlock('BHAGYA (9th House)', ka.bhagya || '');
+    if (ka.karmic_debts) {
+      html += cardBlock('KARMIC DEBTS', ka.karmic_debts.join('<br>'));
+    }
+    if (ka.how_to_clear) {
+      html += cardBlock('HOW TO CLEAR', ka.how_to_clear.join('<br>'));
+    }
+    html += '</div>';
+  }
+
+  // 5) BLOCKED AREAS
+  if (tp.blocked_areas && tp.blocked_areas.length) {
+    html += '<div class="card" style="margin-bottom:24px;border-left:3px solid var(--danger);">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--danger);margin-bottom:16px;">⚠️ Blocked Areas (Kya Ruka Hua Hai)</h3>';
+    tp.blocked_areas.forEach(function (b) {
+      html += '<div style="padding:12px;background:rgba(248,113,113,0.05);border-radius:8px;margin-bottom:10px;">';
+      html += '<strong style="color:var(--gold);">' + (b.hindi || '') + ' (' + b.planet + ') — Bhava ' + b.bhav + '</strong>';
+      html += '<div style="font-size:12px;color:var(--muted);margin-top:6px;">Area: ' + (b.area || '') + '</div>';
+      html += '<div style="font-size:12px;color:var(--muted);margin-top:4px;">Why: ' + (b.why_blocked || '') + '</div>';
+      html += '<div style="font-size:12px;color:var(--danger);margin-top:4px;">Duration: ' + (b.duration || '') + '</div>';
+      html += '<div style="font-size:12px;color:var(--success);margin-top:4px;">Remedy: ' + (b.remedy || '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // 6) TIMING PREDICTIONS
+  if (tp.timing_predictions) {
+    var t = tp.timing_predictions;
+    html += '<div class="card" style="border-left:3px solid var(--gold);">';
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--gold);margin-bottom:16px;">⏳ Timing Predictions (Kab Kya Hoga)</h3>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">';
+    var items = [
+      ['💼 Career', t.career], ['💑 Marriage', t.marriage], ['💰 Wealth', t.wealth],
+      ['👶 Children', t.children], ['🏠 Property', t.property], ['🏥 Health', t.health],
+      ['🕉️ Spiritual', t.spiritual]
+    ];
+    items.forEach(function (item) {
+      if (!item[1]) return;
+      html += '<div style="padding:12px;background:rgba(212,175,55,0.05);border-radius:8px;">';
+      html += '<div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px;">' + item[0] + '</div>';
+      html += '<div style="font-size:12px;color:var(--starlight);line-height:1.6;">' + item[1] + '</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  document.getElementById('time-prediction-grid').innerHTML = html;
 }
 
 // Init i18n
 if (window.I18n) window.I18n.init();
 </script>
 
+  <script src="/static/marriage-render.js" defer></script>
+  <script src="/static/location-map-picker.js" defer></script>
+  <script src="/static/custom-pickers.js" defer></script>
+  <script src="/static/extended-sections.js" defer></script>
+  <script src="/static/phase5-render.js" defer></script>
+  <script src="/static/phase6-render.js" defer></script>
+  <script src="/static/premium-card-grid.js" defer></script>
+  <script src="/static/cookie-consent.js" defer></script>
+  <script src="/static/payment-handler.js" defer></script>
+  <script src="/static/premium-gate.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    if (typeof setupLocationPicker === 'function') {
+      setupLocationPicker('place', 'kundli-map-container', 'kundli-coord-display');
+      console.log('✅ Map picker setup for #place');
+    } else {
+      console.error('❌ setupLocationPicker not loaded');
+    }
+  }, 500);
+});
+</script>
+
+<script>
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    if (typeof attachCustomPickers === 'function') {
+      attachCustomPickers();
+      console.log('✅ Custom pickers force-attached');
+    } else {
+      console.error('❌ custom-pickers.js not loaded');
+    }
+  }, 800);
+});
+</script>
 </body>
 </html>

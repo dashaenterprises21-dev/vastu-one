@@ -1,0 +1,122 @@
+{
+  "_meta": {
+    "lang": "mr",
+    "name": "मराठी",
+    "flag": "🇮🇳",
+    "dir": "ltr"
+  },
+  "common": {
+    "app_name": "Vastu One",
+    "welcome": "Welcome",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loading": "लोड होत आहे...",
+    "save": "जतन करा",
+    "cancel": "रद्द करा",
+    "submit": "Submit",
+    "search": "Search",
+    "close": "बंद करा",
+    "back": "मागे",
+    "next": "पुढे",
+    "yes": "Yes",
+    "no": "No",
+    "error": "त्रुटी",
+    "success": "यश"
+  },
+  "language": {
+    "select": "Select Language",
+    "english": "English",
+    "hindi": "हिन्दी",
+    "hinglish": "Hinglish",
+    "saved": "Language saved"
+  },
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Login to your Vastu One account",
+    "email_placeholder": "you@example.com",
+    "password_placeholder": "Enter your password",
+    "forgot_password": "Forgot Password?",
+    "no_account": "Don't have an account?",
+    "signup_link": "Sign up here",
+    "login_button": "Login"
+  },
+  "dashboard": {
+    "greeting": "Welcome back",
+    "total_revenue": "Total Revenue",
+    "total_users": "Total Users",
+    "enrollments": "Enrollments",
+    "total_lessons": "Total Lessons",
+    "recent_activity": "Recent Activity",
+    "quick_stats": "Quick Stats"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "users": "Users",
+    "courses": "Courses",
+    "orders": "Orders",
+    "security": "Security",
+    "activity": "Activity",
+    "settings": "Settings"
+  },
+  "landing": {
+    "nav_platform": "Platform",
+    "nav_pricing": "Pricing",
+    "nav_testimonials": "Testimonials",
+    "nav_faq": "FAQ",
+    "nav_signin": "Sign In",
+    "nav_get_started": "Get Started",
+    "hero_eyebrow": "Traceable Vastu Intelligence",
+    "hero_title_line1": "Most Vastu advice",
+    "hero_title_line2": "cannot be verified.",
+    "hero_sub": "VASTU ONE is different. Every finding has a source. Every recommendation has a reason. Every uncertainty is disclosed.",
+    "hero_cta_primary": "Begin Free Analysis",
+    "hero_cta_secondary": "Explore the Intelligence",
+    "features_title": "Most Vastu software generates reports. VASTU ONE generates decision clarity.",
+    "features_sub": "Six pillars that make Vastu recommendations traceable, defensible, and actionable.",
+    "feature_1_title": "Property Digital Twin",
+    "feature_2_title": "Source-Linked Findings",
+    "feature_3_title": "Three Gunas Profile",
+    "feature_4_title": "Multi-Tradition Aware",
+    "feature_5_title": "Cost-Aware Remedies",
+    "feature_6_title": "Consultant Operating System",
+    "pricing_title": "Pricing that scales with your practice",
+    "pricing_sub": "Start free. Upgrade when you need more.",
+    "testimonials_title": "Trusted by consultants and architects",
+    "testimonials_sub": "Real professionals, real results.",
+    "faq_title": "Frequently asked questions",
+    "faq_sub": "Everything you need to know.",
+    "cta_title": "From belief to traceability.",
+    "cta_sub": "Join consultants who are transforming their practice.",
+    "cta_primary": "Begin Free Analysis",
+    "cta_secondary": "Talk to Us",
+    "footer_desc": "Traceable Vastu Intelligence. Every finding has a source. Every recommendation has a reason."
+  },
+  "nav": {
+    "home": "मुख्यपृष्ठ",
+    "kundli": "कुंडली प्रो",
+    "vastu": "वास्तु",
+    "learn": "शिका",
+    "signin": "साइन इन",
+    "signup": "साइन अप",
+    "dashboard": "डॅशबोर्ड",
+    "logout": "लॉग आउट"
+  },
+  "form": {
+    "name": "नाव",
+    "dob": "जन्म तिथी",
+    "tob": "जन्म वेळ",
+    "place": "जन्म स्थान",
+    "gps": "जीपीएस",
+    "analyze": "कुंडली पहा",
+    "select_location": "नकाशावर स्थान निवडा"
+  },
+  "hero": {
+    "title": "प्रत्येक निष्कर्षाचा स्रोत आहे.",
+    "subtitle": "वास्तु वन वेगळे आहे.",
+    "cta": "सुरू करा"
+  }
+}

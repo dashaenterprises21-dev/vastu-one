@@ -22,6 +22,36 @@ try:
     from engine.astro.classical_granthas import ClassicalGranthasEngine
     from engine.astro.life_prediction import LifePredictionEngine
     from engine.astro.lal_kitab_engine import LalKitabEngine
+    from engine.astro.lal_kitab_elaborator import LalKitabElaborator
+    from engine.astro.report_elaborator import ReportElaborator
+    from engine.astro.time_prediction import TimePredictionEngine
+    from engine.astro.marriage_engine import MarriageEngine
+    from engine.astro.panchang_engine import PanchangEngine
+    from engine.astro.graha_maitri import GrahaMaitri
+    from engine.astro.aspects_engine import AspectsEngine
+    from engine.astro.gemstone_engine import GemstoneEngine
+    from engine.astro.nakshatra_engine import NakshatraEngine
+    from engine.astro.sade_sati_engine import SadeSatiEngine
+    from engine.astro.kaal_sarp_engine import KaalSarpEngine
+    from engine.astro.transit_engine import TransitEngine
+    from engine.astro.yogini_dasha import YoginiDasha
+    from engine.astro.pitru_dosha_engine import PitruDoshaEngine
+    from engine.astro.yogas_extended import YogasEngine
+    from engine.astro.doshas_extended import DoshasEngine
+    from engine.astro.sudarshan_chakra import SudarshanChakra
+    from engine.astro.kp_system import KPSystem
+    from engine.astro.varshphal_engine import VarshphalEngine
+    from engine.astro.medical_astrology import MedicalAstroEngine
+    from engine.astro.shadvarga_engine import ShadvargaEngine
+    from engine.astro.ashtakoota_engine import AshtakootaEngine
+    from engine.astro.numerology_engine import NumerologyEngine
+    from engine.astro.classical_references import ClassicalReferences
+    from engine.astro.nakshatra_nadi_engine import NakshatraNadiEngine
+    from engine.astro.jaimini_engine import JaiminiEngine
+    from engine.astro.kp_enhanced_engine import KPEnhancedEngine
+    from engine.astro.varshphal_enhanced import VarshphalEnhancedEngine
+    from engine.astro.transit_enhanced import TransitEnhancedEngine
+    from engine.astro.lalkitab_enhanced import LalKitabEnhancedEngine
     CLASSICAL_AVAILABLE = True
 except ImportError:
     CLASSICAL_AVAILABLE = False
@@ -500,8 +530,182 @@ class AstroEngineV3Complete:
         try:
             lk_engine = LalKitabEngine(positions, lagna)
             lal_kitab = lk_engine.analyze_all()
+            # Elaborate each finding
+            elaborator = LalKitabElaborator(lal_kitab.get("findings", []), positions, lagna)
+            lal_kitab["elaborated"] = elaborator.elaborate_all()
         except Exception as e:
             print(f"Lal Kitab error: {e}")
+
+        # Life Prediction Deep Elaboration
+        life_elaborated = {}
+        try:
+            life_elab = ReportElaborator(positions, lagna, dasha, doshas, yogas)
+            life_elaborated = life_elab.elaborate_all(life_predictions, lal_kitab)
+        except Exception as e:
+            print(f"Life elaboration error: {e}")
+
+        # Time-Based Prediction (Past + Present + Future)
+        time_prediction = {}
+        try:
+            time_engine = TimePredictionEngine(positions, lagna, dasha, bhava_chalit)
+            time_prediction = time_engine.analyze_all()
+        except Exception as e:
+            print(f"Time prediction error: {e}")
+
+        # Phase 1 Engine Data
+        panchang_data = {}
+        graha_maitri_data = {}
+        aspects_data = {}
+        gemstone_data = {}
+        nakshatra_data = {}
+        try:
+            panchang_data = PanchangEngine().calculate_all()
+        except Exception as e:
+            print(f"Panchang error: {e}")
+        try:
+            graha_maitri_data = GrahaMaitri(positions).analyze_all()
+        except Exception as e:
+            print(f"Graha Maitri error: {e}")
+        try:
+            aspects_data = AspectsEngine(positions).analyze_all()
+        except Exception as e:
+            print(f"Aspects error: {e}")
+        try:
+            gemstone_data = GemstoneEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Gemstone error: {e}")
+        try:
+            nakshatra_data = NakshatraEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Nakshatra error: {e}")
+
+        # Phase 2 Engine Data
+        sade_sati_data = {}
+        kaal_sarp_data = {}
+        transit_data = {}
+        yogini_dasha_data = {}
+        pitru_dosha_data = {}
+        try:
+            sade_sati_data = SadeSatiEngine(positions, basic).analyze_all()
+        except Exception as e:
+            print(f"Sade Sati error: {e}")
+        try:
+            kaal_sarp_data = KaalSarpEngine(positions).analyze_all()
+        except Exception as e:
+            print(f"Kaal Sarp error: {e}")
+        try:
+            transit_data = TransitEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Transit error: {e}")
+        try:
+            yogini_dasha_data = YoginiDasha(basic, positions).analyze_all()
+        except Exception as e:
+            print(f"Yogini Dasha error: {e}")
+        try:
+            pitru_dosha_data = PitruDoshaEngine(positions).analyze_all()
+        except Exception as e:
+            print(f"Pitru Dosha error: {e}")
+
+        # Phase 3 Engine Data
+        yogas_extended_data = {}
+        doshas_extended_data = {}
+        sudarshan_data = {}
+        try:
+            yogas_extended_data = YogasEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Yogas extended error: {e}")
+        try:
+            doshas_extended_data = DoshasEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Doshas extended error: {e}")
+        try:
+            sudarshan_data = SudarshanChakra(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Sudarshan error: {e}")
+
+        # Phase 4 Engine Data
+        kp_data = {}
+        varshphal_data = {}
+        medical_data = {}
+        try:
+            kp_data = KPSystem(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"KP error: {e}")
+        try:
+            varshphal_data = VarshphalEngine(basic, positions).analyze_all()
+        except Exception as e:
+            print(f"Varshphal error: {e}")
+        try:
+            medical_data = MedicalAstroEngine(positions, lagna, doshas).analyze_all()
+        except Exception as e:
+            print(f"Medical error: {e}")
+
+        # Advanced Engine Data
+        shadvarga_data = {}
+        ashtakoota_data = {}
+        numerology_data = {}
+        classical_refs = {}
+        try:
+            shadvarga_data = ShadvargaEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Shadvarga error: {e}")
+        try:
+            # Ashtakoota for self (Chandra nakshatra)
+            ch = positions.get("Chandra", {})
+            nak_num = ch.get("nakshatra_number", 1) or 1
+            ashtakoota_data = AshtakootaEngine().calculate(nak_num - 1, nak_num - 1)
+        except Exception as e:
+            print(f"Ashtakoota error: {e}")
+        try:
+            name = basic.get("name", "User")
+            dob = basic.get("dob", "1990-01-01")
+            numerology_data = NumerologyEngine(name, dob).analyze_all()
+        except Exception as e:
+            print(f"Numerology error: {e}")
+        try:
+            classical_refs = ClassicalReferences().all_references()
+        except Exception as e:
+            print(f"Classical refs error: {e}")
+
+        # Phase 6 Engine Data (Final 6 features)
+        nakshatra_nadi_data = {}
+        jaimini_data = {}
+        kp_enhanced_data = {}
+        varshphal_enhanced_data = {}
+        transit_enhanced_data = {}
+        lalkitab_enhanced_data = {}
+        try:
+            nakshatra_nadi_data = NakshatraNadiEngine(positions).analyze_all()
+        except Exception as e:
+            print(f"Nakshatra Nadi error: {e}")
+        try:
+            jaimini_data = JaiminiEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Jaimini error: {e}")
+        try:
+            kp_enhanced_data = KPEnhancedEngine(positions, lagna, basic).analyze_all()
+        except Exception as e:
+            print(f"KP Enhanced error: {e}")
+        try:
+            varshphal_enhanced_data = VarshphalEnhancedEngine(basic, positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Varshphal Enhanced error: {e}")
+        try:
+            transit_enhanced_data = TransitEnhancedEngine(positions, lagna).analyze_all()
+        except Exception as e:
+            print(f"Transit Enhanced error: {e}")
+        try:
+            lalkitab_enhanced_data = LalKitabEnhancedEngine(positions, lagna, doshas).analyze_all()
+        except Exception as e:
+            print(f"Lal Kitab Enhanced error: {e}")
+
+        # Marriage Analysis
+        marriage_analysis = {}
+        try:
+            marriage_engine = MarriageEngine(positions, lagna, dasha, bhava_chalit)
+            marriage_analysis = marriage_engine.analyze_all()
+        except Exception as e:
+            print(f"Marriage analysis error: {e}")
 
         return {
             "basic": basic,
@@ -517,6 +721,35 @@ class AstroEngineV3Complete:
             "classical": classical,
             "life_predictions": life_predictions,
             "lal_kitab": lal_kitab,
+            "life_elaborated": life_elaborated,
+            "time_prediction": time_prediction,
+            "marriage_analysis": marriage_analysis,
+            "panchang": panchang_data,
+            "graha_maitri": graha_maitri_data,
+            "aspects": aspects_data,
+            "gemstone": gemstone_data,
+            "nakshatra": nakshatra_data,
+            "sade_sati": sade_sati_data,
+            "kaal_sarp": kaal_sarp_data,
+            "transit": transit_data,
+            "yogini_dasha": yogini_dasha_data,
+            "pitru_dosha": pitru_dosha_data,
+            "yogas_extended": yogas_extended_data,
+            "doshas_extended": doshas_extended_data,
+            "sudarshan_chakra": sudarshan_data,
+            "kp_system": kp_data,
+            "varshphal": varshphal_data,
+            "medical_astrology": medical_data,
+            "shadvarga": shadvarga_data,
+            "ashtakoota": ashtakoota_data,
+            "numerology": numerology_data,
+            "classical_references": classical_refs,
+            "nakshatra_nadi": nakshatra_nadi_data,
+            "jaimini": jaimini_data,
+            "kp_enhanced": kp_enhanced_data,
+            "varshphal_enhanced": varshphal_enhanced_data,
+            "transit_enhanced": transit_enhanced_data,
+            "lalkitab_enhanced": lalkitab_enhanced_data,
         }
 
 

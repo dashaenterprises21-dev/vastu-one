@@ -4,7 +4,7 @@
 
   const STORAGE_KEY = 'vastu_lang';
   const DEFAULT_LANG = 'en';
-  const SUPPORTED = ['en', 'hi', 'hinglish'];
+  const SUPPORTED = ['en', 'hi', 'hinglish', 'mr', 'gu', 'ta', 'te', 'kn', 'bn', 'pa', 'ml'];
 
   const I18n = {
     currentLang: null,
