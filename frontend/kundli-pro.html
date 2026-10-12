@@ -1331,6 +1331,15 @@ footer {
       <div id="time-prediction-grid"></div>
     </div>
 
+
+    <!-- ALWAYS VISIBLE PDF BUTTON (Testing) -->
+    <div id="downloadPdfAlways" style="margin: 30px auto; max-width: 600px; padding: 24px; background: linear-gradient(135deg, rgba(212,169,97,0.15), rgba(90,20,32,0.5)); border: 2px solid var(--gold); border-radius: 16px; text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 12px;">📄</div>
+      <div style="font-family: var(--font-display); font-size: 22px; color: var(--gold); margin-bottom: 8px;">Download PDF Report</div>
+      <div style="font-size: 12px; color: var(--ivory-muted); margin-bottom: 20px;">Complete 50+ page kundli report</div>
+      <button onclick="if(window.vastuOneLastData && typeof exportToPDF === 'function') { exportToPDF(window.vastuOneLastData); } else { alert('Pehle kundli analyze karein'); }" style="background: linear-gradient(135deg, #e0b968, #d4a961, #b8893b); color: #2a0810; border: none; padding: 16px 40px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; box-shadow: 0 12px 32px rgba(212,169,97,0.4);">📄 Download PDF Report</button>
+    </div>
+    
 </main>
 
 <footer>

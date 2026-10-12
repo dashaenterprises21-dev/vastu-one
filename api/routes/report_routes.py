@@ -228,7 +228,7 @@ async def delete_report(
 # ==========================================
 from fastapi.responses import StreamingResponse
 from io import BytesIO
-from engine.report.pdf_generator import pdf_generator
+from engine.report.pdf_generator import generate_pdf as pdf_generator
 
 
 @router.get("/{report_id}/pdf")

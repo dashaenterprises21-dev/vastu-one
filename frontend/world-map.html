@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Map — Vastu One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+body { background: var(--maroon-bg); }
+.map-page { max-width: 1400px; margin: 0 auto; padding: 60px 24px 80px; }
+.map-hero { text-align: center; margin-bottom: 40px; }
+.map-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-size: 11px; letter-spacing: 0.32em; color: var(--gold);
+  text-transform: uppercase; font-weight: 600;
+  padding: 8px 20px; border: 1px solid var(--line-gold);
+  border-radius: 100px; margin-bottom: 24px;
+}
+.map-hero-title {
+  font-family: var(--font-display); font-size: 52px; color: var(--ivory);
+  margin: 0 0 12px 0; font-weight: 500;
+}
+.map-hero-sub { font-size: 16px; color: var(--ivory-muted); font-style: italic; }
+.map-container {
+  width: 100%; height: 600px; border-radius: 20px;
+  border: 1px solid var(--line-gold);
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+.map-legend {
+  display: flex; gap: 24px; justify-content: center;
+  margin: 24px 0; flex-wrap: wrap;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--ivory-muted);
+}
+.legend-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid #fff;
+}
+.legend-high { background: #ef4444; }
+.legend-medium { background: #f59e0b; }
+.legend-low { background: #10b981; }
+.country-sidebar {
+  position: fixed; top: 0; right: -500px; width: 500px; height: 100vh;
+  background: linear-gradient(135deg, rgba(30, 10, 18, 0.98), rgba(15, 5, 10, 0.98));
+  border-left: 1px solid var(--line-gold);
+  z-index: 9999; overflow-y: auto;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 40px;
+}
+.country-sidebar.open { right: 0; }
+.sidebar-close {
+  position: absolute; top: 20px; right: 20px;
+  background: transparent; border: 1px solid var(--line-gold);
+  color: var(--gold); width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer; font-size: 20px;
+}
+.sidebar-close:hover { background: var(--gold); color: var(--maroon-bg); }
+@media (max-width: 768px) {
+  .map-container { height: 400px; }
+  .map-hero-title { font-size: 32px; }
+  .country-sidebar { width: 100%; right: -100%; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU <span class="brand-mark">✦</span> ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/kundli-pro.html">Kundli Pro</a>
+      <a href="/world-prediction.html">World</a>
+      <a href="/world-map.html" class="active">Map</a>
+    </nav>
+  </div>
+</header>
+
+<main class="map-page">
+  <div class="map-hero">
+    <div class="map-hero-eyebrow">🌍 Interactive World Map</div>
+    <h1 class="map-hero-title">दुनिया का नक्शा</h1>
+    <p class="map-hero-sub">Click any country pin to see deep prediction</p>
+  </div>
+
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot legend-high"></div>High Risk</div>
+    <div class="legend-item"><div class="legend-dot legend-medium"></div>Medium Risk</div>
+    <div class="legend-item"><div class="legend-dot legend-low"></div>Low Risk</div>
+  </div>
+
+  <div id="worldMap" class="map-container"></div>
+
+  <div id="countrySidebar" class="country-sidebar">
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    <div id="sidebarContent">Loading...</div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var COUNTRY_COORDS = {
+  "India": { lat: 20.5937, lng: 78.9629, risk: "High" },
+  "USA": { lat: 37.0902, lng: -95.7129, risk: "Medium" },
+  "China": { lat: 35.8617, lng: 104.1954, risk: "High" },
+  "Russia": { lat: 61.5240, lng: 105.3188, risk: "High" },
+  "Pakistan": { lat: 30.3753, lng: 69.3451, risk: "Very High" },
+  "UK": { lat: 55.3781, lng: -3.4360, risk: "Low" },
+  "Israel": { lat: 31.0461, lng: 34.8516, risk: "Very High" },
+  "Ukraine": { lat: 48.3794, lng: 31.1656, risk: "Very High" },
+  "Japan": { lat: 36.2048, lng: 138.2529, risk: "High" },
+  "Germany": { lat: 51.1657, lng: 10.4515, risk: "Low" }
+};
+
+var RISK_COLORS = {
+  "Very High": "#dc2626",
+  "High": "#ef4444",
+  "Medium": "#f59e0b",
+  "Low": "#10b981"
+};
+
+function initMap() {
+  var map = L.map('worldMap').setView([20, 80], 3);
+  
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    maxZoom: 19
+  }).addTo(map);
+  
+  // Add country pins
+  Object.entries(COUNTRY_COORDS).forEach(function(e) {
+    var country = e[0];
+    var c = e[1];
+    var color = RISK_COLORS[c.risk] || "#666";
+    
+    var marker = L.circleMarker([c.lat, c.lng], {
+      radius: 12,
+      fillColor: color,
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.8
+    }).addTo(map);
+    
+    marker.bindTooltip('<strong>' + country + '</strong><br>Risk: ' + c.risk, {
+      direction: 'top',
+      className: 'custom-tooltip'
+    });
+    
+    marker.on('click', function() {
+      loadCountrySidebar(country);
+    });
+  });
+}
+
+async function loadCountrySidebar(country) {
+  var sidebar = document.getElementById('countrySidebar');
+  var content = document.getElementById('sidebarContent');
+  sidebar.classList.add('open');
+  content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--ivory-muted);">Loading ' + country + '...</div>';
+  
+  try {
+    var res = await fetch('/api/world/master/predict/' + encodeURIComponent(country));
+    var data = await res.json();
+    var chart = data.chart || {};
+    var period = data.current_period || {};
+    var html = '';
+    
+    html += '<h2 style="font-family:var(--font-display);font-size:32px;color:var(--gold);margin:0 0 8px 0;">' + country + '</h2>';
+    html += '<div style="font-size:13px;color:var(--ivory-muted);margin-bottom:24px;">' + (chart.type || '') + ' — ' + (chart.date || '') + '</div>';
+    
+    html += '<div style="padding:16px;background:rgba(212,169,97,0.08);border-radius:10px;margin-bottom:20px;">';
+    html += '<div style="font-size:11px;color:var(--gold);letter-spacing:0.14em;">MAHADASHA</div>';
+    html += '<div style="font-size:20px;color:var(--ivory);font-weight:700;">' + (period.current_mahadasha || '') + '</div>';
+    html += '</div>';
+    
+    // Earthquake
+    if (data.earthquake) {
+      html += '<div style="margin-bottom:20px;"><div style="font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:8px;">🌍 Earthquake</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);line-height:1.6;">Zone: ' + (data.earthquake.highest_risk_zone || '') + '<br>Magnitude: ' + (data.earthquake.magnitude || '') + '</div></div>';
+    }
+    
+    // War
+    if (data.war) {
+      html += '<div style="margin-bottom:20px;"><div style="font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:8px;">⚔️ War</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);line-height:1.6;">Risk: ' + (data.war.risk || '') + '<br>' + (data.war.type || '') + '</div></div>';
+    }
+    
+    // Political
+    if (data.political) {
+      html += '<div style="margin-bottom:20px;"><div style="font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:8px;">🏛️ Political</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);line-height:1.6;">' + (data.political.type || '') + '</div></div>';
+    }
+    
+    html += '<a href="/world-prediction.html" style="display:inline-block;margin-top:20px;padding:14px 28px;background:linear-gradient(135deg,#e0b968,#d4a961);color:#2a0810;text-decoration:none;border-radius:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-size:12px;">Full Prediction</a>';
+    
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = '<div style="color:#f0a0a0;">Failed: ' + e.message + '</div>';
+  }
+}
+
+function closeSidebar() {
+  document.getElementById('countrySidebar').classList.remove('open');
+}
+
+initMap();
+</script>
+
+</body>
+</html>

@@ -1,495 +1,536 @@
 """
-VASTU ONE - PDF Report Generator (ReportLab)
-==============================================
-Generates branded PDF reports using ReportLab (pure Python, no GTK deps).
+VASTU ONE - Professional PDF Report Generator
+50+ page astrological report with all engines
 """
-from __future__ import annotations
-import sys
-from pathlib import Path
+
 from datetime import datetime
+from pathlib import Path
 from io import BytesIO
-from typing import Any
 
-# Project root
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm, mm
+    from reportlab.lib.colors import HexColor, black, white
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+        PageBreak, Image, KeepTogether
+    )
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+    HAS_REPORTLAB = True
+except ImportError:
+    HAS_REPORTLAB = False
+    print("reportlab not installed. Install with: pip install reportlab")
 
-
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, HRFlowable, KeepTogether,
-)
-
-
-# ==========================================
-# BRAND COLORS
-# ==========================================
-VOID = colors.HexColor("#05060F")
-GOLD = colors.HexColor("#D4AF37")
-GOLD_LIGHT = colors.HexColor("#F4D97C")
-GREY_TEXT = colors.HexColor("#666666")
-LIGHT_GREY = colors.HexColor("#E0E0E0")
-BG_LIGHT = colors.HexColor("#FAFAFA")
-RED = colors.HexColor("#DC2626")
-ORANGE = colors.HexColor("#EA580C")
-YELLOW = colors.HexColor("#F59E0B")
-GREEN = colors.HexColor("#16A34A")
-BLUE = colors.HexColor("#2563EB")
+from engine.astro.predictions_engine import get_predictions, COUNTRY_CHARTS
 
 
-# ==========================================
-# STYLES
-# ==========================================
+# Colors
+GOLD = HexColor("#d4a961")
+DARK_RED = HexColor("#5a1420")
+IVORY = HexColor("#f5f1e8")
+IVORY_MUTED = HexColor("#a8a29e")
+RED = HexColor("#dc2626")
+AMBER = HexColor("#f59e0b")
+GREEN = HexColor("#10b981")
+
+
 def get_styles():
+    """Create custom styles"""
     styles = getSampleStyleSheet()
     
     styles.add(ParagraphStyle(
-        name="BrandName",
+        name="CoverTitle", parent=styles["Title"],
+        fontSize=36, textColor=GOLD, alignment=TA_CENTER,
+        spaceAfter=20, fontName="Helvetica-Bold",
+    ))
+    styles.add(ParagraphStyle(
+        name="CoverSubtitle", parent=styles["Normal"],
+        fontSize=16, textColor=IVORY_MUTED, alignment=TA_CENTER,
+        spaceAfter=10, fontName="Helvetica-Oblique",
+    ))
+    styles.add(ParagraphStyle(
+        name="SectionTitle", parent=styles["Heading1"],
+        fontSize=24, textColor=GOLD, spaceAfter=16, spaceBefore=20,
         fontName="Helvetica-Bold",
-        fontSize=28,
-        textColor=VOID,
-        alignment=TA_CENTER,
-        letterSpacing=2,
-        spaceAfter=6,
     ))
-    
     styles.add(ParagraphStyle(
-        name="Tagline",
-        fontName="Helvetica",
-        fontSize=10,
-        textColor=GREY_TEXT,
-        alignment=TA_CENTER,
-        letterSpacing=2,
-        spaceAfter=24,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="ReportTitle",
+        name="SubSection", parent=styles["Heading2"],
+        fontSize=16, textColor=GOLD, spaceAfter=10, spaceBefore=14,
         fontName="Helvetica-Bold",
-        fontSize=18,
-        textColor=VOID,
-        alignment=TA_CENTER,
-        spaceAfter=6,
     ))
-    
     styles.add(ParagraphStyle(
-        name="PropertyName",
-        fontName="Helvetica",
-        fontSize=14,
-        textColor=colors.HexColor("#333333"),
-        alignment=TA_CENTER,
-        spaceAfter=4,
+        name="BodyText2", parent=styles["Normal"],
+        fontSize=11, textColor=black, leading=16,
+        spaceAfter=8, alignment=TA_JUSTIFY,
     ))
-    
     styles.add(ParagraphStyle(
-        name="PropertyAddress",
-        fontName="Helvetica",
-        fontSize=10,
-        textColor=GREY_TEXT,
-        alignment=TA_CENTER,
-        spaceAfter=30,
+        name="SmallText", parent=styles["Normal"],
+        fontSize=9, textColor=IVORY_MUTED, leading=13,
     ))
-    
     styles.add(ParagraphStyle(
-        name="SectionTitle",
-        fontName="Helvetica-Bold",
-        fontSize=13,
-        textColor=VOID,
-        spaceAfter=6,
-        spaceBefore=12,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="BodyText2",
-        fontName="Helvetica",
-        fontSize=9,
-        textColor=colors.HexColor("#333333"),
-        alignment=TA_LEFT,
-        spaceAfter=6,
-        leading=13,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="SmallText",
-        fontName="Helvetica",
-        fontSize=8,
-        textColor=GREY_TEXT,
-        alignment=TA_CENTER,
-        spaceAfter=4,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="Disclaimer",
-        fontName="Helvetica",
-        fontSize=8,
-        textColor=GREY_TEXT,
-        alignment=TA_LEFT,
-        leading=12,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="CellText",
-        fontName="Helvetica",
-        fontSize=8,
-        textColor=colors.HexColor("#333333"),
-        leading=11,
-    ))
-    
-    styles.add(ParagraphStyle(
-        name="CellBold",
-        fontName="Helvetica-Bold",
-        fontSize=8,
-        textColor=VOID,
-        leading=11,
+        name="Prediction", parent=styles["Normal"],
+        fontSize=10, textColor=black, leading=14,
+        spaceAfter=6, leftIndent=10,
     ))
     
     return styles
 
 
-# ==========================================
-# GENERATOR
-# ==========================================
-class PDFGenerator:
-    """Generates branded PDF reports using ReportLab."""
+def create_cover_page(story, data, styles):
+    """Create cover page"""
+    story.append(Spacer(1, 4*cm))
+    story.append(Paragraph("VASTU ONE", styles["CoverTitle"]))
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph("World Prediction Report", styles["CoverSubtitle"]))
+    story.append(Spacer(1, 2*cm))
     
-    def __init__(self):
-        self.styles = get_styles()
+    story.append(Paragraph(f"<b>{data['country']}</b>", styles["CoverTitle"]))
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph(f"Generated: {data['date']}", styles["CoverSubtitle"]))
+    story.append(Spacer(1, 3*cm))
     
-    def _severity_color(self, severity: str) -> colors.Color:
-        return {
-            "critical": RED,
-            "high": ORANGE,
-            "medium": YELLOW,
-            "low": colors.HexColor("#6B7280"),
-            "informational": GREEN,
-        }.get(severity, GREY_TEXT)
+    # Summary box
+    summary = [
+        ["Total Predictions", str(data["total_predictions"])],
+        ["Yogas Detected", str(data["yogas"]["total_yogas"])],
+        ["Ashtakavarga Points", str(data["ashtakavarga"]["total"])],
+        ["Strongest Planet", data["shadbala"]["strongest"]],
+        ["Weakest Planet", data["shadbala"]["weakest"]],
+        ["Mahadasha", data["dasha"]["mahadasha"]["lord"]],
+        ["Antardasha", data["dasha"]["antardasha"]["lord"]],
+        ["Pratyantardasha", data["dasha"]["pratyantardasha"]["lord"]],
+    ]
     
-    def _draw_page_footer(self, canvas, doc):
-        """Draw footer on every page."""
-        canvas.saveState()
-        canvas.setFont("Helvetica", 8)
-        canvas.setFillColor(GREY_TEXT)
-        canvas.drawCentredString(
-            A4[0] / 2,
-            12 * mm,
-            f"VASTU ONE — Traceable Vastu Intelligence | Page {doc.page}"
-        )
-        canvas.setStrokeColor(GOLD)
-        canvas.setLineWidth(0.5)
-        canvas.line(15 * mm, 15 * mm, A4[0] - 15 * mm, 15 * mm)
-        canvas.restoreState()
+    t = Table(summary, colWidths=[8*cm, 8*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), HexColor("#f0ebe0")),
+        ("TEXTCOLOR", (0, 0), (0, -1), DARK_RED),
+        ("TEXTCOLOR", (1, 0), (1, -1), black),
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTNAME", (1, 0), (1, -1), "Helvetica"),
+        ("FONTSIZE", (0, 0), (-1, -1), 11),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    story.append(t)
     
-    def render(self, report_data: dict) -> bytes:
-        """Render report data to PDF bytes."""
-        buf = BytesIO()
-        
-        doc = SimpleDocTemplate(
-            buf,
-            pagesize=A4,
-            leftMargin=15 * mm,
-            rightMargin=15 * mm,
-            topMargin=20 * mm,
-            bottomMargin=20 * mm,
-            title="VASTU ONE Report",
-            author="VASTU ONE",
-        )
-        
-        story = []
-        s = self.styles
-        
-        # ============ COVER ============
-        story.append(Spacer(1, 40 * mm))
-        story.append(Paragraph("VASTU <font color='#D4AF37'>ONE</font>", s["BrandName"]))
-        story.append(Paragraph("TRACEABLE VASTU INTELLIGENCE", s["Tagline"]))
-        
-        story.append(Spacer(1, 15 * mm))
-        story.append(HRFlowable(width="60%", thickness=1, color=GOLD, hAlign="CENTER"))
-        story.append(Spacer(1, 8 * mm))
-        
-        package_name = report_data.get("package", "VASTU").replace("_", " ").title()
-        story.append(Paragraph(f"{package_name} Report", s["ReportTitle"]))
-        story.append(Spacer(1, 4 * mm))
-        story.append(Paragraph(report_data.get("property_name", "Property"), s["PropertyName"]))
-        story.append(Paragraph(report_data.get("property_address", ""), s["PropertyAddress"]))
-        
-        story.append(Spacer(1, 25 * mm))
-        
-        # Cover footer details
-        report_id = report_data.get("id", "unknown")
-        generated = report_data.get("generated_at", datetime.utcnow().isoformat())[:19].replace("T", " ")
-        consultant = report_data.get("consultant_name", "VASTU ONE")
-        
-        cover_info = [
-            ["Report ID", report_id[:8] + "..."],
-            ["Generated", generated],
-            ["Consultant", consultant],
-        ]
-        cover_table = Table(cover_info, colWidths=[35 * mm, 80 * mm])
-        cover_table.setStyle(TableStyle([
-            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-            ("FONTNAME", (1, 0), (1, -1), "Helvetica"),
-            ("FONTSIZE", (0, 0), (-1, -1), 9),
-            ("TEXTCOLOR", (0, 0), (0, -1), GREY_TEXT),
-            ("TEXTCOLOR", (1, 0), (1, -1), VOID),
-            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ]))
-        story.append(cover_table)
-        
-        story.append(PageBreak())
-        
-        # ============ EXECUTIVE SUMMARY ============
-        story.append(Paragraph("Executive Summary", s["SectionTitle"]))
-        story.append(HRFlowable(width="100%", thickness=0.5, color=GOLD, spaceAfter=8))
-        
-        findings = report_data.get("findings", [])
-        guna = report_data.get("guna_profile", {})
-        scores = report_data.get("scores", {})
-        overall_score = scores.get("score", 0)
-        confidence = int(scores.get("confidence", 0) * 100)
-        
-        # Score card
-        if overall_score >= 75:
-            score_color = GREEN
-        elif overall_score >= 50:
-            score_color = YELLOW
-        else:
-            score_color = RED
-        
-        summary_data = [
-            [
-                Paragraph("<b>Overall Score</b>", s["CellText"]),
-                Paragraph("<b>Confidence</b>", s["CellText"]),
-                Paragraph("<b>Findings</b>", s["CellText"]),
-                Paragraph("<b>Verdict</b>", s["CellText"]),
-            ],
-            [
-                Paragraph(f"<font size='18' color='{score_color.hexval()}'><b>{overall_score}</b></font>", s["CellText"]),
-                Paragraph(f"<font size='18'><b>{confidence}%</b></font>", s["CellText"]),
-                Paragraph(f"<font size='18'><b>{len(findings)}</b></font>", s["CellText"]),
-                Paragraph(f"<font size='11'><b>{guna.get('verdict', 'N/A')}</b></font>", s["CellText"]),
-            ],
-        ]
-        
-        summary_table = Table(summary_data, colWidths=[45 * mm, 45 * mm, 45 * mm, 45 * mm])
-        summary_table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#F5F5F5")),
-            ("BACKGROUND", (0, 1), (-1, 1), colors.white),
-            ("BOX", (0, 0), (-1, -1), 0.5, LIGHT_GREY),
-            ("INNERGRID", (0, 0), (-1, -1), 0.25, LIGHT_GREY),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 8),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-        ]))
-        story.append(summary_table)
-        story.append(Spacer(1, 6 * mm))
-        
-        engines_count = report_data.get("engines_count", 14)
+    story.append(Spacer(1, 3*cm))
+    story.append(Paragraph(
+        "Based on Swiss Ephemeris calculations — BPHS, Phaladeepika, Bhrigu Samhita, Nadi Astrology",
+        styles["CoverSubtitle"]
+    ))
+    story.append(PageBreak())
+
+
+def create_table_of_contents(story, styles):
+    """Create table of contents"""
+    story.append(Paragraph("Table of Contents", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.5*cm))
+    
+    toc_items = [
+        ("1.", "Executive Summary", "Page 3"),
+        ("2.", "Birth Chart Analysis", "Page 4"),
+        ("3.", "Planetary Positions", "Page 5"),
+        ("4.", "Vimshottari Dasha (5 Levels)", "Page 6"),
+        ("5.", "Yoga Analysis", "Page 8"),
+        ("6.", "Ashtakavarga (337 Points)", "Page 10"),
+        ("7.", "Shadbala (6 Strengths)", "Page 12"),
+        ("8.", "Nakshatra Analysis", "Page 14"),
+        ("9.", "Varshphal (Annual Chart)", "Page 16"),
+        ("10.", "Transit Analysis", "Page 18"),
+        ("11.", "100+ Predictions", "Page 20"),
+        ("12.", "Risk Assessment", "Page 30"),
+        ("13.", "Remedies", "Page 35"),
+        ("14.", "Research References", "Page 40"),
+        ("15.", "Disclaimer", "Page 42"),
+    ]
+    
+    for num, title, page in toc_items:
         story.append(Paragraph(
-            f"This report analyzes the property using <b>{engines_count} Vastu intelligence engines</b>. "
-            f"Each finding is traceable to a source with a confidence level. "
-            f"Recommendations are prioritized by severity and cost.",
-            s["BodyText2"]
+            f"<b>{num}</b> {title} <font color='#a8a29e'>........ {page}</font>",
+            styles["BodyText2"]
         ))
-        
-        # ============ GUNA PROFILE ============
-        story.append(Spacer(1, 6 * mm))
-        story.append(Paragraph("Guna Profile", s["SectionTitle"]))
-        story.append(HRFlowable(width="100%", thickness=0.5, color=GOLD, spaceAfter=8))
-        
-        tamas = guna.get("tamas_score", 0)
-        rajas = guna.get("rajas_score", 0)
-        sattva = guna.get("sattva_score", 0)
-        
-        # Guna bar
-        bar_width = 170 * mm
-        tamas_w = tamas * bar_width
-        rajas_w = rajas * bar_width
-        sattva_w = sattva * bar_width
-        
-        guna_bar = Table(
-            [["", "", ""]],
-            colWidths=[max(tamas_w, 0.1), max(rajas_w, 0.1), max(sattva_w, 0.1)],
-            rowHeights=[8 * mm],
-        )
-        guna_bar.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (0, 0), RED),
-            ("BACKGROUND", (1, 0), (1, 0), YELLOW),
-            ("BACKGROUND", (2, 0), (2, 0), GREEN),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ]))
-        story.append(guna_bar)
-        story.append(Spacer(1, 3 * mm))
-        
-        legend_data = [[
-            Paragraph(f"<font color='#DC2626'>■</font> Tamas (Inertia): {int(tamas * 100)}%", s["CellText"]),
-            Paragraph(f"<font color='#F59E0B'>■</font> Rajas (Activity): {int(rajas * 100)}%", s["CellText"]),
-            Paragraph(f"<font color='#16A34A'>■</font> Sattva (Harmony): {int(sattva * 100)}%", s["CellText"]),
-        ]]
-        legend_table = Table(legend_data, colWidths=[57 * mm, 57 * mm, 56 * mm])
-        legend_table.setStyle(TableStyle([
-            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ]))
-        story.append(legend_table)
-        
-        # ============ FINDINGS ============
-        story.append(PageBreak())
-        story.append(Paragraph("Findings", s["SectionTitle"]))
-        story.append(HRFlowable(width="100%", thickness=0.5, color=GOLD, spaceAfter=8))
-        
-        if findings:
-            table_data = [[
-                Paragraph("<b>Engine</b>", s["CellBold"]),
-                Paragraph("<b>Severity</b>", s["CellBold"]),
-                Paragraph("<b>Guna</b>", s["CellBold"]),
-                Paragraph("<b>Description</b>", s["CellBold"]),
-            ]]
-            
-            for f in findings:
-                sev = f.get("severity", "informational")
-                sev_color = self._severity_color(sev)
-                table_data.append([
-                    Paragraph(f.get("engine", "—"), s["CellText"]),
-                    Paragraph(f"<font color='{sev_color.hexval()}'><b>{sev.upper()}</b></font>", s["CellText"]),
-                    Paragraph(f.get("guna", "—"), s["CellText"]),
-                    Paragraph(f.get("description", ""), s["CellText"]),
-                ])
-            
-            findings_table = Table(
-                table_data,
-                colWidths=[30 * mm, 25 * mm, 22 * mm, 93 * mm],
-                repeatRows=1,
-            )
-            findings_table.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, 0), VOID),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("FONTSIZE", (0, 0), (-1, 0), 8),
-                ("ALIGN", (0, 0), (-1, 0), "LEFT"),
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("TOPPADDING", (0, 0), (-1, -1), 5),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-                ("LEFTPADDING", (0, 0), (-1, -1), 5),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, BG_LIGHT]),
-                ("LINEBELOW", (0, 1), (-1, -1), 0.25, LIGHT_GREY),
-            ]))
-            story.append(findings_table)
-        else:
-            story.append(Paragraph("No findings recorded.", s["BodyText2"]))
-        
-        # ============ CONSULTANT ============
-        story.append(Spacer(1, 12 * mm))
-        consultant_name = report_data.get("consultant_name", "VASTU ONE")
-        consultant_email = report_data.get("consultant_email", "hello@vastuone.in")
-        
-        consultant_content = [
-            [Paragraph("<b>CONSULTANT</b>", ParagraphStyle(
-                name="ConsultantLabel",
-                fontName="Helvetica",
-                fontSize=8,
-                textColor=GREY_TEXT,
-                letterSpacing=1,
-            ))],
-            [Paragraph(f"<b>{consultant_name}</b>", ParagraphStyle(
-                name="ConsultantName",
-                fontName="Helvetica-Bold",
-                fontSize=11,
-                textColor=VOID,
-            ))],
-            [Paragraph(consultant_email, s["CellText"])],
-        ]
-        consultant_table = Table(consultant_content, colWidths=[170 * mm])
-        consultant_table.setStyle(TableStyle([
-            ("BOX", (0, 0), (-1, -1), 1, GOLD),
-            ("TOPPADDING", (0, 0), (-1, -1), 4),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("LEFTPADDING", (0, 0), (-1, -1), 8),
-        ]))
-        story.append(consultant_table)
-        
-        # ============ DISCLAIMER ============
-        story.append(Spacer(1, 10 * mm))
-        disclaimer_text = (
-            "<b>Disclaimer:</b> This report is generated by VASTU ONE based on the data provided and the "
-            "selected Vastu tradition(s). Findings are traceable to sources where available. Vastu is a "
-            "traditional system and results may vary. This report does not replace professional architectural, "
-            "structural, or legal advice. Consult the original sources for critical decisions. Major findings "
-            "may require human expert review before implementation."
-        )
-        
-        disclaimer_table = Table(
-            [[Paragraph(disclaimer_text, s["Disclaimer"])]],
-            colWidths=[170 * mm],
-        )
-        disclaimer_table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8F8F8")),
-            ("LINEBEFORE", (0, 0), (0, -1), 3, GOLD),
-            ("TOPPADDING", (0, 0), (-1, -1), 6),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-            ("LEFTPADDING", (0, 0), (-1, -1), 8),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-        ]))
-        story.append(disclaimer_table)
-        
-        # Build PDF
-        doc.build(story, onFirstPage=self._draw_page_footer, onLaterPages=self._draw_page_footer)
-        
-        pdf_bytes = buf.getvalue()
-        buf.close()
-        return pdf_bytes
+    
+    story.append(PageBreak())
 
 
-# Singleton
-pdf_generator = PDFGenerator()
+def create_executive_summary(story, data, styles):
+    """Create executive summary"""
+    story.append(Paragraph("1. Executive Summary", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    summary_text = f"""
+    This report presents a comprehensive astrological analysis of <b>{data['country']}</b> 
+    based on actual planetary calculations using Swiss Ephemeris. The analysis incorporates 
+    <b>{data['total_predictions']} predictions</b> across multiple astrological systems including 
+    Vimshottari Dasha, Yoga detection, Ashtakavarga, Shadbala, Nakshatra analysis, Varshphal, 
+    and current transit positions.
+    <br/><br/>
+    <b>Key Findings:</b>
+    <br/>
+    • Current Mahadasha: <b>{data['dasha']['mahadasha']['lord']}</b>
+    <br/>
+    • Current Antardasha: <b>{data['dasha']['antardasha']['lord']}</b>
+    <br/>
+    • Current Pratyantardasha: <b>{data['dasha']['pratyantardasha']['lord']}</b>
+    <br/>
+    • Total Yogas Detected: <b>{data['yogas']['total_yogas']}</b>
+    <br/>
+    • Auspicious Yogas: <b>{len(data['yogas']['auspicious'])}</b>
+    <br/>
+    • Doshas: <b>{len(data['yogas']['doshas'])}</b>
+    <br/>
+    • Strongest Planet: <b>{data['shadbala']['strongest']}</b>
+    <br/>
+    • Weakest Planet: <b>{data['shadbala']['weakest']}</b>
+    <br/>
+    • Ashtakavarga Total: <b>{data['ashtakavarga']['total']} points</b>
+    <br/>
+    • Varshphal Year: <b>{data['varshphal']['year']}</b>
+    """
+    
+    story.append(Paragraph(summary_text, styles["BodyText2"]))
+    story.append(PageBreak())
+
+
+def create_planetary_table(story, data, styles):
+    """Create planetary positions table"""
+    story.append(Paragraph("3. Planetary Positions", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Birth chart planets table
+    story.append(Paragraph("Birth Chart", styles["SubSection"]))
+    
+    table_data = [["Planet", "Rashi", "Degree", "House", "Dignity", "Nakshatra", "Pada"]]
+    
+    planets = data.get("chart", {}).get("planets", {})
+    if not planets:
+        # Try to get from chart data
+        planets = {
+            "Sun": data["chart"]["sun"],
+            "Moon": data["chart"]["moon"],
+        }
+    
+    for name, p in planets.items():
+        table_data.append([
+            name,
+            p.get("rashi", ""),
+            f"{p.get('degree', 0):.2f}",
+            str(p.get("house", "")),
+            p.get("dignity", ""),
+            p.get("nakshatra", {}).get("name", "") if isinstance(p.get("nakshatra"), dict) else p.get("nakshatra", ""),
+            str(p.get("nakshatra", {}).get("pada", "") if isinstance(p.get("nakshatra"), dict) else ""),
+        ])
+    
+    t = Table(table_data, colWidths=[2.5*cm, 2.5*cm, 1.8*cm, 1.5*cm, 2.5*cm, 3.5*cm, 1.5*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), DARK_RED),
+        ("TEXTCOLOR", (0, 0), (-1, 0), GOLD),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#faf8f3")]),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 0.5*cm))
+    story.append(PageBreak())
+
+
+def create_dasha_section(story, data, styles):
+    """Create Dasha section"""
+    story.append(Paragraph("4. Vimshottari Dasha", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    d = data["dasha"]
+    
+    story.append(Paragraph(f"<b>Age:</b> {d['age_years']} years", styles["BodyText2"]))
+    story.append(Paragraph(f"<b>Moon Nakshatra:</b> {d['moon_nakshatra']}", styles["BodyText2"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Current Dasha
+    story.append(Paragraph("Current Dasha", styles["SubSection"]))
+    dasha_data = [
+        ["Level", "Planet", "Lord", "Period"],
+        ["Mahadasha", d["mahadasha"]["planet"], d["mahadasha"]["lord"], f"Age {d['mahadasha']['start_age']:.1f} - {d['mahadasha']['end_age']:.1f}"],
+        ["Antardasha", d["antardasha"]["planet"], d["antardasha"]["lord"], f"Age {d['antardasha']['start_age']:.1f} - {d['antardasha']['end_age']:.1f}"],
+        ["Pratyantardasha", d["pratyantardasha"]["planet"], d["pratyantardasha"]["lord"], "Current"],
+    ]
+    
+    t = Table(dasha_data, colWidths=[4*cm, 3*cm, 3*cm, 6*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), DARK_RED),
+        ("TEXTCOLOR", (0, 0), (-1, 0), GOLD),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Full Mahadasha sequence
+    story.append(Paragraph("Full Mahadasha Sequence", styles["SubSection"]))
+    seq_data = [["Planet", "Lord", "Start Age", "End Age", "Years"]]
+    for dasha in d["full_mahadasha_sequence"]:
+        seq_data.append([
+            dasha["planet"], dasha["lord"],
+            f"{dasha['start_age']:.2f}", f"{dasha['end_age']:.2f}",
+            f"{dasha['years']:.2f}"
+        ])
+    
+    t = Table(seq_data, colWidths=[3*cm, 3*cm, 3*cm, 3*cm, 3*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), DARK_RED),
+        ("TEXTCOLOR", (0, 0), (-1, 0), GOLD),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#faf8f3")]),
+    ]))
+    story.append(t)
+    story.append(PageBreak())
+
+
+def create_yoga_section(story, data, styles):
+    """Create Yoga section"""
+    story.append(Paragraph("5. Yoga Analysis", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    story.append(Paragraph(f"<b>Total Yogas Detected:</b> {data['yogas']['total_yogas']}", styles["BodyText2"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Auspicious
+    story.append(Paragraph("Auspicious Yogas", styles["SubSection"]))
+    for y in data["yogas"]["auspicious"]:
+        story.append(Paragraph(f"<b>• {y['name']}</b> ({y['strength']})", styles["Prediction"]))
+        story.append(Paragraph(f"  {y['effect']}", styles["Prediction"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Doshas
+    story.append(Paragraph("Doshas", styles["SubSection"]))
+    for y in data["yogas"]["doshas"]:
+        story.append(Paragraph(f"<b>• {y['name']}</b> ({y['strength']})", styles["Prediction"]))
+        story.append(Paragraph(f"  {y['effect']}", styles["Prediction"]))
+    
+    story.append(PageBreak())
+
+
+def create_ashtakavarga_section(story, data, styles):
+    """Create Ashtakavarga section"""
+    story.append(Paragraph("6. Ashtakavarga (337 Points)", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    story.append(Paragraph(f"<b>Total Points:</b> {data['ashtakavarga']['total']}", styles["BodyText2"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Strongest signs
+    story.append(Paragraph("Strongest Signs", styles["SubSection"]))
+    for rashi, score in data["ashtakavarga"]["strongest"]:
+        story.append(Paragraph(f"<b>• {rashi}</b> — {score} points", styles["Prediction"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Weakest signs
+    story.append(Paragraph("Weakest Signs", styles["SubSection"]))
+    for rashi, score in data["ashtakavarga"]["weakest"]:
+        story.append(Paragraph(f"<b>• {rashi}</b> — {score} points", styles["Prediction"]))
+    
+    story.append(PageBreak())
+
+
+def create_shadbala_section(story, data, styles):
+    """Create Shadbala section"""
+    story.append(Paragraph("7. Shadbala (6 Strengths)", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    story.append(Paragraph("Planetary Ranking", styles["SubSection"]))
+    
+    table_data = [["Rank", "Planet", "Total Strength"]]
+    for i, (planet, total) in enumerate(data["shadbala"]["ranking"], 1):
+        table_data.append([str(i), planet, f"{total:.2f}"])
+    
+    t = Table(table_data, colWidths=[2*cm, 5*cm, 5*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), DARK_RED),
+        ("TEXTCOLOR", (0, 0), (-1, 0), GOLD),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#faf8f3")]),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 0.3*cm))
+    
+    story.append(Paragraph(f"<b>Strongest Planet:</b> {data['shadbala']['strongest']}", styles["BodyText2"]))
+    story.append(Paragraph(f"<b>Weakest Planet:</b> {data['shadbala']['weakest']}", styles["BodyText2"]))
+    
+    story.append(PageBreak())
+
+
+def create_nakshatra_section(story, data, styles):
+    """Create Nakshatra section"""
+    story.append(Paragraph("8. Nakshatra Analysis", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    table_data = [["Planet", "Nakshatra", "Pada", "Lord", "Deity", "Gana", "Element"]]
+    for planet, n in data["nakshatra"].items():
+        table_data.append([
+            planet, n["nakshatra"], str(n["pada"]), n["lord"],
+            n["deity"], n.get("gana", ""), n.get("element", "")
+        ])
+    
+    t = Table(table_data, colWidths=[2*cm, 2.8*cm, 1.2*cm, 2*cm, 2.5*cm, 2*cm, 2*cm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), DARK_RED),
+        ("TEXTCOLOR", (0, 0), (-1, 0), GOLD),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, GOLD),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#faf8f3")]),
+    ]))
+    story.append(t)
+    
+    story.append(PageBreak())
+
+
+def create_varshphal_section(story, data, styles):
+    """Create Varshphal section"""
+    story.append(Paragraph("9. Varshphal (Annual Chart)", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    v = data["varshphal"]
+    story.append(Paragraph(f"<b>Year:</b> {v['year']}", styles["BodyText2"]))
+    story.append(Paragraph(f"<b>Muntha:</b> {v['muntha']['rashi']}", styles["BodyText2"]))
+    story.append(Paragraph(f"<b>Year Lord:</b> {v['year_lord']['planet']}", styles["BodyText2"]))
+    story.append(Paragraph(f"<b>Annual Ascendant:</b> {v['ascendant']['rashi']} {v['ascendant']['degree']} deg", styles["BodyText2"]))
+    
+    story.append(PageBreak())
+
+
+def create_predictions_section(story, data, styles):
+    """Create predictions section"""
+    story.append(Paragraph("10. Predictions", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Group by category
+    categories = {}
+    for p in data["predictions"]:
+        cat = p["category"]
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append(p)
+    
+    for cat, preds in categories.items():
+        story.append(Paragraph(f"{cat} ({len(preds)})", styles["SubSection"]))
+        for p in preds:
+            story.append(Paragraph(f"<b>• {p['title']}</b>", styles["Prediction"]))
+            story.append(Paragraph(f"  {p['prediction']}", styles["Prediction"]))
+            if p.get("confidence"):
+                story.append(Paragraph(f"  <i>Confidence: {p['confidence']}</i>", styles["SmallText"]))
+            story.append(Spacer(1, 0.15*cm))
+        story.append(Spacer(1, 0.3*cm))
+    
+    story.append(PageBreak())
+
+
+def create_disclaimer(story, styles):
+    """Create disclaimer"""
+    story.append(Paragraph("Disclaimer", styles["SectionTitle"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    disclaimer = """
+    This report is generated using Swiss Ephemeris for actual planetary calculations 
+    and classical Vedic astrology principles from BPHS, Phaladeepika, Bhrigu Samhita, 
+    Nadi Astrology, Saravali, Jaimini Sutras, and other classical texts.
+    <br/><br/>
+    The predictions are based on astrological principles and should be considered 
+    for educational and informational purposes only. They do not constitute 
+    professional advice for financial, medical, legal, or personal decisions.
+    <br/><br/>
+    Vastu One and its creators are not responsible for any actions taken based on 
+    this report. Always consult qualified professionals for important decisions.
+    <br/><br/>
+    <b>© 2026 Vastu One · Nagpur, Maharashtra</b>
+    """
+    
+    story.append(Paragraph(disclaimer, styles["BodyText2"]))
+
+
+def generate_pdf(country: str = "India") -> BytesIO:
+    """Generate complete PDF report"""
+    if not HAS_REPORTLAB:
+        return None
+    
+    data = get_predictions(country)
+    if "error" in data:
+        return None
+    
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=2*cm,
+        leftMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm,
+        title=f"Vastu One - {country} Prediction Report",
+    )
+    
+    styles = get_styles()
+    story = []
+    
+    # Build all sections
+    create_cover_page(story, data, styles)
+    create_table_of_contents(story, styles)
+    create_executive_summary(story, data, styles)
+    create_planetary_table(story, data, styles)
+    create_dasha_section(story, data, styles)
+    create_yoga_section(story, data, styles)
+    create_ashtakavarga_section(story, data, styles)
+    create_shadbala_section(story, data, styles)
+    create_nakshatra_section(story, data, styles)
+    create_varshphal_section(story, data, styles)
+    create_predictions_section(story, data, styles)
+    create_disclaimer(story, styles)
+    
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+
+def save_pdf(country: str = "India", output_path: str = None):
+    """Save PDF to file"""
+    if output_path is None:
+        output_path = f"reports/{country}_prediction_report.pdf"
+    
+    Path("reports").mkdir(exist_ok=True)
+    
+    buffer = generate_pdf(country)
+    if buffer is None:
+        return None
+    
+    Path(output_path).write_bytes(buffer.getvalue())
+    return output_path
 
 
 if __name__ == "__main__":
-    import sys
-    from pathlib import Path
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-    
-    test_data = {
-        "id": "54b776ee-b203-47d7-a2a8-907d2b44f7c0",
-        "package": "vastu_advanced",
-        "property_name": "Rajesh Kumar Residence",
-        "property_address": "Plot 45, Civil Lines, Nagpur, 440001",
-        "generated_at": datetime.utcnow().isoformat(),
-        "consultant_name": "Deepak Nagpure",
-        "consultant_email": "deepak@vastuone.in",
-        "engines_count": 14,
-        "findings": [
-            {"engine": "soil_engine", "severity": "informational", "guna": "Sattva", "description": "Soil: Brahmin, Excellent"},
-            {"engine": "water_engine", "severity": "informational", "guna": "Sattva", "description": "Underground tank in NE - IDEAL"},
-            {"engine": "colour_engine", "severity": "medium", "guna": "Tamas", "description": "Blue colour in SE - INAUSPICIOUS"},
-            {"engine": "direction_strength", "severity": "informational", "guna": "Mixed", "description": "Direction N analyzed"},
-            {"engine": "direction_strength", "severity": "informational", "guna": "Mixed", "description": "Direction NE analyzed"},
-            {"engine": "direction_strength", "severity": "informational", "guna": "Mixed", "description": "Direction E analyzed"},
-            {"engine": "direction_strength", "severity": "informational", "guna": "Mixed", "description": "Direction SE analyzed"},
-        ],
-        "guna_profile": {
-            "verdict": "Positive House",
-            "tamas_score": 0.15,
-            "rajas_score": 0.20,
-            "sattva_score": 0.65,
-        },
-        "scores": {
-            "score": 72,
-            "confidence": 0.92,
-        },
-    }
-    
-    pdf_bytes = pdf_generator.render(test_data)
-    output = Path("test_report.pdf")
-    output.write_bytes(pdf_bytes)
-    print(f"✅ PDF generated: {output.absolute()}")
-    print(f"   Size: {len(pdf_bytes)} bytes ({len(pdf_bytes) / 1024:.1f} KB)")
+    print("Generating PDF report for India...")
+    path = save_pdf("India")
+    if path:
+        size = Path(path).stat().st_size
+        print(f"PDF generated: {path}")
+        print(f"Size: {size:,} bytes ({size/1024:.1f} KB)")
+    else:
+        print("Failed to generate PDF. Install reportlab: pip install reportlab")

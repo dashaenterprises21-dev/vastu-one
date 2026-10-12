@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscription Plans — Vastu One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU <span class="brand-mark">✦</span> ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/kundli-pro.html">Kundli Pro</a>
+      <a href="/legal/subscription.html" class="active">Plans</a>
+    </nav>
+  </div>
+</header>
+
+<main class="legal-page">
+  <div class="legal-header" style="text-align:center;">
+    <div class="legal-eyebrow">Pricing</div>
+    <h1 class="legal-title">Choose Your Plan</h1>
+    <p class="legal-subtitle">Unlock unlimited kundli reports and premium features</p>
+  </div>
+
+  <div id="plansGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:40px;">
+    <div style="text-align:center;padding:60px;color:var(--ivory-muted);">Loading plans...</div>
+  </div>
+
+  <div id="subscriptionStatus" style="display:none;margin-top:40px;padding:24px;border-radius:12px;text-align:center;"></div>
+</main>
+
+<footer class="foot" style="padding:40px;text-align:center;border-top:1px solid var(--line);">
+  <div style="font-size:12px;color:var(--ivory-dim);">© 2026 Vastu One · Nagpur, Maharashtra</div>
+  <div style="margin-top:16px;font-size:12px;">
+    <a href="/legal/privacy.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Privacy</a>
+    <a href="/legal/terms.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Terms</a>
+    <a href="/legal/refund.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Refund</a>
+  </div>
+</footer>
+
+<script>
+async function loadPlans() {
+  try {
+    var res = await fetch('/api/payments/plans');
+    var data = await res.json();
+    
+    var html = '';
+    var plans = data.plans || [];
+    
+    plans.forEach(function(plan, idx) {
+      var isPro = plan.id === 'pro';
+      var border = isPro ? '2px solid #d4a961' : '1px solid rgba(212,169,97,0.3)';
+      var bg = isPro ? 'linear-gradient(135deg,rgba(212,169,97,0.15),rgba(90,20,32,0.6))' : 'linear-gradient(135deg,rgba(90,20,32,0.4),rgba(50,10,18,0.6))';
+      
+      html += '<div style="background:' + bg + ';border:' + border + ';border-radius:16px;padding:32px 28px;position:relative;transition:all 0.3s;">';
+      
+      if (isPro) {
+        html += '<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e0b968,#d4a961);color:#2a0810;padding:6px 20px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;">Most Popular</div>';
+      }
+      
+      html += '<div style="font-family:var(--font-display);font-size:22px;color:var(--ivory);margin-bottom:8px;">' + plan.name + '</div>';
+      html += '<div style="font-size:40px;color:var(--gold);font-weight:700;margin:20px 0 8px;">' + plan.price + '</div>';
+      html += '<div style="font-size:12px;color:var(--ivory-muted);margin-bottom:24px;">per ' + plan.period + '</div>';
+      
+      html += '<ul style="list-style:none;padding:0;margin:0 0 24px 0;text-align:left;">';
+      (plan.features || []).forEach(function(f) {
+        html += '<li style="font-size:13px;color:var(--ivory-muted);padding:6px 0;line-height:1.6;"><span style="color:#7ee0a0;margin-right:8px;">✓</span>' + f + '</li>';
+      });
+      html += '</ul>';
+      
+      html += '<button onclick="subscribePlan(\'' + plan.id + '\', ' + plan.price + ')" style="width:100%;background:linear-gradient(135deg,#e0b968,#d4a961,#b8893b);color:#2a0810;border:none;padding:16px 24px;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all 0.25s;">Subscribe Now</button>';
+      
+      html += '</div>';
+    });
+    
+    document.getElementById('plansGrid').innerHTML = html;
+  } catch (e) {
+    console.error('Plans load error:', e);
+    document.getElementById('plansGrid').innerHTML = '<div style="color:#f0a0a0;text-align:center;padding:40px;">Failed to load plans. Please refresh.</div>';
+  }
+}
+
+async function subscribePlan(planId, price) {
+  var status = document.getElementById('subscriptionStatus');
+  
+  try {
+    var res = await fetch('/api/payments/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan_id: planId, customer_id: 'user_' + Date.now() })
+    });
+    var data = await res.json();
+    
+    var options = {
+      key: 'rzp_test_TkaNUKiP6i0BII',
+      amount: price * 100,
+      currency: 'INR',
+      name: 'Vastu One',
+      description: planId.charAt(0).toUpperCase() + planId.slice(1) + ' Subscription',
+      handler: function(response) {
+        status.style.display = 'block';
+        status.style.background = 'rgba(16,185,129,0.15)';
+        status.style.color = '#7ee0a0';
+        status.innerHTML = '✅ <strong>Subscription Activated!</strong><br>Payment ID: ' + response.razorpay_payment_id;
+      },
+      prefill: {},
+      theme: { color: '#6b1420' },
+      modal: {
+        ondismiss: function() {
+          status.style.display = 'block';
+          status.style.background = 'rgba(248,113,113,0.15)';
+          status.style.color = '#fca5a5';
+          status.innerHTML = '❌ Payment cancelled';
+        }
+      }
+    };
+    
+    var rzp = new Razorpay(options);
+    rzp.open();
+  } catch (e) {
+    console.error('Subscribe error:', e);
+    status.style.display = 'block';
+    status.style.background = 'rgba(248,113,113,0.15)';
+    status.style.color = '#fca5a5';
+    status.innerHTML = '❌ Failed: ' + e.message;
+  }
+}
+
+loadPlans();
+</script>
+
+</body>
+</html>

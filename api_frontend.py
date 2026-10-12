@@ -1,0 +1,345 @@
+# VASTU ONE - Full Prediction API + Frontend
+
+from pathlib import Path
+
+# ═══════════════════════════════════════════════════════════
+# API ROUTE
+# ═══════════════════════════════════════════════════════════
+
+api_code = '''"""
+VASTU ONE - Full Prediction API Routes
+All engines combined
+"""
+
+from fastapi import APIRouter, HTTPException
+from datetime import datetime
+from engine.astro.predictions_engine import get_predictions, COUNTRY_CHARTS
+
+router = APIRouter(prefix="/api/world/full", tags=["world-full"])
+
+
+@router.get("/countries")
+async def list_countries():
+    return {"countries": list(COUNTRY_CHARTS.keys()), "total": len(COUNTRY_CHARTS)}
+
+
+@router.get("/predict/{country}")
+async def full_predict(country: str):
+    result = get_predictions(country)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+
+@router.get("/predict/{country}/{year}/{month}/{day}")
+async def full_predict_date(country: str, year: int, month: int, day: int):
+    target = datetime(year, month, day)
+    result = get_predictions(country, target)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+'''
+
+Path("api/routes/full_prediction_routes.py").write_text(api_code, encoding="utf-8")
+print("API route created")
+
+# ═══════════════════════════════════════════════════════════
+# REGISTER IN main.py
+# ═══════════════════════════════════════════════════════════
+
+main_file = Path("api/main.py")
+c = main_file.read_text(encoding="utf-8")
+
+if "full_prediction_routes" not in c:
+    # Add import
+    c = c.replace(
+        "from api.routes import real_transit_routes",
+        "from api.routes import real_transit_routes\nfrom api.routes import full_prediction_routes"
+    )
+    # Add router
+    c = c.replace(
+        "app.include_router(real_transit_routes.router)",
+        "app.include_router(real_transit_routes.router)\napp.include_router(full_prediction_routes.router)"
+    )
+    main_file.write_text(c, encoding="utf-8")
+    print("Registered in main.py")
+else:
+    print("Already registered")
+
+# ═══════════════════════════════════════════════════════════
+# FRONTEND PAGE
+# ═══════════════════════════════════════════════════════════
+
+frontend_code = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Prediction — Vastu One</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+.fp-page { max-width: 1300px; margin: 0 auto; padding: 40px 24px 80px; }
+.fp-hero { text-align: center; margin-bottom: 30px; }
+.fp-hero-title { font-family: var(--font-display); font-size: 44px; color: var(--ivory); margin: 0 0 12px 0; font-weight: 500; }
+.fp-hero-sub { font-size: 14px; color: var(--ivory-muted); font-style: italic; }
+.fp-countries { display: flex; gap: 8px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+.fp-btn { padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 100px; color: var(--ivory-muted); font-size: 12px; cursor: pointer; transition: all 0.25s; }
+.fp-btn:hover { border-color: var(--gold); color: var(--ivory); }
+.fp-btn.active { background: rgba(212,169,97,0.15); border-color: var(--gold); color: var(--gold); }
+.fp-tabs { display: flex; gap: 6px; margin: 28px 0 20px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.fp-tab { padding: 10px 16px; background: transparent; border: none; color: var(--ivory-muted); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.25s; }
+.fp-tab:hover { color: var(--ivory); }
+.fp-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.fp-content { display: none; }
+.fp-content.active { display: block; animation: fadeIn 0.4s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.card { background: linear-gradient(135deg, rgba(90,20,32,0.5), rgba(50,10,18,0.65)); border: 1px solid var(--line-gold); border-radius: 12px; padding: 18px; margin-bottom: 10px; }
+.card-title { font-family: var(--font-display); font-size: 18px; color: var(--gold); margin-bottom: 8px; }
+.card-text { font-size: 13px; color: var(--ivory); line-height: 1.6; }
+.card-meta { font-size: 11px; color: var(--ivory-muted); margin-top: 6px; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+
+.stat-box { padding: 14px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--gold); }
+.stat-label { font-size: 10px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+.stat-value { font-size: 16px; color: var(--ivory); margin-top: 4px; font-weight: 600; }
+.stat-sub { font-size: 11px; color: var(--ivory-muted); margin-top: 2px; }
+
+.pred-card { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; border-left: 3px solid var(--gold); margin-bottom: 8px; }
+.pred-cat { font-size: 10px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+.pred-title { font-size: 14px; color: var(--ivory); font-weight: 600; margin: 4px 0; }
+.pred-text { font-size: 12px; color: var(--ivory-muted); line-height: 1.5; }
+.pred-conf { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 100px; margin-top: 6px; font-weight: 700; }
+.conf-High { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.conf-Medium { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.conf-Strong { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.conf-Moderate { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+.bar-chart { margin: 8px 0; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; font-size: 12px; }
+.bar-label { width: 80px; color: var(--ivory-muted); }
+.bar-fill { height: 16px; background: linear-gradient(90deg, var(--gold), var(--gold-deep)); border-radius: 4px; transition: width 0.5s; }
+.bar-value { color: var(--gold); font-weight: 700; }
+
+.loading { text-align: center; padding: 60px; color: var(--ivory-muted); }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/world-prediction.html">World</a>
+      <a href="/real-transit.html">Real Transit</a>
+      <a href="/full-prediction.html" class="active">Full</a>
+    </nav>
+  </div>
+</header>
+
+<main class="fp-page">
+  <div class="fp-hero">
+    <h1 class="fp-hero-title">Complete Astrological Analysis</h1>
+    <p class="fp-hero-sub">All engines combined — 100+ data points per country</p>
+  </div>
+  <div class="fp-countries" id="fpCountries"><div class="loading">Loading...</div></div>
+  <div class="fp-tabs" id="fpTabs" style="display:none;">
+    <button class="fp-tab active" data-tab="overview">Overview</button>
+    <button class="fp-tab" data-tab="predictions">Predictions</button>
+    <button class="fp-tab" data-tab="chart">Chart</button>
+    <button class="fp-tab" data-tab="dasha">Dasha</button>
+    <button class="fp-tab" data-tab="yogas">Yogas</button>
+    <button class="fp-tab" data-tab="ashtakavarga">Ashtakavarga</button>
+    <button class="fp-tab" data-tab="shadbala">Shadbala</button>
+    <button class="fp-tab" data-tab="nakshatra">Nakshatra</button>
+    <button class="fp-tab" data-tab="varshphal">Varshphal</button>
+  </div>
+  <div id="fpContent"><div class="loading">Select a country</div></div>
+</main>
+
+<script>
+var DATA = null;
+
+function switchTab(name) {
+  document.querySelectorAll('.fp-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.fp-content').forEach(c => c.classList.remove('active'));
+  document.querySelector('.fp-tab[data-tab="' + name + '"]').classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function overviewHtml(d) {
+  var h = '<div class="grid-3">';
+  h += '<div class="stat-box"><div class="stat-label">Ascendant</div><div class="stat-value">' + d.chart.ascendant.rashi + '</div><div class="stat-sub">' + d.chart.ascendant.degree + ' deg</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Sun</div><div class="stat-value">' + d.chart.sun.rashi + '</div><div class="stat-sub">' + d.chart.sun.degree + ' deg</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Moon</div><div class="stat-value">' + d.chart.moon.rashi + '</div><div class="stat-sub">' + d.chart.moon.degree + ' deg</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Mahadasha</div><div class="stat-value">' + d.dasha.mahadasha.lord + '</div><div class="stat-sub">Age ' + d.dasha.age_years + '</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Antardasha</div><div class="stat-value">' + d.dasha.antardasha.lord + '</div><div class="stat-sub">Current</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Pratyantar</div><div class="stat-value">' + d.dasha.pratyantardasha.lord + '</div><div class="stat-sub">Current</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Strongest Planet</div><div class="stat-value">' + d.shadbala.strongest + '</div><div class="stat-sub">Shadbala</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Weakest Planet</div><div class="stat-value">' + d.shadbala.weakest + '</div><div class="stat-sub">Shadbala</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Yogas</div><div class="stat-value">' + d.yogas.total_yogas + '</div><div class="stat-sub">Detected</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Predictions</div><div class="stat-value">' + d.total_predictions + '</div><div class="stat-sub">Total</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Ashtakavarga</div><div class="stat-value">' + d.ashtakavarga.total + '</div><div class="stat-sub">Total points</div></div>';
+  h += '<div class="stat-box"><div class="stat-label">Varshphal</div><div class="stat-value">' + d.varshphal.year + '</div><div class="stat-sub">Muntha: ' + d.varshphal.muntha.rashi + '</div></div>';
+  h += '</div>';
+  return h;
+}
+
+function predictionsHtml(d) {
+  var h = '';
+  d.predictions.forEach(function(p) {
+    h += '<div class="pred-card">';
+    h += '<div class="pred-cat">' + p.category + '</div>';
+    h += '<div class="pred-title">' + p.title + '</div>';
+    h += '<div class="pred-text">' + p.prediction + '</div>';
+    if (p.confidence) h += '<span class="pred-conf conf-' + p.confidence + '">' + p.confidence + '</span>';
+    h += '</div>';
+  });
+  return h;
+}
+
+function chartHtml(d) {
+  var h = '<div class="grid-2">';
+  h += '<div class="card"><div class="card-title">Ascendant</div><div class="card-text">' + d.chart.ascendant.rashi + ' ' + d.chart.ascendant.degree + ' deg</div></div>';
+  h += '<div class="card"><div class="card-title">Sun</div><div class="card-text">' + d.chart.sun.rashi + ' ' + d.chart.sun.degree + ' deg</div><div class="card-meta">' + d.chart.sun.nakshatra + ' pada ' + d.chart.sun.pada + '</div></div>';
+  h += '<div class="card"><div class="card-title">Moon</div><div class="card-text">' + d.chart.moon.rashi + ' ' + d.chart.moon.degree + ' deg</div><div class="card-meta">' + d.chart.moon.nakshatra + ' pada ' + d.chart.moon.pada + '</div></div>';
+  h += '</div>';
+  return h;
+}
+
+function dashaHtml(d) {
+  var h = '<div class="grid-2">';
+  h += '<div class="card"><div class="card-title">Mahadasha</div><div class="card-text">' + d.dasha.mahadasha.lord + '</div><div class="card-meta">Age ' + d.dasha.mahadasha.start_age + ' to ' + d.dasha.mahadasha.end_age + '</div></div>';
+  h += '<div class="card"><div class="card-title">Antardasha</div><div class="card-text">' + d.dasha.antardasha.lord + '</div><div class="card-meta">Sub-period</div></div>';
+  h += '<div class="card"><div class="card-title">Pratyantardasha</div><div class="card-text">' + d.dasha.pratyantardasha.lord + '</div><div class="card-meta">Micro-period</div></div>';
+  h += '</div>';
+  return h;
+}
+
+function yogasHtml(d) {
+  var h = '';
+  h += '<div class="card"><div class="card-title">Auspicious Yogas (' + d.yogas.auspicious.length + ')</div></div>';
+  d.yogas.auspicious.forEach(function(y) {
+    h += '<div class="pred-card"><div class="pred-title">' + y.name + '</div><div class="pred-text">' + y.effect + '</div><span class="pred-conf conf-' + y.strength + '">' + y.strength + '</span></div>';
+  });
+  h += '<div class="card" style="margin-top:16px;"><div class="card-title">Doshas (' + d.yogas.doshas.length + ')</div></div>';
+  d.yogas.doshas.forEach(function(y) {
+    h += '<div class="pred-card" style="border-left-color:#ef4444;"><div class="pred-title">' + y.name + '</div><div class="pred-text">' + y.effect + '</div><span class="pred-conf conf-' + y.strength + '">' + y.strength + '</span></div>';
+  });
+  return h;
+}
+
+function ashtakavargaHtml(d) {
+  var h = '<div class="card"><div class="card-title">Ashtakavarga — ' + d.ashtakavarga.total + ' Points</div></div>';
+  h += '<div class="grid-2">';
+  d.ashtakavarga.strongest.forEach(function(s) {
+    h += '<div class="stat-box"><div class="stat-label">Strong</div><div class="stat-value">' + s[0] + '</div><div class="stat-sub">' + s[1] + ' points</div></div>';
+  });
+  d.ashtakavarga.weakest.forEach(function(s) {
+    h += '<div class="stat-box" style="border-left-color:#ef4444;"><div class="stat-label">Weak</div><div class="stat-value">' + s[0] + '</div><div class="stat-sub">' + s[1] + ' points</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function shadbalaHtml(d) {
+  var h = '<div class="card"><div class="card-title">Shadbala Ranking</div></div>';
+  var max = Math.max.apply(null, d.shadbala.ranking.map(function(r) { return r[1]; }));
+  d.shadbala.ranking.forEach(function(r) {
+    var pct = (r[1] / max * 100).toFixed(0);
+    h += '<div class="bar-row"><div class="bar-label">' + r[0] + '</div><div class="bar-fill" style="width:' + pct + '%;"></div><div class="bar-value">' + r[1].toFixed(0) + '</div></div>';
+  });
+  return h;
+}
+
+function nakshatraHtml(d) {
+  var h = '<div class="grid-2">';
+  Object.entries(d.nakshatra).forEach(function(e) {
+    var p = e[0], n = e[1];
+    h += '<div class="card"><div class="card-title">' + p + '</div><div class="card-text">' + n.nakshatra + ' (pada ' + n.pada + ')</div><div class="card-meta">Lord: ' + n.lord + ' | Deity: ' + n.deity + '</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function varshphalHtml(d) {
+  var h = '<div class="grid-2">';
+  h += '<div class="card"><div class="card-title">Year ' + d.varshphal.year + '</div><div class="card-text">Muntha: ' + d.varshphal.muntha.rashi + '</div><div class="card-meta">Year Lord: ' + d.varshphal.year_lord.planet + '</div></div>';
+  h += '<div class="card"><div class="card-title">Annual Ascendant</div><div class="card-text">' + d.varshphal.ascendant.rashi + ' ' + d.varshphal.ascendant.degree + ' deg</div></div>';
+  h += '</div>';
+  return h;
+}
+
+async function loadCountry(country) {
+  document.querySelectorAll('.fp-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.querySelector('.fp-btn[data-country="' + country + '"]');
+  if (btn) btn.classList.add('active');
+  
+  document.getElementById('fpContent').innerHTML = '<div class="loading">Calculating all engines for ' + country + '...</div>';
+  document.getElementById('fpTabs').style.display = 'none';
+  
+  try {
+    var res = await fetch('/api/world/full/predict/' + encodeURIComponent(country));
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    var d = await res.json();
+    DATA = d;
+    
+    var html = '';
+    html += '<div id="tab-overview" class="fp-content active">' + overviewHtml(d) + '</div>';
+    html += '<div id="tab-predictions" class="fp-content">' + predictionsHtml(d) + '</div>';
+    html += '<div id="tab-chart" class="fp-content">' + chartHtml(d) + '</div>';
+    html += '<div id="tab-dasha" class="fp-content">' + dashaHtml(d) + '</div>';
+    html += '<div id="tab-yogas" class="fp-content">' + yogasHtml(d) + '</div>';
+    html += '<div id="tab-ashtakavarga" class="fp-content">' + ashtakavargaHtml(d) + '</div>';
+    html += '<div id="tab-shadbala" class="fp-content">' + shadbalaHtml(d) + '</div>';
+    html += '<div id="tab-nakshatra" class="fp-content">' + nakshatraHtml(d) + '</div>';
+    html += '<div id="tab-varshphal" class="fp-content">' + varshphalHtml(d) + '</div>';
+    
+    document.getElementById('fpContent').innerHTML = html;
+    document.getElementById('fpTabs').style.display = 'flex';
+    document.querySelectorAll('.fp-tab').forEach(function(t) {
+      t.onclick = function() { switchTab(t.dataset.tab); };
+    });
+  } catch (e) {
+    document.getElementById('fpContent').innerHTML = '<div class="loading" style="color:#f0a0a0;">Error: ' + e.message + '</div>';
+  }
+}
+
+function loadCountries() {
+  var countries = ['India', 'USA', 'China', 'Russia', 'Pakistan', 'UK', 'Israel', 'Ukraine', 'Japan', 'Germany', 'France', 'Brazil', 'Australia', 'Canada', 'Saudi Arabia', 'Iran', 'North Korea', 'South Korea', 'Nepal', 'Sri Lanka', 'Bangladesh', 'Afghanistan', 'Turkey', 'Egypt', 'South Africa'];
+  var h = '';
+  countries.forEach(function(c) {
+    h += '<button class="fp-btn" data-country="' + c + '" onclick="loadCountry(\\'' + c + '\\')">' + c + '</button>';
+  });
+  document.getElementById('fpCountries').innerHTML = h;
+  loadCountry('India');
+}
+
+document.addEventListener('DOMContentLoaded', loadCountries);
+</script>
+</body>
+</html>
+"""
+
+Path("frontend/full-prediction.html").write_text(frontend_code, encoding="utf-8")
+print("Frontend created")
+
+# ═══════════════════════════════════════════════════════════
+# TEST
+# ═══════════════════════════════════════════════════════════
+
+print()
+print("=" * 60)
+print("TESTING FULL PREDICTION API")
+print("=" * 60)
+
+import subprocess
+import sys
+
+result = subprocess.run([sys.executable, "-m", "engine.astro.predictions_engine"], capture_output=True, text=True)
+print(result.stdout[:1500])
+if result.stderr:
+    print("STDERR:", result.stderr[:300])

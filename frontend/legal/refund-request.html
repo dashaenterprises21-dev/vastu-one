@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refund Request — Vastu One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU <span class="brand-mark">✦</span> ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/kundli-pro.html">Kundli Pro</a>
+      <a href="/legal/refund.html">Policy</a>
+    </nav>
+  </div>
+</header>
+
+<main class="legal-page">
+  <div class="legal-header">
+    <div class="legal-eyebrow">Support · Refund</div>
+    <h1 class="legal-title">Refund Request</h1>
+    <p class="legal-subtitle">Submit a refund request for payment issues</p>
+  </div>
+
+  <div class="legal-warning" style="margin-bottom:32px;">
+    <strong>⚠ Note:</strong> All sales are final. Refunds are only issued for duplicate payments or technical failures. See our <a href="/legal/refund.html" style="color:var(--gold);">Refund Policy</a> for details.
+  </div>
+
+  <form id="refundForm" style="max-width:600px;margin:0 auto;">
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:11px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">Razorpay Payment ID</label>
+      <input type="text" id="paymentId" required placeholder="pay_XXXXXXXXXXXX" style="width:100%;padding:14px 18px;background:rgba(31,6,12,0.5);border:1px solid var(--line);border-radius:10px;color:var(--ivory);font-size:14px;outline:none;font-family:monospace;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:11px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">Email Address</label>
+      <input type="email" id="email" required placeholder="your@email.com" style="width:100%;padding:14px 18px;background:rgba(31,6,12,0.5);border:1px solid var(--line);border-radius:10px;color:var(--ivory);font-size:14px;outline:none;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:11px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">Reason</label>
+      <select id="reason" required style="width:100%;padding:14px 18px;background:rgba(31,6,12,0.5);border:1px solid var(--line);border-radius:10px;color:var(--ivory);font-size:14px;outline:none;">
+        <option value="">Select reason...</option>
+        <option value="duplicate">Duplicate Payment</option>
+        <option value="technical">Technical Failure</option>
+        <option value="not_received">Report Not Received</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:11px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">Details</label>
+      <textarea id="details" rows="4" placeholder="Describe the issue..." style="width:100%;padding:14px 18px;background:rgba(31,6,12,0.5);border:1px solid var(--line);border-radius:10px;color:var(--ivory);font-size:14px;outline:none;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+
+    <button type="submit" style="width:100%;background:linear-gradient(135deg,#e0b968,#d4a961,#b8893b);color:#2a0810;border:none;padding:18px 24px;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 32px rgba(212,169,97,0.4);">Submit Request</button>
+  </form>
+
+  <div id="refundStatus" style="display:none;margin-top:24px;padding:20px;border-radius:12px;text-align:center;font-size:14px;"></div>
+</main>
+
+<footer class="foot" style="padding:40px;text-align:center;border-top:1px solid var(--line);">
+  <div style="font-size:12px;color:var(--ivory-dim);">© 2026 Vastu One · Nagpur, Maharashtra</div>
+  <div style="margin-top:16px;font-size:12px;">
+    <a href="/legal/privacy.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Privacy</a>
+    <a href="/legal/terms.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Terms</a>
+    <a href="/legal/refund.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Refund</a>
+  </div>
+</footer>
+
+<script>
+document.getElementById('refundForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var status = document.getElementById('refundStatus');
+  var paymentId = document.getElementById('paymentId').value;
+  var email = document.getElementById('email').value;
+  var reason = document.getElementById('reason').value;
+  var details = document.getElementById('details').value;
+  
+  status.style.display = 'block';
+  status.style.background = 'rgba(212,169,97,0.15)';
+  status.style.color = '#d4a961';
+  status.innerHTML = '⏳ Submitting request...';
+  
+  try {
+    var res = await fetch('/api/payments/refund', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_id: paymentId, amount: 505, reason: reason + ': ' + details })
+    });
+    var data = await res.json();
+    
+    if (data.refund_id) {
+      status.style.background = 'rgba(16,185,129,0.15)';
+      status.style.color = '#7ee0a0';
+      status.innerHTML = '✅ <strong>Refund Request Submitted!</strong><br>Refund ID: ' + data.refund_id + '<br>We will review within 3-5 business days.';
+      document.getElementById('refundForm').reset();
+    } else {
+      throw new Error(data.detail || 'Failed');
+    }
+  } catch (err) {
+    status.style.background = 'rgba(248,113,113,0.15)';
+    status.style.color = '#fca5a5';
+    status.innerHTML = '❌ <strong>Request Failed</strong><br>' + err.message + '<br><br>Email: dashaenterprises21@gmail.com';
+  }
+});
+</script>
+
+</body>
+</html>

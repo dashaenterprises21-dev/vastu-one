@@ -62,6 +62,14 @@ async def lifespan(app: FastAPI):
 
 
 from api.routes import payments_routes
+from api.routes import email_routes
+from api.routes import world_routes
+from api.routes import deep_world_routes
+from api.routes import master_world_routes
+from api.routes import advanced_routes
+from api.routes import real_transit_routes
+from api.routes import full_prediction_routes
+from api.routes import pdf_download_routes
 
 app = FastAPI(
     title="VASTU ONE",
@@ -118,6 +126,14 @@ app.include_router(astro_v3_router)
 app.include_router(advanced_kundli_router)
 app.include_router(advanced_astro_router)
 app.include_router(payments_routes.router)
+app.include_router(email_routes.router)
+app.include_router(world_routes.router)
+app.include_router(deep_world_routes.router)
+app.include_router(master_world_routes.router)
+app.include_router(advanced_routes.router)
+app.include_router(real_transit_routes.router)
+app.include_router(full_prediction_routes.router)
+app.include_router(pdf_download_routes.router)
 
 
 @app.get("/api")

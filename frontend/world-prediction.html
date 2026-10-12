@@ -1,0 +1,578 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Prediction — Vastu One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+.world-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+.world-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.world-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 8px 20px;
+  border: 1px solid var(--line-gold);
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+
+.world-hero-title {
+  font-family: var(--font-display);
+  font-size: 52px;
+  color: var(--ivory);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.world-hero-sub {
+  font-size: 16px;
+  color: var(--ivory-muted);
+  font-style: italic;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 40px 0;
+}
+
+.country-card {
+  background: linear-gradient(135deg, rgba(90, 20, 32, 0.5), rgba(50, 10, 18, 0.65));
+  border: 1px solid var(--line-gold);
+  border-radius: 14px;
+  padding: 22px 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.country-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
+}
+
+.country-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 24px 60px -16px rgba(212, 169, 97, 0.3);
+}
+
+.country-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--ivory);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.country-meta {
+  font-size: 12px;
+  color: var(--ivory-muted);
+  line-height: 1.6;
+}
+
+.country-rashi {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--gold);
+  background: rgba(212, 169, 97, 0.12);
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--line-gold);
+}
+
+.prediction-panel {
+  margin-top: 40px;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(90, 20, 32, 0.5), rgba(50, 10, 18, 0.7));
+  border: 1px solid var(--line-gold);
+  border-radius: 20px;
+  display: none;
+}
+
+.prediction-panel.active {
+  display: block;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.prediction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.prediction-country-name {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--ivory);
+  margin: 0;
+  font-weight: 500;
+}
+
+.prediction-country-sub {
+  font-size: 13px;
+  color: var(--ivory-muted);
+  margin-top: 4px;
+}
+
+.prediction-section {
+  margin-bottom: 32px;
+}
+
+.prediction-section-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.prediction-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+}
+
+.prediction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.month-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: all 0.25s;
+}
+
+.month-card:hover {
+  border-color: var(--gold);
+  background: rgba(212, 169, 97, 0.08);
+}
+
+.month-label {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.month-prediction {
+  font-size: 14px;
+  color: var(--ivory);
+  line-height: 1.6;
+}
+
+.confidence-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.confidence-High { background: rgba(16, 185, 129, 0.15); color: #7ee0a0; border: 1px solid rgba(16, 185, 129, 0.4); }
+.confidence-Medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+.confidence-Low { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+.risk-card {
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid #ef4444;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.opportunity-card {
+  background: rgba(16, 185, 129, 0.08);
+  border-left: 3px solid #10b981;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .world-page { padding: 32px 16px 60px; }
+  .world-hero-title { font-size: 32px; }
+  .world-hero-sub { font-size: 14px; }
+  .country-grid { grid-template-columns: 1fr; gap: 12px; }
+  .prediction-panel { padding: 24px 20px; }
+  .prediction-country-name { font-size: 26px; }
+  .prediction-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU <span class="brand-mark">✦</span> ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/kundli-pro.html">Kundli Pro</a>
+      <a href="/world-prediction.html" class="active">World</a>
+    </nav>
+  </div>
+</header>
+
+<main class="world-page">
+  <div class="world-hero">
+    <div class="world-hero-eyebrow">🌍 World Prediction</div>
+    <h1 class="world-hero-title">दुनिया की भविष्यवाणी</h1>
+    <p class="world-hero-sub">Country-wise astrological analysis — Independence charts, Dasha, Transit, and Predictions</p>
+  </div>
+
+  <div id="countryGrid" class="country-grid">
+    <div style="text-align:center;padding:60px;color:var(--ivory-muted);grid-column:1/-1;">Loading countries...</div>
+  </div>
+
+  <div id="predictionPanel" class="prediction-panel"></div>
+</main>
+
+<footer class="foot" style="padding:40px;text-align:center;border-top:1px solid var(--line);">
+  <div style="font-size:12px;color:var(--ivory-dim);">© 2026 Vastu One · Nagpur, Maharashtra</div>
+  <div style="margin-top:16px;font-size:12px;">
+    <a href="/legal/privacy.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Privacy</a>
+    <a href="/legal/terms.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Terms</a>
+    <a href="/legal/disclaimer.html" style="color:var(--gold);text-decoration:none;margin:0 12px;">Disclaimer</a>
+  </div>
+</footer>
+
+<script>
+async function loadCountries() {
+  try {
+    var res = await fetch('/api/world/countries');
+    var data = await res.json();
+    
+    var html = '';
+    (data.countries || []).forEach(function(country) {
+      html += '<div class="country-card" onclick="loadPrediction(\'' + country + '\')">';
+      html += '<div class="country-name">' + country + '</div>';
+      html += '<div class="country-meta">Click to see prediction</div>';
+      html += '<div class="country-rashi">🌍 ' + country + '</div>';
+      html += '</div>';
+    });
+    
+    document.getElementById('countryGrid').innerHTML = html;
+  } catch (e) {
+    console.error('Countries load error:', e);
+    document.getElementById('countryGrid').innerHTML = '<div style="text-align:center;padding:60px;color:#f0a0a0;grid-column:1/-1;">Failed to load countries</div>';
+  }
+}
+
+async function loadPrediction(country) {
+  var panel = document.getElementById('predictionPanel');
+  panel.classList.add('active');
+  panel.innerHTML = '<div style="text-align:center;padding:60px;color:var(--ivory-muted);">Loading prediction for ' + country + '...</div>';
+  
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  try {
+    var res = await fetch('/api/world/deep/predict/' + country);
+    var data = await res.json();
+    
+    var html = '';
+    
+    // Header
+    html += '<div class="prediction-header">';
+    html += '<div>';
+    html += '<h2 class="prediction-country-name">' + data.country + '</h2>';
+    var chartType = (data.chart && data.chart.type) || (data.chart_data && data.chart_data.type) || '';
+    var chartDate = (data.chart && data.chart.date) || (data.chart_data && data.chart_data.date) || '';
+    html += '<div class="prediction-country-sub">' + chartType + ' — ' + chartDate + '</div>';
+    html += '</div>';
+    html += '<div style="text-align:right;">';
+    html += '<div style="font-size:11px;color:var(--gold);letter-spacing:0.14em;">CURRENT DASHA</div>';
+    var maha = (data.current_period && data.current_period.current_mahadasha) || (data.current_dasha && data.current_dasha.current_period) || '—';
+    var age = (data.current_period && data.current_period.age_years) || (data.current_dasha && data.current_dasha.age_years) || '';
+    html += '<div style="font-family:var(--font-display);font-size:24px;color:var(--ivory);margin-top:4px;">' + maha + '</div>';
+    html += '<div style="font-size:11px;color:var(--ivory-muted);margin-top:4px;">Age: ' + age + ' years</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    // 12-month predictions
+    if (data.predictions && data.predictions.length) {
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">📅 Next 12 Months</h3>';
+      html += '<div class="prediction-grid">';
+      data.predictions.forEach(function(p) {
+        html += '<div class="month-card">';
+        html += '<div class="month-label">' + p.month + '</div>';
+        html += '<div class="month-prediction">' + p.prediction + '</div>';
+        html += '<span class="confidence-badge confidence-' + p.confidence + '">' + p.confidence + ' Confidence</span>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+    
+    // Long term
+    if (data.long_term) {
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">🔮 Long Term (5-10 Years)</h3>';
+      html += '<div class="prediction-grid">';
+      Object.entries(data.long_term.next_5_years || {}).forEach(function(e) {
+        html += '<div class="month-card">';
+        html += '<div class="month-label">' + e[0] + '</div>';
+        html += '<div class="month-prediction">' + e[1] + '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+    
+    // Risk areas
+    if (data.risk_areas && data.risk_areas.length) {
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">⚠️ Risk Areas</h3>';
+      data.risk_areas.forEach(function(r) {
+        html += '<div class="risk-card">';
+        html += '<div style="font-size:15px;color:var(--ivory);font-weight:600;">' + r.area + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:6px;"><strong style="color:#fca5a5;">Risk:</strong> ' + r.risk + ' · <strong>Period:</strong> ' + r.period + '</div>';
+        html += '<div style="font-size:12px;color:#7ee0a0;margin-top:6px;"><strong>उपाय:</strong> ' + r.remedy + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    
+    // Opportunity areas
+    if (data.opportunity_areas && data.opportunity_areas.length) {
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">✨ Opportunity Areas</h3>';
+      data.opportunity_areas.forEach(function(o) {
+        html += '<div class="opportunity-card">';
+        html += '<div style="font-size:15px;color:var(--ivory);font-weight:600;">' + o.area + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:6px;"><strong style="color:#7ee0a0;">Opportunity:</strong> ' + o.opportunity + ' · <strong>Period:</strong> ' + o.period + '</div>';
+        html += '<div style="font-size:12px;color:var(--gold);margin-top:6px;"><strong>Action:</strong> ' + o.action + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    
+    
+    
+    // EARTHQUAKE PREDICTION
+    if (data.earthquake_prediction) {
+      var eq = data.earthquake_prediction;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">🌍 Earthquake Prediction</h3>';
+      html += '<div style="padding:16px;background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;border-radius:10px;margin-bottom:12px;">';
+      var eqRisk = (eq.overall_risk && eq.overall_risk.level) || eq.risk_level || 'Medium';
+      var eqMag = (eq.highest_risk_zone && eq.highest_risk_zone.magnitude_range) || eq.magnitude_estimate || '—';
+      var eqZones = (eq.zones || []).map(function(z){return z.zone;}).join(', ') || (eq.vulnerable_zones || []).join(', ');
+      html += '<div style="font-size:16px;color:var(--ivory);font-weight:600;">Risk Level: <span style="color:#fca5a5;">' + eqRisk + '</span></div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:8px;"><strong>Magnitude Estimate:</strong> ' + eqMag + '</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:6px;"><strong>Vulnerable Zones:</strong> ' + eqZones + '</div>';
+      html += '</div>';
+      if (eq.trigger_periods) {
+        eq.trigger_periods.forEach(function(t) {
+          html += '<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;">';
+          html += '<div style="font-size:13px;color:var(--gold);font-weight:600;">' + t.period + '</div>';
+          html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:4px;">' + t.reason + '</div>';
+          html += '</div>';
+        });
+      }
+      html += '<div style="font-size:11px;color:var(--gold-deep);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">📚 ' + (eq.classical_reference || '') + '</div>';
+      html += '</div>';
+    }
+    
+    // WAR PREDICTION
+    if (data.war_prediction) {
+      var war = data.war_prediction;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">⚔️ War Prediction</h3>';
+      html += '<div style="padding:16px;background:rgba(245,158,11,0.08);border-left:3px solid #f59e0b;border-radius:10px;margin-bottom:12px;">';
+      html += '<div style="font-size:16px;color:var(--ivory);font-weight:600;">Risk Level: <span style="color:#fbbf24;">' + war.risk_level + '</span></div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:8px;"><strong>War Type:</strong> ' + war.war_type + '</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:6px;"><strong>Involved Countries:</strong> ' + (war.involved_countries || []).join(', ') + '</div>';
+      html += '</div>';
+      if (war.trigger_periods) {
+        war.trigger_periods.forEach(function(t) {
+          html += '<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;">';
+          html += '<div style="font-size:13px;color:var(--gold);font-weight:600;">' + t.period + ' <span style="color:' + (t.probability === 'High' ? '#fca5a5' : '#fbbf24') + ';">(' + t.probability + ')</span></div>';
+          html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:4px;">' + t.reason + '</div>';
+          html += '</div>';
+        });
+      }
+      html += '<div style="font-size:11px;color:var(--gold-deep);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">📚 ' + (war.classical_reference || '') + '</div>';
+      html += '</div>';
+    }
+    
+    // POLITICAL CHANGE
+    if (data.political_change) {
+      var pc = data.political_change;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">🏛️ Political Change</h3>';
+      html += '<div style="padding:16px;background:rgba(139,92,246,0.08);border-left:3px solid #8b5cf6;border-radius:10px;margin-bottom:12px;">';
+      html += '<div style="font-size:16px;color:var(--ivory);font-weight:600;">Probability: <span style="color:#c4b5fd;">' + pc.change_probability + '</span></div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:8px;">' + (pc.prediction || '') + '</div>';
+      html += '</div>';
+      if (pc.timeline) {
+        pc.timeline.forEach(function(t) {
+          html += '<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;">';
+          html += '<div style="font-size:13px;color:var(--gold);font-weight:600;">' + t.year + '</div>';
+          html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:4px;">' + t.event + '</div>';
+          html += '</div>';
+        });
+      }
+      html += '<div style="font-size:11px;color:var(--gold-deep);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">📚 ' + (pc.classical_reference || '') + '</div>';
+      html += '</div>';
+    }
+    
+    // DEATH PREDICTION
+    if (data.death_prediction) {
+      var dp = data.death_prediction;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">⚰️ High-Profile Death Prediction</h3>';
+      html += '<div style="padding:16px;background:rgba(220,38,38,0.08);border-left:3px solid #dc2626;border-radius:10px;margin-bottom:12px;">';
+      html += '<div style="font-size:14px;color:var(--ivory);">Risk Level: <strong>' + dp.risk_level + '</strong></div>';
+      html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:8px;font-style:italic;">' + (dp.ethical_note || '') + '</div>';
+      html += '</div>';
+      if (dp.categories) {
+        dp.categories.forEach(function(c) {
+          html += '<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;">';
+          html += '<div style="font-size:13px;color:var(--gold);font-weight:600;">' + c.category + '</div>';
+          html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:4px;">Risk: ' + c.risk + ' · Period: ' + c.period + '</div>';
+          html += '</div>';
+        });
+      }
+      html += '<div style="font-size:11px;color:var(--gold-deep);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">📚 ' + (dp.classical_reference || '') + '</div>';
+      html += '</div>';
+    }
+    
+    // NATURAL DISASTER
+    if (data.natural_disaster) {
+      var nd = data.natural_disaster;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">🌊 Natural Disaster Prediction</h3>';
+      if (nd.flood_risk) {
+        html += '<div style="padding:12px;background:rgba(59,130,246,0.08);border-left:3px solid #3b82f6;border-radius:8px;margin-bottom:8px;">';
+        html += '<div style="font-size:14px;color:var(--ivory);font-weight:600;">🌊 Flood Risk: ' + nd.flood_risk.level + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:6px;"><strong>Areas:</strong> ' + (nd.flood_risk.areas || []).join(', ') + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);"><strong>Period:</strong> ' + nd.flood_risk.period + '</div>';
+        html += '</div>';
+      }
+      if (nd.cyclone_risk) {
+        html += '<div style="padding:12px;background:rgba(6,182,212,0.08);border-left:3px solid #06b6d4;border-radius:8px;margin-bottom:8px;">';
+        html += '<div style="font-size:14px;color:var(--ivory);font-weight:600;">🌀 Cyclone Risk: ' + nd.cyclone_risk.level + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:6px;"><strong>Areas:</strong> ' + (nd.cyclone_risk.areas || []).join(', ') + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);"><strong>Period:</strong> ' + nd.cyclone_risk.period + '</div>';
+        html += '</div>';
+      }
+      if (nd.heatwave_risk) {
+        html += '<div style="padding:12px;background:rgba(249,115,22,0.08);border-left:3px solid #f97316;border-radius:8px;margin-bottom:8px;">';
+        html += '<div style="font-size:14px;color:var(--ivory);font-weight:600;">🔥 Heatwave Risk: ' + nd.heatwave_risk.level + '</div>';
+        html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:6px;"><strong>Period:</strong> ' + nd.heatwave_risk.period + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    
+    // ECONOMIC ANALYSIS
+    if (data.economic_analysis) {
+      var ea = data.economic_analysis;
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">💰 Economic Analysis</h3>';
+      html += '<div style="padding:16px;background:rgba(16,185,129,0.08);border-left:3px solid #10b981;border-radius:10px;margin-bottom:12px;">';
+      html += '<div style="font-size:14px;color:var(--ivory);">' + (ea.market_outlook || '') + '</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);margin-top:8px;"><strong>Recession Risk:</strong> ' + ea.recession_risk + '</div>';
+      html += '<div style="font-size:13px;color:var(--ivory-muted);"><strong>Currency:</strong> ' + ea.currency + '</div>';
+      html += '</div>';
+      if (ea.sectors) {
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;">';
+        Object.entries(ea.sectors).forEach(function(e) {
+          html += '<div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;">';
+          html += '<div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;">' + e[0] + '</div>';
+          html += '<div style="font-size:12px;color:var(--ivory-muted);margin-top:4px;">' + e[1] + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+      html += '<div style="font-size:11px;color:var(--gold-deep);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">📚 ' + (ea.classical_reference || '') + '</div>';
+      html += '</div>';
+    }
+    
+    // RESEARCH REFERENCES
+    if (data.research_references) {
+      html += '<div class="prediction-section">';
+      html += '<h3 class="prediction-section-title">📚 Research References</h3>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">';
+      data.research_references.forEach(function(ref) {
+        html += '<div style="padding:12px;background:rgba(212,169,97,0.08);border:1px solid var(--line-gold);border-radius:8px;">';
+        html += '<div style="font-size:13px;color:var(--gold);font-weight:600;">' + ref.book + '</div>';
+        html += '<div style="font-size:11px;color:var(--ivory-muted);margin-top:4px;">' + ref.chapter + '</div>';
+        html += '<div style="font-size:11px;color:var(--ivory-dim);margin-top:4px;font-style:italic;">' + ref.topic + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    }
+
+    // Disclaimer
+    html += '<div style="margin-top:40px;padding:20px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:12px;font-size:12px;color:var(--ivory-muted);line-height:1.7;">';
+    html += '<strong style="color:#f59e0b;">⚠ Disclaimer:</strong> Yeh predictions classical astrology ke hisaab se hain. Yeh educational aur informational purpose ke liye hain. Koi bhi decision lene se pehle qualified astrologer ya expert se consult karein.';
+    html += '</div>';
+    
+    panel.innerHTML = html;
+  } catch (e) {
+    console.error('Prediction error:', e);
+    panel.innerHTML = '<div style="text-align:center;padding:60px;color:#f0a0a0;">Failed to load prediction. Please try again.</div>';
+  }
+}
+
+loadCountries();
+</script>
+
+</body>
+</html>

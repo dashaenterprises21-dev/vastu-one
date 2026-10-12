@@ -116,6 +116,67 @@ function buildPDFReport(data) {
     card: 'linear-gradient(135deg, rgba(90,20,32,0.55), rgba(50,10,18,0.7))'
   };
 
+  // ══════════════════════════════════════════
+  // PDF HELPER FUNCTIONS
+  // ══════════════════════════════════════════
+  function page(content) {
+    return '<div style="max-width:900px;margin:0 auto 24px auto;padding:40px 48px;background:' + T.bg + ';color:' + T.ivory + ';page-break-after:always;position:relative;font-family:Georgia,serif;">' +
+      content +
+      '<div style="position:absolute;bottom:20px;left:48px;right:48px;display:flex;justify-content:space-between;font-size:10px;color:' + T.ivoryDim + ';letter-spacing:0.1em;border-top:1px solid ' + T.line + ';padding-top:12px;">' +
+      '<span>VASTU ONE · KUNDLI REPORT</span><span>Page ' + (typeof pageNum !== 'undefined' ? pageNum++ : '') + '</span></div></div>';
+  }
+
+  function hero(title, hindi, sub) {
+    return '<div style="text-align:center;padding:20px 0 36px;border-bottom:1px solid ' + T.lineGold + ';margin-bottom:36px;position:relative;">' +
+      '<div style="font-size:10px;letter-spacing:0.32em;color:' + T.gold + ';font-weight:600;text-transform:uppercase;margin-bottom:16px;">VASTU ONE · KUNDLI REPORT</div>' +
+      '<h1 style="font-family:Georgia,serif;font-size:32px;font-weight:400;color:' + T.ivory + ';margin:0 0 8px 0;letter-spacing:-0.02em;">' + title + '</h1>' +
+      (hindi ? '<div style="font-family:serif;font-size:18px;color:' + T.gold + ';margin-top:8px;">' + hindi + '</div>' : '') +
+      (sub ? '<div style="font-size:12px;color:' + T.ivoryMuted + ';margin-top:12px;font-style:italic;">' + sub + '</div>' : '') +
+      '</div>';
+  }
+
+  function stitle(num, title, hindi) {
+    return '<div style="margin:32px 0 20px 0;padding-bottom:12px;border-bottom:1px solid ' + T.line + ';position:relative;">' +
+      (num ? '<div style="font-size:10px;letter-spacing:0.3em;color:' + T.goldDeep + ';font-weight:600;text-transform:uppercase;margin-bottom:8px;">' + num + '</div>' : '') +
+      '<h2 style="font-family:Georgia,serif;font-size:22px;font-weight:500;color:' + T.ivory + ';margin:0;">' + title +
+      (hindi ? ' <span style="font-size:15px;color:' + T.gold + ';font-weight:400;">' + hindi + '</span>' : '') + '</h2>' +
+      '<div style="position:absolute;bottom:-1px;left:0;width:60px;height:2px;background:linear-gradient(90deg,' + T.maroonRich + ',' + T.gold + ');"></div></div>';
+  }
+
+  function card(content) {
+    return '<div style="background:' + T.cardBg + ';border:1px solid ' + T.lineGold + ';border-radius:14px;padding:22px;margin-bottom:18px;position:relative;">' +
+      '<div style="position:absolute;top:0;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,' + T.gold + ',transparent);"></div>' +
+      content + '</div>';
+  }
+
+  function table(headers, rows) {
+    let h = '<table style="width:100%;border-collapse:collapse;font-size:11.5px;margin:14px 0;">';
+    h += '<thead><tr>';
+    headers.forEach(function(hd) {
+      h += '<th style="padding:10px 12px;background:rgba(212,169,97,0.12);color:' + T.gold + ';font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;text-align:left;border-bottom:1px solid ' + T.lineGold + ';">' + hd + '</th>';
+    });
+    h += '</tr></thead><tbody>';
+    rows.forEach(function(r) {
+      h += '<tr>';
+      r.forEach(function(cell, i) {
+        h += '<td style="padding:9px 12px;border-bottom:1px solid ' + T.line + ';color:' + T.ivoryMuted + ';font-size:11.5px;' + (i === 0 ? 'font-weight:600;color:' + T.ivory + ';' : '') + '">' + cell + '</td>';
+      });
+      h += '</tr>';
+    });
+    return h + '</tbody></table>';
+  }
+
+  function list(items) {
+    if (!items || !items.length) return '';
+    let h = '<ul style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.8;padding-left:20px;margin:10px 0;">';
+    items.forEach(function(i) { h += '<li>' + i + '</li>'; });
+    return h + '</ul>';
+  }
+
+  // ═══ END HELPERS ═══
+
+
+
   const basic = data.basic || {};
   const lagna = data.lagna || {};
   const positions = data.positions || {};
@@ -135,35 +196,6 @@ function buildPDFReport(data) {
   let html = '';
   let pg = 1;
 
-  function page(content) {
-    return '<div style="max-width:900px;margin:0 auto 24px auto;padding:48px 56px;background:' + T.bg + ';color:' + T.ivory + ';page-break-after:always;position:relative;font-family:Georgia,serif;">' +
-      content +
-      '<div style="position:absolute;bottom:20px;left:56px;right:56px;display:flex;justify-content:space-between;font-size:10px;color:' + T.ivoryDim + ';letter-spacing:0.1em;border-top:1px solid ' + T.line + ';padding-top:12px;">' +
-      '<span>VASTU ONE · KUNDLI REPORT</span><span>Page ' + (pg++) + '</span></div></div>';
-  }
-
-  function hero(title, hindi, sub) {
-    return '<div style="text-align:center;padding:20px 0 40px;border-bottom:1px solid ' + T.lineGold + ';margin-bottom:40px;position:relative;">' +
-      '<div style="font-size:10px;letter-spacing:0.32em;color:' + T.gold + ';font-weight:600;text-transform:uppercase;margin-bottom:16px;">VASTU ONE · KUNDLI REPORT</div>' +
-      '<h1 style="font-family:Georgia,serif;font-size:36px;font-weight:400;color:' + T.ivory + ';margin:0 0 8px 0;letter-spacing:-0.02em;">' + title + '</h1>' +
-      (hindi ? '<div style="font-family:serif;font-size:19px;color:' + T.gold + ';margin-top:8px;">' + hindi + '</div>' : '') +
-      (sub ? '<div style="font-size:12px;color:' + T.ivoryMuted + ';margin-top:12px;font-style:italic;">' + sub + '</div>' : '') +
-      '</div>';
-  }
-
-  function stitle(num, title, hindi) {
-    return '<div style="margin:32px 0 20px 0;padding-bottom:12px;border-bottom:1px solid ' + T.line + ';position:relative;">' +
-      '<div style="font-size:10px;letter-spacing:0.3em;color:' + T.goldDeep + ';font-weight:600;text-transform:uppercase;margin-bottom:8px;">' + num + '</div>' +
-      '<h2 style="font-family:Georgia,serif;font-size:22px;font-weight:500;color:' + T.ivory + ';margin:0;">' + title +
-      (hindi ? ' <span style="font-size:15px;color:' + T.gold + ';font-weight:400;">' + hindi + '</span>' : '') + '</h2>' +
-      '<div style="position:absolute;bottom:-1px;left:0;width:60px;height:2px;background:linear-gradient(90deg,' + T.maroonRich + ',' + T.gold + ');"></div></div>';
-  }
-
-  function card(content) {
-    return '<div style="background:' + T.card + ';border:1px solid ' + T.lineGold + ';border-radius:14px;padding:22px;margin-bottom:18px;position:relative;">' +
-      '<div style="position:absolute;top:0;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,' + T.gold + ',transparent);"></div>' + content + '</div>';
-  }
-
   function tbl(headers, rows) {
     let h = '<table style="width:100%;border-collapse:collapse;font-size:11.5px;margin:14px 0;">';
     h += '<thead><tr>';
@@ -179,13 +211,6 @@ function buildPDFReport(data) {
       h += '</tr>';
     });
     return h + '</tbody></table>';
-  }
-
-  function list(items) {
-    if (!items || !items.length) return '';
-    let h = '<ul style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.8;padding-left:20px;margin:10px 0;">';
-    items.forEach(function(i) { h += '<li>' + i + '</li>'; });
-    return h + '</ul>';
   }
 
   // ══════════════════════════════════════════
@@ -508,6 +533,397 @@ function buildPDFReport(data) {
   // ══════════════════════════════════════════
   // YOGAS
   // ══════════════════════════════════════════
+  
+  // ══════════════════════════════════════════
+  // PHASE 1: PANCHANG
+  // ══════════════════════════════════════════
+  if (data.panchang && data.panchang.panchang) {
+    const pn = data.panchang.panchang || {};
+    const mu = data.panchang.muhurta || {};
+    const sm = data.panchang.sun_moon || {};
+    let content = hero('Panchang', 'पंचांग', 'Traditional Vedic almanac');
+    content += table(['Element', 'Value'], [
+      ['तिथि', pn.tithi || '—'], ['पक्ष', pn.paksha_hindi || '—'],
+      ['नक्षत्र', pn.nakshatra || '—'], ['योग', pn.yoga || '—'],
+      ['करण', pn.karana || '—'], ['वार', pn.vaar || '—'],
+      ['सूर्योदय', sm.sunrise || '—'], ['सूर्यास्त', sm.sunset || '—'],
+      ['राहु काल', mu.rahu_kaal || '—'], ['यमगंड', mu.yamaganda || '—'],
+      ['गुलिक काल', mu.gulika_kaal || '—'],
+    ]);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 1: GRAHA MAITRI
+  // ══════════════════════════════════════════
+  if (data.graha_maitri && data.graha_maitri.natural) {
+    let content = hero('Graha Maitri', 'ग्रह मैत्री', 'Planetary friendships');
+    let rows = [];
+    Object.entries(data.graha_maitri.natural).forEach(function(e) {
+      const p = e[1];
+      rows.push([p.hindi, (p.friends || []).join(', '), (p.enemies || []).join(', '), (p.neutral || []).join(', ')]);
+    });
+    content += table(['Planet', 'Friends', 'Enemies', 'Neutral'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 1: ASPECTS
+  // ══════════════════════════════════════════
+  if (data.aspects && data.aspects.aspects) {
+    let content = hero('Planetary Aspects', 'ग्रह दृष्टि', 'Full Vedic Drishti');
+    let rows = data.aspects.aspects.slice(0, 30).map(function(a) {
+      return [a.from_hindi, a.aspect + 'th', a.to_hindi, 'Bhava ' + a.bhava];
+    });
+    content += table(['From', 'Aspect', 'To', 'Bhava'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 1: GEMSTONE
+  // ══════════════════════════════════════════
+  if (data.gemstone && data.gemstone.recommendations) {
+    let content = hero('Gemstone Report', 'रत्न रिपोर्ट', 'Personalized ratna recommendations');
+    if (data.gemstone.recommendations.length === 0) {
+      content += '<p style="font-size:13px;color:' + T.ivoryMuted + ';">No specific gemstone recommendation.</p>';
+    } else {
+      data.gemstone.recommendations.forEach(function(r) {
+        content += card(
+          '<div style="font-size:16px;color:' + T.gold + ';font-weight:600;margin-bottom:10px;">💎 ' + r.name + ' (' + r.english + ')</div>' +
+          '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.8;">' +
+          '<div><strong style="color:' + T.gold + ';">Planet:</strong> ' + r.planet_hindi + '</div>' +
+          '<div><strong style="color:' + T.gold + ';">Metal:</strong> ' + r.metal + '</div>' +
+          '<div><strong style="color:' + T.gold + ';">Finger:</strong> ' + r.finger + '</div>' +
+          '<div><strong style="color:' + T.gold + ';">Day:</strong> ' + r.day + '</div>' +
+          '<div><strong style="color:' + T.gold + ';">Weight:</strong> ' + r.weight + '</div>' +
+          '<div><strong style="color:' + T.gold + ';">Mantra:</strong> ' + r.mantra + '</div>' +
+          '</div>'
+        );
+      });
+    }
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 1: NAKSHATRA
+  // ══════════════════════════════════════════
+  if (data.nakshatra && data.nakshatra.birth_nakshatra) {
+    const bn = data.nakshatra.birth_nakshatra;
+    let content = hero('Nakshatra Report', 'नक्षत्र रिपोर्ट', 'Birth star analysis');
+    content += card(
+      '<div style="font-size:18px;color:' + T.gold + ';font-weight:600;margin-bottom:12px;">⭐ ' + (bn.name || '—') + ' (' + (bn.english || '') + ')</div>' +
+      '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.9;">' +
+      '<div><strong style="color:' + T.gold + ';">Lord:</strong> ' + (bn.lord || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Devta:</strong> ' + (bn.devta || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Gana:</strong> ' + (bn.gana || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Yoni:</strong> ' + (bn.yoni || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Nadi:</strong> ' + (bn.nadi || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Varna:</strong> ' + (bn.varna || '—') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Nature:</strong> ' + (bn.nature || '—') + '</div>' +
+      '</div>'
+    );
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 2: SADE SATI
+  // ══════════════════════════════════════════
+  if (data.sade_sati && data.sade_sati.current_status) {
+    const cs = data.sade_sati.current_status;
+    let content = hero('Sade Sati', 'साढ़े साती', 'Shani transit analysis');
+    content += card(
+      '<div style="font-size:15px;color:' + T.gold + ';font-weight:600;margin-bottom:10px;">🪐 ' + (cs.status || '') + '</div>' +
+      '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.8;">' +
+      '<div><strong style="color:' + T.gold + ';">Moon Rashi:</strong> ' + (cs.moon_rashi_hindi || '') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">Shani Rashi:</strong> ' + (cs.shani_rashi_hindi || '') + '</div>' +
+      '<div><strong style="color:' + T.gold + ';">In Sade Sati:</strong> ' + (cs.in_sade_sati ? 'हाँ' : 'नहीं') + '</div>' +
+      '</div>'
+    );
+    if (data.sade_sati.effects) content += stitle('', 'Effects') + list(data.sade_sati.effects);
+    if (data.sade_sati.remedies) {
+      content += stitle('', 'उपाय');
+      data.sade_sati.remedies.forEach(function(r) {
+        content += card('<div style="font-size:12.5px;color:' + T.ivoryMuted + ';">' + r.remedy + ' <em>(' + r.type + ')</em></div>');
+      });
+    }
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 2: KAAL SARP
+  // ══════════════════════════════════════════
+  if (data.kaal_sarp) {
+    const ks = data.kaal_sarp;
+    let content = hero('Kaal Sarp Dosha', 'काल सर्प दोष', 'Serpent dosha analysis');
+    if (!ks.has_dosha) {
+      content += card('<div style="font-size:14px;color:#7ee0a0;font-weight:600;">✅ कोई काल सर्प दोष नहीं</div>');
+    } else {
+      content += card('<div style="font-size:15px;color:#f0a0a0;font-weight:600;">🐍 काल सर्प दोष</div>' + (ks.type && ks.type.name ? '<div style="font-size:13px;color:' + T.ivory + ';margin-top:6px;">Type: ' + ks.type.name + '</div>' : ''));
+      if (ks.effects) content += stitle('', 'Effects') + list(ks.effects);
+      if (ks.remedies) { content += stitle('', 'उपाय'); ks.remedies.forEach(function(r) { content += card('<div style="font-size:12.5px;color:' + T.ivoryMuted + ';">' + r.remedy + '</div>'); }); }
+    }
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 2: TRANSIT
+  // ══════════════════════════════════════════
+  if (data.transit && data.transit.current_transits) {
+    let content = hero('Transit (Gochar)', 'गोचर', 'Current planetary transits');
+    let rows = data.transit.current_transits.map(function(t) {
+      return [t.planet_hindi, t.rashi_hindi, 'Bhava ' + t.bhava, t.nature];
+    });
+    content += table(['Planet', 'Rashi', 'Bhava', 'Nature'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 2: YOGINI DASHA
+  // ══════════════════════════════════════════
+  if (data.yogini_dasha && data.yogini_dasha.current_yogini) {
+    const cy = data.yogini_dasha.current_yogini;
+    let content = hero('Yogini Dasha', 'योगिनी दशा', 'Alternative dasha system');
+    content += card('<div style="font-size:16px;color:' + T.gold + ';font-weight:600;">🎭 ' + cy.name + '</div>' + '<div style="font-size:13px;color:' + T.ivoryMuted + ';margin-top:6px;">Planet: ' + cy.planet + ' · Duration: ' + cy.years + ' years</div>');
+    if (data.yogini_dasha.full_cycle) {
+      let rows = data.yogini_dasha.full_cycle.slice(0, 8).map(function(p) {
+        return [p.yogini, p.planet, p.years + 'y', p.start, p.end, p.is_current ? '← NOW' : ''];
+      });
+      content += table(['Yogini', 'Planet', 'Years', 'Start', 'End', ''], rows);
+    }
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 2: PITRU DOSHA
+  // ══════════════════════════════════════════
+  if (data.pitru_dosha) {
+    const pd = data.pitru_dosha;
+    let content = hero('Pitru Dosha', 'पितृ दोष', 'Ancestral karma');
+    if (!pd.has_dosha) {
+      content += card('<div style="font-size:14px;color:#7ee0a0;font-weight:600;">✅ कोई पितृ दोष नहीं</div>');
+    } else {
+      content += card('<div style="font-size:15px;color:#f0a0a0;font-weight:600;">👴 पितृ दोष</div>' + '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';margin-top:8px;">' + ((pd.reasons || []).join('<br>')) + '</div>');
+      if (pd.effects) content += stitle('', 'Effects') + list(pd.effects);
+      if (pd.remedies) { content += stitle('', 'उपाय'); pd.remedies.forEach(function(r) { content += card('<div style="font-size:12.5px;color:' + T.ivoryMuted + ';">' + r.remedy + ' <em>(' + r.type + ')</em></div>'); }); }
+    }
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 3: YOGAS EXTENDED
+  // ══════════════════════════════════════════
+  if (data.yogas_extended && data.yogas_extended.yogas) {
+    let content = hero('Extended Yogas', 'विस्तृत योग', (data.yogas_extended.total || 0) + ' auspicous combinations');
+    data.yogas_extended.yogas.forEach(function(y) {
+      content += card(
+        '<div style="font-size:14px;color:' + T.gold + ';font-weight:600;margin-bottom:6px;">🌟 ' + y.name + ' (' + y.english + ')</div>' +
+        '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.6;">' + (y.description || '') + '</div>' +
+        (y.effect ? '<div style="font-size:12px;color:#7ee0a0;margin-top:6px;">✓ ' + y.effect + '</div>' : '')
+      );
+    });
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 3: DOSHAS EXTENDED
+  // ══════════════════════════════════════════
+  if (data.doshas_extended && data.doshas_extended.doshas) {
+    let content = hero('Extended Doshas', 'विस्तृत दोष', (data.doshas_extended.total || 0) + ' challenging combinations');
+    data.doshas_extended.doshas.forEach(function(d) {
+      content += card(
+        '<div style="font-size:14px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">⚠️ ' + d.name + ' (' + d.english + ')</div>' +
+        '<div style="font-size:12px;color:' + T.gold + ';margin-bottom:6px;">Severity: ' + d.severity + '</div>' +
+        '<div style="font-size:12.5px;color:' + T.ivoryMuted + ';line-height:1.6;">' + (d.description || '') + '</div>' +
+        (d.remedies && d.remedies.length ? '<div style="font-size:12px;color:#7ee0a0;margin-top:6px;"><strong>उपाय:</strong> ' + d.remedies.join(' · ') + '</div>' : '')
+      );
+    });
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 3: SUDARSHAN CHAKRA
+  // ══════════════════════════════════════════
+  if (data.sudarshan_chakra && data.sudarshan_chakra.combined) {
+    let content = hero('Sudarshan Chakra', 'सुदर्शन चक्र', 'Lagna + Chandra + Surya combined');
+    let rows = data.sudarshan_chakra.combined.map(function(h) {
+      return ['House ' + h.house, h.from_lagna, h.from_chandra, h.from_surya];
+    });
+    content += table(['House', 'From Lagna', 'From Chandra', 'From Surya'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 4: KP SYSTEM
+  // ══════════════════════════════════════════
+  if (data.kp_system && data.kp_system.planets_kp) {
+    let content = hero('KP System', 'केपी पद्धति', 'Krishnamurti Paddhati');
+    let rows = data.kp_system.planets_kp.map(function(p) {
+      return [p.planet, p.nakshatra, p.nakshatra_lord, p.sub_lord, 'Bhava ' + (p.bhava || '')];
+    });
+    content += table(['Planet', 'Nakshatra', 'Star Lord', 'Sub Lord', 'Bhava'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 4: VARSHPHAL
+  // ══════════════════════════════════════════
+  if (data.varshphal && data.varshphal.varsha_year) {
+    let content = hero('Varshphal', 'वर्षफल', 'Annual chart analysis');
+    content += card('<div style="font-size:15px;color:' + T.gold + ';font-weight:600;">🎂 Varsha Number</div>' + '<div style="font-size:13px;color:' + T.ivoryMuted + ';margin-top:6px;">Number: ' + data.varshphal.varsha_year.varsha_number + ' · Age: ' + data.varshphal.varsha_year.age + '</div>');
+    if (data.varshphal.muntha) content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">🌙 Muntha</div>' + '<div style="font-size:13px;color:' + T.ivoryMuted + ';margin-top:6px;">' + (data.varshphal.muntha.muntha_rashi_hindi || '') + '</div>');
+    if (data.varshphal.year_lord) content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">👑 Year Lord</div>' + '<div style="font-size:13px;color:' + T.ivoryMuted + ';margin-top:6px;">' + (data.varshphal.year_lord.lord_hindi || '') + '</div>');
+    if (data.varshphal.predictions) content += stitle('', 'Predictions') + list(data.varshphal.predictions);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 4: MEDICAL ASTROLOGY
+  // ══════════════════════════════════════════
+  if (data.medical_astrology) {
+    const ma = data.medical_astrology;
+    let content = hero('Medical Astrology', 'चिकित्सा ज्योतिष', 'Health vulnerabilities');
+    if (ma.longevity) content += card('<div style="font-size:14px;color:' + T.gold + ';font-weight:600;">⏳ Longevity</div><div style="font-size:14px;color:' + T.ivory + ';margin-top:6px;">' + (ma.longevity.duration || '') + '</div>');
+    if (ma.weak_planets && ma.weak_planets.length) { content += stitle('', 'Weak Planets'); ma.weak_planets.forEach(function(w) { content += card('<div style="font-size:13px;color:#f0a0a0;font-weight:600;">' + w.planet_hindi + '</div><div style="font-size:12px;color:' + T.ivoryMuted + ';margin-top:4px;">' + w.reason + '</div>'); }); }
+    if (ma.preventive_care) content += stitle('', 'Preventive Care') + list(ma.preventive_care);
+    if (ma.health_risks) content += stitle('', 'Health Risks') + list(ma.health_risks);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 5: SHADVARGA
+  // ══════════════════════════════════════════
+  if (data.shadvarga) {
+    let content = hero('Shadvarga Charts', 'षड्वर्ग', '7 Divisional Charts');
+    Object.entries(data.shadvarga).forEach(function(e) {
+      let varga = e[0];
+      let v = e[1];
+      content += card('<div style="font-size:14px;color:' + T.gold + ';font-weight:600;margin-bottom:6px;">' + varga + ' — ' + v.name + '</div>' + '<div style="font-size:12px;color:' + T.ivoryMuted + ';margin-bottom:6px;">' + v.meaning + ' · Lagna: ' + v.lagna_hindi + '</div>');
+    });
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 5: ASHTAKOOTA
+  // ══════════════════════════════════════════
+  if (data.ashtakoota && data.ashtakoota.scores) {
+    let content = hero('Guna Milan', 'गुण मिलान', 'Ashtakoota 36-point matching');
+    content += card('<div style="font-size:32px;color:' + T.gold + ';font-weight:700;text-align:center;">' + data.ashtakoota.total + '/36</div>' + '<div style="font-size:13px;color:' + T.ivoryMuted + ';text-align:center;margin-top:6px;">' + data.ashtakoota.percentage + '% · ' + data.ashtakoota.verdict + '</div>');
+    let rows = [];
+    Object.entries(data.ashtakoota.scores).forEach(function(e) {
+      rows.push([e[0].replace(/_/g, ' ').toUpperCase(), e[1].score + '/' + e[1].max]);
+    });
+    content += table(['Koota', 'Score'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 5: NUMEROLOGY
+  // ══════════════════════════════════════════
+  if (data.numerology && data.numerology.mulank) {
+    let content = hero('Numerology', 'अंकशास्त्र', 'Mulank · Bhagyank · Naamank');
+    content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">🔢 Mulank (Birth Number)</div><div style="font-size:20px;color:' + T.gold + ';font-weight:700;margin-top:6px;">' + data.numerology.mulank.number + '</div><div style="font-size:12px;color:' + T.ivoryMuted + ';">' + data.numerology.mulank.info.hindi + ' — ' + data.numerology.mulank.info.traits + '</div>');
+    content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">🌟 Bhagyank (Destiny)</div><div style="font-size:20px;color:' + T.gold + ';font-weight:700;margin-top:6px;">' + data.numerology.bhagyank.number + '</div><div style="font-size:12px;color:' + T.ivoryMuted + ';">' + data.numerology.bhagyank.info.hindi + '</div>');
+    content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">✨ Lucky Details</div><div style="font-size:12px;color:' + T.ivoryMuted + ';margin-top:6px;line-height:1.7;">Number: ' + data.numerology.lucky_number + '<br>Color: ' + data.numerology.lucky_color + '<br>Day: ' + data.numerology.lucky_day + '<br>Gemstone: ' + data.numerology.lucky_gemstone + '</div>');
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 5: CLASSICAL REFERENCES
+  // ══════════════════════════════════════════
+  if (data.classical_references && data.classical_references.length) {
+    let content = hero('Classical References', 'शास्त्रीय संदर्भ', data.classical_references.length + ' References');
+    let rows = data.classical_references.slice(0, 30).map(function(r) {
+      return [r.text + ' ' + r.chapter + '.' + r.shloka, r.ref];
+    });
+    content += table(['Reference', 'Description'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: NAKSHATRA NADI
+  // ══════════════════════════════════════════
+  if (data.nakshatra_nadi && data.nakshatra_nadi.planets) {
+    let content = hero('Nakshatra Nadi', 'नक्षत्र नाड़ी', 'Planetary Nakshatra details');
+    let rows = [];
+    Object.entries(data.nakshatra_nadi.planets).forEach(function(e) {
+      let p = e[1];
+      rows.push([p.hindi, p.nakshatra, p.lord, p.devta, p.nadi]);
+    });
+    content += table(['Planet', 'Nakshatra', 'Lord', 'Devta', 'Nadi'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: JAIMINI
+  // ══════════════════════════════════════════
+  if (data.jaimini && data.jaimini.chara_karakas) {
+    let content = hero('Jaimini System', 'जैमिनी पद्धति', 'Chara Karakas & Karakamsha');
+    let rows = data.jaimini.chara_karakas.map(function(k) {
+      return [k.num + '. ' + k.hindi, k.planet_hindi, k.degree + '°', k.meaning];
+    });
+    content += table(['Karaka', 'Planet', 'Degree', 'Meaning'], rows);
+    if (data.jaimini.karakamsha) content += card('<div style="font-size:14px;color:' + T.gold + ';font-weight:600;">Karakamsha</div><div style="font-size:13px;color:' + T.ivory + ';margin-top:6px;">' + (data.jaimini.karakamsha.atra_hindi || '') + ' — ' + (data.jaimini.karakamsha.atra_rashi_hindi || '') + '</div>');
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: KP ENHANCED
+  // ══════════════════════════════════════════
+  if (data.kp_enhanced && data.kp_enhanced.sub_sub_analysis) {
+    let content = hero('KP Enhanced', 'केपी विस्तृत', 'Sub-Sub Lord Analysis');
+    let rows = data.kp_enhanced.sub_sub_analysis.map(function(p) {
+      return [p.hindi, p.nakshatra, p.nakshatra_lord, p.sub_lord, p.sub_sub_lord];
+    });
+    content += table(['Planet', 'Nakshatra', 'Star', 'Sub', 'Sub-Sub'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: VARSHPHAL 5-YEAR
+  // ══════════════════════════════════════════
+  if (data.varshphal_enhanced && data.varshphal_enhanced.next_5_years) {
+    let content = hero('Varshphal 5-Year', 'पंचवर्षीय वर्षफल', 'Annual forecast');
+    data.varshphal_enhanced.next_5_years.forEach(function(y) {
+      content += card('<div style="font-size:14px;color:' + T.gold + ';font-weight:600;">' + y.year + ' (Age ' + y.age + ')</div>' + '<div style="font-size:12px;color:' + T.ivoryMuted + ';margin-top:6px;"><strong style="color:' + T.gold + ';">Muntha:</strong> ' + y.muntha_rashi_hindi + '</div>' + '<div style="font-size:12px;color:' + T.ivoryMuted + ';"><strong style="color:' + T.gold + ';">Year Lord:</strong> ' + y.year_lord_hindi + ' — ' + y.year_lord_effects + '</div>');
+    });
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: TRANSIT ENHANCED
+  // ══════════════════════════════════════════
+  if (data.transit_enhanced && data.transit_enhanced.current_transits) {
+    let content = hero('Transit Enhanced', 'गोचर विस्तृत', '12-month detailed forecast');
+    let rows = data.transit_enhanced.current_transits.map(function(x) {
+      return [x.planet_hindi, x.rashi_hindi, 'L: ' + x.from_lagna, 'M: ' + x.from_chandra, x.effect_from_moon];
+    });
+    content += table(['Planet', 'Rashi', 'From Lagna', 'From Moon', 'Effect'], rows);
+    html += page(content);
+  }
+
+  // ══════════════════════════════════════════
+  // PHASE 6: LAL KITAB ENHANCED
+  // ══════════════════════════════════════════
+  if (data.lalkitab_enhanced) {
+    let content = hero('Lal Kitab Enhanced', 'लाल किताब विस्तृत', '3 Teva + Remedies');
+    if (data.lalkitab_enhanced.teva_analysis) {
+      content += stitle('', '3 Teva Analysis');
+      data.lalkitab_enhanced.teva_analysis.forEach(function(tv) {
+        content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">' + tv.teva_hindi + '</div><div style="font-size:13px;color:' + T.ivory + ';">' + tv.rashi_hindi + ' — ' + tv.meaning + '</div>');
+      });
+    }
+    if (data.lalkitab_enhanced.house_wise_remedies) {
+      content += stitle('', 'House-wise Remedies');
+      data.lalkitab_enhanced.house_wise_remedies.forEach(function(h) {
+        let remedies = h.remedies.map(function(r) { return '<strong style="color:' + T.gold + ';">' + r.planet_hindi + ':</strong> ' + r.remedy; }).join('<br>');
+        content += card('<div style="font-size:13px;color:' + T.gold + ';font-weight:600;">Bhava ' + h.house + '</div><div style="font-size:12.5px;color:' + T.ivoryMuted + ';margin-top:6px;line-height:1.7;">' + remedies + '</div>');
+      });
+    }
+    if (data.lalkitab_enhanced.kudrati_upay) content += stitle('', 'Natural Remedies') + list(data.lalkitab_enhanced.kudrati_upay);
+    html += page(content);
+  }
+
+
   if (yogas.length > 0) {
     let content = hero('Yogas', 'शुभ योग', yogas.length + ' auspicious combinations');
     yogas.forEach(function(y, i) {
@@ -572,6 +988,13 @@ function exportToPDF(data) {
 
   const styles = `
     @page { size: A4; margin: 10mm; }
+    .pdf-page, .pdf-section { page-break-after: always; page-break-inside: avoid; }
+    .pdf-page:last-child { page-break-after: auto; }
+    table { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+    h1, h2, h3 { page-break-after: avoid; }
+    img, svg { max-width: 100%; height: auto; page-break-inside: avoid; }
+    .card { page-break-inside: avoid; }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: #1f060c; color: #f5ede0; font-family: Georgia, serif; }
     body { padding: 20px; }
