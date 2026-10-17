@@ -18,6 +18,9 @@ from reportlab.platypus import (
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 
 from engine.astro.predictions_engine import get_predictions
+from engine.astro.deep_paragraph_engine import get_full_explanation_report
+from engine.astro.bnn_hidden_gems import analyze_bnn_complete
+from engine.astro.complete_chart_engine import calculate_complete_chart
 from engine.astro.complete_chart_engine import RASHI_LORDS
 
 
@@ -354,11 +357,64 @@ def make_glossary(story, styles):
 def make_disclaimer(story, styles):
     story.append(Paragraph("17. Disclaimer", styles["SectionTitle"]))
     story.append(HRFlowable(width="100%", thickness=1, color=GOLD, spaceAfter=16))
-    text = "This report is generated using Swiss Ephemeris for actual planetary calculations and classical Vedic astrology principles from BPHS, Phaladeepika, Bhrigu Samhita, Nadi Astrology, Saravali, Jaimini Sutras, and other classical texts.<br/><br/><b>Purpose:</b> Educational and informational only. Not a substitute for professional advice.<br/><br/><b>Limitations:</b> Astrological predictions are probabilistic, not deterministic.<br/><br/><b>No Liability:</b> Vastu One and its creators are not responsible for any decisions arising from this report.<br/><br/><b>Copyright 2026 Vastu One - Nagpur, Maharashtra - All Rights Reserved</b>"
+    text = "This report is generated using Swiss Ephemeris for actual planetary calculations and classical Vedic astrology principles from BPHS, Phaladeepika, Bhrigu Samhita, Nadi Astrology, Saravali, Jaimini Sutras, and other classical texts.<br/><br/><b>Purpose:</b> Educational and informational only. Not a substitute for professional advice.<br/><br/><b>Limitations:</b> Astrological predictions are probabilistic, not deterministic.<br/><br/><b>No Liability:</b> Vastu One and its creators are not responsible for any decisions arising from this report.<br/><br/><b>Copyright 2026 Vastu One - India - All Rights Reserved</b>"
     story.append(Paragraph(text, styles["BodyText2"]))
     story.append(Spacer(1, 1*cm))
     story.append(Paragraph("-- End of Report --", styles["Quote"]))
 
+
+
+def make_bnn_section(story, data, styles):
+    """BNN Hidden Gems section"""
+    story.append(Paragraph("9. BNN Hidden Gems", styles["SectionTitle"]))
+    story.append(HRFlowable(width="100%", thickness=1, color=GOLD, spaceAfter=16))
+    
+    bnn = data.get("bnn_data", {})
+    
+    if bnn.get("conjunctions_5_degree"):
+        story.append(Paragraph("5-Degree Conjunctions (BNN Rule)", styles["SubSection"]))
+        for c in bnn["conjunctions_5_degree"]:
+            story.append(Paragraph(" " + c["planets"][0] + " + " + c["planets"][1] + " (" + str(c["degree_diff"]) + ")  " + c["strength"], styles["BodyText2"]))
+            story.append(Paragraph("  " + c["bnn_effect"], styles["BodyText2"]))
+        story.append(Spacer(1, 0.3*cm))
+    
+    if bnn.get("karakas") and bnn["karakas"].get("karakas"):
+        story.append(Paragraph("Karakas (Jaimini System)", styles["SubSection"]))
+        for k, v in bnn["karakas"]["karakas"].items():
+            story.append(Paragraph(" " + k + ": " + v["planet"] + " (" + str(v["degree"]) + ")  " + v["meaning"], styles["BodyText2"]))
+        story.append(Spacer(1, 0.3*cm))
+    
+    if bnn.get("nakshatra_pada"):
+        story.append(Paragraph("Nakshatra Pada Analysis", styles["SubSection"]))
+        for n in bnn["nakshatra_pada"]:
+            story.append(Paragraph(" " + n["planet"] + " in " + n["nakshatra"] + " pada " + str(n["pada"]) + "  " + n["pada_meaning"], styles["BodyText2"]))
+        story.append(Spacer(1, 0.3*cm))
+    
+    if bnn.get("trinal_combinations"):
+        story.append(Paragraph("Trinal Rashi Combinations", styles["SubSection"]))
+        for t in bnn["trinal_combinations"][:10]:
+            story.append(Paragraph(" " + t["planets"][0] + " + " + t["planets"][1] + " (" + t["rashis"][0] + " + " + t["rashis"][1] + ")", styles["BodyText2"]))
+    
+    story.append(PageBreak())
+
+
+def make_deep_paragraphs_section(story, data, styles):
+    """Deep Paragraph Explanations section"""
+    story.append(Paragraph("10. Deep Paragraph Explanations", styles["SectionTitle"]))
+    story.append(HRFlowable(width="100%", thickness=1, color=GOLD, spaceAfter=16))
+    
+    paragraphs_data = data.get("paragraphs_data", {})
+    paragraphs = paragraphs_data.get("paragraphs", [])
+    
+    story.append(Paragraph("Total Detailed Analyses: " + str(len(paragraphs)), styles["BodyText2"]))
+    story.append(Spacer(1, 0.3*cm))
+    
+    for p in paragraphs:
+        story.append(Paragraph(p.get("title", ""), styles["SubSubSection"]))
+        story.append(Paragraph(p.get("paragraph", ""), styles["ParagraphText"]))
+        story.append(Spacer(1, 0.3*cm))
+    
+    story.append(PageBreak())
 
 def generate_pdf(country="India"):
     data = get_predictions(country)

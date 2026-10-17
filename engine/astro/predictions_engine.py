@@ -57,6 +57,8 @@ def get_predictions(country: str = "India", target_date: datetime = None):
     
     birth = datetime(y, m, d)
     chart = calculate_complete_chart(y, m, d, data["time"], data["lat"], data["lng"])
+    from engine.astro.planetary_deep_analysis import analyze_all_planets_deep
+    planetary_deep = analyze_all_planets_deep(chart)
     dasha = calculate_vimshottari_dasha(chart, birth, target_date)
     transit = calculate_transit(chart, target_date)
     yogas = detect_all_yogas(chart)
@@ -75,7 +77,9 @@ def get_predictions(country: str = "India", target_date: datetime = None):
             "ascendant": chart["ascendant"],
             "sun": chart["planets"]["Sun"],
             "moon": chart["planets"]["Moon"],
+            "planets": chart["planets"],
         },
+        "planetary_deep": planetary_deep,
         "dasha": dasha,
         "yogas": yogas,
         "ashtakavarga": {

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Prediction - Vastu One</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+.mp-page { max-width: 1300px; margin: 0 auto; padding: 40px 24px 80px; }
+.mp-hero { text-align: center; margin-bottom: 30px; }
+.mp-hero-eyebrow { display: inline-flex; align-items: center; gap: 14px; font-size: 11px; letter-spacing: 0.32em; color: var(--gold); text-transform: uppercase; font-weight: 600; padding: 8px 20px; border: 1px solid var(--line-gold); border-radius: 100px; margin-bottom: 24px; }
+.mp-hero-title { font-family: var(--font-display); font-size: 48px; color: var(--ivory); margin: 0 0 12px 0; font-weight: 500; }
+.mp-hero-sub { font-size: 15px; color: var(--ivory-muted); font-style: italic; max-width: 700px; margin: 0 auto; }
+.mp-countries { display: flex; gap: 8px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+.mp-btn { padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 100px; color: var(--ivory-muted); font-size: 12px; cursor: pointer; transition: all 0.25s; }
+.mp-btn:hover { border-color: var(--gold); color: var(--ivory); }
+.mp-btn.active { background: rgba(212,169,97,0.15); border-color: var(--gold); color: var(--gold); }
+.mp-tabs { display: flex; gap: 6px; margin: 28px 0 20px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.mp-tab { padding: 10px 16px; background: transparent; border: none; color: var(--ivory-muted); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.25s; }
+.mp-tab:hover { color: var(--ivory); }
+.mp-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.mp-content { display: none; }
+.mp-content.active { display: block; animation: fadeIn 0.4s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.section { background: linear-gradient(135deg, rgba(90,20,32,0.5), rgba(50,10,18,0.65)); border: 1px solid var(--line-gold); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+.section-title { font-family: var(--font-display); font-size: 26px; color: var(--gold); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.subsection { margin-bottom: 24px; }
+.subsection-title { font-size: 18px; color: var(--gold); font-weight: 600; margin-bottom: 12px; }
+.item { background: rgba(255,255,255,0.03); border-left: 4px solid var(--gold); border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+.item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+.item-title { font-size: 16px; color: var(--ivory); font-weight: 600; }
+.item-body { font-size: 14px; color: var(--ivory); line-height: 1.7; margin-bottom: 10px; }
+.item-reasoning { font-size: 13px; color: var(--ivory-muted); line-height: 1.6; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; }
+.item-reasoning strong { color: var(--gold); }
+.item-ref { font-size: 11px; color: var(--gold-deep); font-style: italic; padding-top: 10px; border-top: 1px solid var(--line); }
+.badge { display: inline-block; font-size: 11px; padding: 3px 12px; border-radius: 100px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.badge-High, .badge-VeryHigh { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+.badge-Medium, .badge-Moderate { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4); }
+.badge-Strong { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4); }
+.badge-Active { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.4); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px; border-left: 3px solid var(--gold); }
+.stat-label { font-size: 10px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.stat-value { font-size: 20px; color: var(--ivory); font-weight: 600; font-family: var(--font-display); }
+.stat-sub { font-size: 11px; color: var(--ivory-muted); margin-top: 4px; }
+
+.planet-card { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--gold); }
+.planet-name { font-family: var(--font-display); font-size: 20px; color: var(--gold); font-weight: 600; margin-bottom: 10px; }
+.planet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.planet-attr { font-size: 12px; }
+.planet-attr-label { color: var(--gold-deep); font-size: 10px; text-transform: uppercase; }
+.planet-attr-value { color: var(--ivory); font-weight: 500; margin-top: 2px; }
+
+.loading { text-align: center; padding: 60px; color: var(--ivory-muted); }
+@media (max-width: 768px) { .mp-hero-title { font-size: 32px; } .section { padding: 20px; } }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">VASTU ONE</a></div>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/world-prediction.html">World</a>
+      <a href="/real-transit.html">Real Transit</a>
+      <a href="/full-prediction.html">Full</a>
+      <a href="/master-prediction.html" class="active">Master</a>
+    </nav>
+  </div>
+</header>
+
+<main class="mp-page">
+  <div class="mp-hero">
+    <div class="mp-hero-eyebrow">Maha Guru Level  6 Layers  91+ Predictions</div>
+    <h1 class="mp-hero-title">Master Prediction Report</h1>
+    <p class="mp-hero-sub">Complete 6-layer astrological analysis  Planetary Deep, Dasha 5 Levels, 100+ Yogas, Ashtakavarga+Transit, Varshphal, Nadi/Bhrigu</p>
+  </div>
+
+  <div class="mp-countries" id="mpCountries"><div class="loading">Loading...</div></div>
+  <div class="mp-tabs" id="mpTabs" style="display:none;">
+    <button class="mp-tab active" data-tab="overview">Overview</button>
+    <button class="mp-tab" data-tab="planets">Planets Deep</button>
+    <button class="mp-tab" data-tab="dasha">Dasha 5 Levels</button>
+    <button class="mp-tab" data-tab="yogas">Yogas</button>
+    <button class="mp-tab" data-tab="transit">Transit+Ashtaka</button>
+    <button class="mp-tab" data-tab="varshphal">Varshphal</button>
+    <button class="mp-tab" data-tab="nadi">Nadi/Bhrigu</button>
+    <button class="mp-tab" data-tab="paragraphs">Deep Paragraphs</button>
+    <button class="mp-tab" data-tab="bnn">BNN Hidden Gems</button>
+    <button class="mp-tab" data-tab="paragraphs">Deep Paragraphs</button>
+    <button class="mp-tab" data-tab="bnn">BNN Hidden Gems</button>
+    <button class="mp-tab" data-tab="paragraphs">Deep Paragraphs</button>
+    <button class="mp-tab" data-tab="bnn">BNN Hidden Gems</button>
+    <button class="mp-tab" data-tab="explanations">Deep Explanations</button>
+  </div>
+  <div id="mpContent"><div class="loading">Select a country</div></div>
+</main>
+
+<script>
+var DATA = null;
+
+function switchTab(name) {
+  document.querySelectorAll('.mp-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.mp-content').forEach(function(c) { c.classList.remove('active'); });
+  document.querySelector('.mp-tab[data-tab="' + name + '"]').classList.add('active');
+  var el = document.getElementById('tab-' + name);
+  if (el) el.classList.add('active');
+}
+
+function overviewHtml(d) {
+  var h = '<div class="section"><div class="section-title">Master Summary</div><div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Country</div><div class="stat-value">' + d.country + '</div><div class="stat-sub">' + d.date + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Total Predictions</div><div class="stat-value">' + d.total_predictions + '</div><div class="stat-sub">6 layers</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Ascendant</div><div class="stat-value">' + d.chart.ascendant.rashi + '</div><div class="stat-sub">' + d.chart.ascendant.degree + ' deg</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Mahadasha</div><div class="stat-value">' + d.complete_dasha.levels.mahadasha.planet + '</div><div class="stat-sub">' + d.complete_dasha.levels.mahadasha.start_date + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Antardasha</div><div class="stat-value">' + d.complete_dasha.levels.antardasha.planet + '</div><div class="stat-sub">Current</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pratyantardasha</div><div class="stat-value">' + d.complete_dasha.levels.pratyantardasha.planet + '</div><div class="stat-sub">Current</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Total Yogas</div><div class="stat-value">' + d.yogas_complete.total_yogas + '</div><div class="stat-sub">' + d.yogas_complete.auspicious.length + ' auspicious</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Transit Verdict</div><div class="stat-value">' + d.transit_ashtakavarga.overall_verdict + '</div><div class="stat-sub">' + d.transit_ashtakavarga.positive_count + ' positive</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Strongest Planet</div><div class="stat-value">' + d.shadbala.strongest + '</div><div class="stat-sub">Shadbala</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Weakest Planet</div><div class="stat-value">' + d.shadbala.weakest + '</div><div class="stat-sub">Shadbala</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Nadi Type</div><div class="stat-value">' + (d.nadi_bhrigu.nadi_karma.nadi || '') + '</div><div class="stat-sub">' + (d.nadi_bhrigu.nadi_karma.past_life || '') + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Karmic Debts</div><div class="stat-value">' + d.nadi_bhrigu.karmic_debts.length + '</div><div class="stat-sub">To resolve</div></div>';
+  h += '</div></div>';
+  
+  h += '<div class="section"><div class="section-title">Executive Summary</div>';
+  h += '<div class="item"><div class="item-body">' + d.country + ' is in <strong>' + d.complete_dasha.levels.mahadasha.planet + ' Mahadasha</strong> with <strong>' + d.complete_dasha.levels.antardasha.planet + ' Antardasha</strong> and <strong>' + d.complete_dasha.levels.pratyantardasha.planet + ' Pratyantardasha</strong>. Current transit verdict is <strong>' + d.transit_ashtakavarga.overall_verdict + '</strong>.</div>';
+  h += '<div class="item-reasoning"><strong>Analysis:</strong> 6 layers analyzed  Planetary Deep (20+ attrs per planet), Dasha (5 levels with exact dates), Yogas (' + d.yogas_complete.total_yogas + '), Ashtakavarga+Transit (bindu analysis), Varshphal (3 years), Nadi/Bhrigu (karmic).</div>';
+  h += '<div class="item-ref">Reference: BPHS, Phaladeepika, Bhrigu Samhita, Nadi Astrology</div></div></div>';
+  
+  return h;
+}
+
+function planetsHtml(d) {
+  var h = '<div class="section"><div class="section-title">Planetary Deep Analysis  20+ Attributes per Planet</div>';
+  Object.entries(d.planetary_deep.planets).forEach(function(e) {
+    var name = e[0], p = e[1];
+    h += '<div class="planet-card">';
+    h += '<div class="planet-name">' + name + '</div>';
+    h += '<div class="planet-grid">';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Rashi</div><div class="planet-attr-value">' + p.rashi + ' ' + p.degree + ' deg</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">House</div><div class="planet-attr-value">' + p.house + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Dignity</div><div class="planet-attr-value">' + p.dignity + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Avastha</div><div class="planet-attr-value">' + p.avastha.state + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Saptavargaja</div><div class="planet-attr-value">' + p.saptavargaja_bala.percentage + '%</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Digbala</div><div class="planet-attr-value">' + p.digbala.digbala + '/60</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Ishta Phala</div><div class="planet-attr-value">' + p.ishta_kashta.ishta_phala + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Kashta Phala</div><div class="planet-attr-value">' + p.ishta_kashta.kashta_phala + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Nakshatra Lord</div><div class="planet-attr-value">' + (p.nakshatra_lord || '') + '</div></div>';
+    h += '<div class="planet-attr"><div class="planet-attr-label">Nakshatra Deity</div><div class="planet-attr-value">' + (p.nakshatra_deity || '') + '</div></div>';
+    h += '</div>';
+    h += '<div class="item-reasoning"><strong>Retrograde:</strong> ' + (p.retrograde ? 'Yes' : 'No') + ' | <strong>Combust:</strong> ' + (p.combust ? 'Yes' : 'No') + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function dashaHtml(d) {
+  var h = '<div class="section"><div class="section-title">Complete Dasha  5 Levels</div>';
+  var levels = d.complete_dasha.levels;
+  var levelNames = ['mahadasha', 'antardasha', 'pratyantardasha', 'sookshma', 'prana'];
+  var levelTitles = ['Mahadasha (Major Period)', 'Antardasha (Sub-Period)', 'Pratyantardasha (Sub-Sub)', 'Sookshma (Micro)', 'Prana (Finest)'];
+  
+  levelNames.forEach(function(lv, i) {
+    var level = levels[lv];
+    if (!level) return;
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + levelTitles[i] + ': ' + level.planet + '</div><span class="badge badge-' + (i < 2 ? 'High' : 'Medium') + '">' + (i < 2 ? 'Active' : 'Current') + '</span></div>';
+    h += '<div class="item-body">' + (level.effects ? level.effects.positive : '') + '</div>';
+    h += '<div class="item-reasoning"><strong>Period:</strong> ' + level.start_date + ' to ' + level.end_date + '</div>';
+    if (level.effects && level.effects.classical_ref) {
+      h += '<div class="item-ref">' + level.effects.classical_ref + '</div>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function yogasHtml(d) {
+  var h = '<div class="section"><div class="section-title">Complete Yoga Analysis (' + d.yogas_complete.total_yogas + ' Yogas)</div>';
+  
+  if (d.yogas_complete.auspicious.length) {
+    h += '<div class="subsection"><div class="subsection-title">Auspicious Yogas (' + d.yogas_complete.auspicious.length + ')</div>';
+    d.yogas_complete.auspicious.forEach(function(y) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + y.name + '</div><span class="badge badge-' + y.strength + '">' + y.strength + '</span></div>';
+      h += '<div class="item-body">' + y.effect + '</div>';
+      h += '<div class="item-ref">' + y.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  if (d.yogas_complete.doshas.length) {
+    h += '<div class="subsection"><div class="subsection-title">Doshas (' + d.yogas_complete.doshas.length + ')</div>';
+    d.yogas_complete.doshas.forEach(function(y) {
+      h += '<div class="item" style="border-left-color:#ef4444;"><div class="item-header"><div class="item-title">' + y.name + '</div><span class="badge badge-' + y.strength + '">' + y.strength + '</span></div>';
+      h += '<div class="item-body">' + y.effect + '</div>';
+      h += '<div class="item-ref">' + y.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  h += '</div>';
+  return h;
+}
+
+function transitHtml(d) {
+  var h = '<div class="section"><div class="section-title">Ashtakavarga + Transit Integration</div>';
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Overall Verdict</div><div class="stat-value">' + d.transit_ashtakavarga.overall_verdict + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Positive</div><div class="stat-value">' + d.transit_ashtakavarga.positive_count + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Negative</div><div class="stat-value">' + d.transit_ashtakavarga.negative_count + '</div></div>';
+  h += '</div>';
+  
+  d.transit_ashtakavarga.transit_analysis.forEach(function(t) {
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + t.planet + ' in ' + t.rashi + ' (House ' + t.house + ')</div><span class="badge badge-' + (t.verdict_type === 'positive' ? 'Strong' : (t.verdict_type === 'negative' ? 'High' : 'Medium')) + '">' + t.bindu + '/8 bindus</span></div>';
+    h += '<div class="item-body">' + t.verdict + '</div>';
+    h += '<div class="item-reasoning"><strong>House Type:</strong> ' + t.house_type + ' | <strong>Nakshatra:</strong> ' + t.nakshatra + ' (Pada ' + t.pada + ')</div></div>';
+  });
+  
+  h += '</div>';
+  return h;
+}
+
+function varshphalHtml(d) {
+  var h = '<div class="section"><div class="section-title">Varshphal  Annual Charts 2026-2028</div>';
+  ['2026', '2027', '2028'].forEach(function(year) {
+    var v = d.varshphal[year];
+    if (!v) return;
+    h += '<div class="item"><div class="item-header"><div class="item-title">Year ' + year + '</div><span class="badge badge-Medium">Muntha: ' + v.muntha.rashi + '</span></div>';
+    h += '<div class="item-body"><strong>Solar Return:</strong> ' + v.solar_return_date + '</div>';
+    h += '<div class="item-reasoning"><strong>Year Lord:</strong> ' + v.year_lord.planet + '  ' + v.year_lord.meaning + '</div>';
+    h += '<div class="item-reasoning"><strong>Muntha Meaning:</strong> ' + v.muntha.meaning + '</div>';
+    h += '<div class="item-ref">' + v.classical_ref + '</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function nadiHtml(d) {
+  var h = '<div class="section"><div class="section-title">Nadi/Bhrigu  Karmic Analysis</div>';
+  
+  var nadi = d.nadi_bhrigu.nadi_karma;
+  if (nadi) {
+    h += '<div class="item"><div class="item-title">Nadi Karma</div>';
+    h += '<div class="item-body"><strong>Nakshatra:</strong> ' + nadi.nakshatra + ' | <strong>Nadi:</strong> ' + nadi.nadi + '</div>';
+    h += '<div class="item-reasoning"><strong>Karma:</strong> ' + nadi.karma + '<br><strong>Past Life:</strong> ' + nadi.past_life + '</div></div>';
+  }
+  
+  if (d.nadi_bhrigu.karmic_debts.length) {
+    h += '<div class="subsection"><div class="subsection-title">Karmic Debts (' + d.nadi_bhrigu.karmic_debts.length + ')</div>';
+    d.nadi_bhrigu.karmic_debts.forEach(function(k) {
+      h += '<div class="item" style="border-left-color:#ef4444;"><div class="item-header"><div class="item-title">' + k.name + '</div><span class="badge badge-High">' + k.type + '</span></div>';
+      h += '<div class="item-body"><strong>Cause:</strong> ' + k.cause + '</div>';
+      h += '<div class="item-reasoning"><strong>Effect:</strong> ' + k.effect + '<br><strong>Remedy:</strong> ' + k.remedy + '</div>';
+      h += '<div class="item-ref">' + k.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  var se = d.nadi_bhrigu.spiritual_evolution;
+  if (se) {
+    h += '<div class="subsection"><div class="subsection-title">Spiritual Evolution</div>';
+    h += '<div class="item"><div class="item-body"><strong>Level:</strong> ' + se.level + '</div>';
+    h += '<div class="item-reasoning"><strong>9th Lord:</strong> ' + se.lord_9th + ' | <strong>12th Lord:</strong> ' + se.lord_12th + '</div>';
+    h += '<div class="item-ref">' + se.classical_ref + '</div></div></div>';
+  }
+  
+  h += '</div>';
+  return h;
+}
+
+
+function explanationsHtml(d) {
+  if (!d.explanations || !d.explanations.explanations) {
+    return '<div class="section"><div class="section-title">Deep Explanations</div><div class="loading">No explanations available</div></div>';
+  }
+  var h = '<div class="section"><div class="section-title">Deep Explanations  ' + d.explanations.total + ' Predictions with Full Analysis</div>';
+  d.explanations.explanations.forEach(function(e) {
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + e.planet + ' in ' + e.rashi + ' (House ' + e.house + ')</div><span class="badge badge-High">' + e.bindu + '/8 bindus</span></div>';
+    h += '<div class="item-body"><strong>' + (e.prediction || e.verdict) + '</strong></div>';
+    h += '<div class="item-reasoning"><strong>Astrological Reason:</strong> ' + (e.astrological_reason || '') + '</div>';
+    h += '<div class="item-reasoning"><strong>Classical Reference:</strong> ' + (e.classical_reference || '') + '</div>';
+    if (e.detailed_explanation) {
+      h += '<div class="item-reasoning" style="white-space:pre-line;font-size:12px;">' + e.detailed_explanation + '</div>';
+    }
+    if (e.historical_evidence && e.historical_evidence.length) {
+      h += '<div class="item-reasoning"><strong>Historical Evidence:</strong><br>';
+      e.historical_evidence.forEach(function(ev) {
+        h += ' ' + ev + '<br>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+
+function paragraphsHtml(d) {
+  if (!d.paragraphs_data || !d.paragraphs_data.paragraphs) {
+    return '<div class="section"><div class="section-title">Deep Paragraph Explanations</div><div class="loading">Loading paragraphs...</div></div>';
+  }
+  var h = '<div class="section"><div class="section-title">Deep Paragraph Explanations  ' + d.paragraphs_data.total + ' Detailed Analyses</div>';
+  d.paragraphs_data.paragraphs.forEach(function(p) {
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + p.title + '</div><span class="badge badge-Medium">' + p.type + '</span></div>';
+    h += '<div class="item-body" style="white-space:pre-line;font-size:13px;line-height:1.8;">' + p.paragraph + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function bnnHtml(d) {
+  if (!d.bnn_data) {
+    return '<div class="section"><div class="section-title">BNN Hidden Gems</div><div class="loading">Loading BNN analysis...</div></div>';
+  }
+  var bnn = d.bnn_data;
+  var h = '<div class="section"><div class="section-title">BNN Hidden Gems  ' + (bnn.conjunctions_5_degree || []).length + ' Conjunctions</div>';
+  
+  // 5-Degree Conjunctions
+  if (bnn.conjunctions_5_degree && bnn.conjunctions_5_degree.length) {
+    h += '<div class="subsection"><div class="subsection-title">5-Degree Conjunctions (BNN Rule)</div>';
+    bnn.conjunctions_5_degree.forEach(function(c) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + c.planets[0] + ' + ' + c.planets[1] + ' (' + c.degree_diff + ')</div><span class="badge badge-' + c.strength.replace(' ', '') + '">' + c.strength + '</span></div>';
+      h += '<div class="item-body">' + c.bnn_effect + '</div>';
+      h += '<div class="item-ref">' + c.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // Karakas
+  if (bnn.karakas && bnn.karakas.karakas) {
+    h += '<div class="subsection"><div class="subsection-title">Karakas (Jaimini System)</div>';
+    Object.entries(bnn.karakas.karakas).forEach(function(e) {
+      var k = e[0], v = e[1];
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + k + ': ' + v.planet + '</div><span class="badge badge-Medium">' + v.degree + '</span></div>';
+      h += '<div class="item-body">' + v.meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // BNN Yogas
+  if (bnn.bnn_yogas && bnn.bnn_yogas.length) {
+    h += '<div class="subsection"><div class="subsection-title">BNN Yogas</div>';
+    bnn.bnn_yogas.forEach(function(y) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + y.name + '</div><span class="badge badge-' + y.strength + '">' + y.strength + '</span></div>';
+      h += '<div class="item-body">' + y.effect + '</div>';
+      h += '<div class="item-ref">' + y.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // Nakshatra Pada
+  if (bnn.nakshatra_pada && bnn.nakshatra_pada.length) {
+    h += '<div class="subsection"><div class="subsection-title">Nakshatra Pada Analysis</div>';
+    bnn.nakshatra_pada.forEach(function(n) {
+      h += '<div class="item"><div class="item-title">' + n.planet + ' in ' + n.nakshatra + ' pada ' + n.pada + '</div>';
+      h += '<div class="item-body">' + n.pada_meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  h += '</div>';
+  return h;
+}
+
+
+function paragraphsHtml(d) {
+  if (!d.paragraphs_data || !d.paragraphs_data.paragraphs) {
+    return '<div class="section"><div class="section-title">Deep Paragraph Explanations</div><div class="loading">Loading paragraphs...</div></div>';
+  }
+  var h = '<div class="section"><div class="section-title">Deep Paragraph Explanations  ' + d.paragraphs_data.total + ' Detailed Analyses</div>';
+  d.paragraphs_data.paragraphs.forEach(function(p) {
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + p.title + '</div><span class="badge badge-Medium">' + p.type + '</span></div>';
+    h += '<div class="item-body" style="white-space:pre-line;font-size:13px;line-height:1.8;">' + p.paragraph + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function bnnHtml(d) {
+  if (!d.bnn_data) {
+    return '<div class="section"><div class="section-title">BNN Hidden Gems</div><div class="loading">Loading BNN analysis...</div></div>';
+  }
+  var bnn = d.bnn_data;
+  var h = '<div class="section"><div class="section-title">BNN Hidden Gems  ' + (bnn.conjunctions_5_degree || []).length + ' Conjunctions</div>';
+  
+  // 5-Degree Conjunctions
+  if (bnn.conjunctions_5_degree && bnn.conjunctions_5_degree.length) {
+    h += '<div class="subsection"><div class="subsection-title">5-Degree Conjunctions (BNN Rule)</div>';
+    bnn.conjunctions_5_degree.forEach(function(c) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + c.planets[0] + ' + ' + c.planets[1] + ' (' + c.degree_diff + ')</div><span class="badge badge-' + c.strength.replace(' ', '') + '">' + c.strength + '</span></div>';
+      h += '<div class="item-body">' + c.bnn_effect + '</div>';
+      h += '<div class="item-ref">' + c.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // Karakas
+  if (bnn.karakas && bnn.karakas.karakas) {
+    h += '<div class="subsection"><div class="subsection-title">Karakas (Jaimini System)</div>';
+    Object.entries(bnn.karakas.karakas).forEach(function(e) {
+      var k = e[0], v = e[1];
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + k + ': ' + v.planet + '</div><span class="badge badge-Medium">' + v.degree + '</span></div>';
+      h += '<div class="item-body">' + v.meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // BNN Yogas
+  if (bnn.bnn_yogas && bnn.bnn_yogas.length) {
+    h += '<div class="subsection"><div class="subsection-title">BNN Yogas</div>';
+    bnn.bnn_yogas.forEach(function(y) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + y.name + '</div><span class="badge badge-' + y.strength + '">' + y.strength + '</span></div>';
+      h += '<div class="item-body">' + y.effect + '</div>';
+      h += '<div class="item-ref">' + y.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  // Nakshatra Pada
+  if (bnn.nakshatra_pada && bnn.nakshatra_pada.length) {
+    h += '<div class="subsection"><div class="subsection-title">Nakshatra Pada Analysis</div>';
+    bnn.nakshatra_pada.forEach(function(n) {
+      h += '<div class="item"><div class="item-title">' + n.planet + ' in ' + n.nakshatra + ' pada ' + n.pada + '</div>';
+      h += '<div class="item-body">' + n.pada_meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  h += '</div>';
+  return h;
+}
+
+
+function paragraphsHtml(d) {
+  if (!d.paragraphs_data || !d.paragraphs_data.paragraphs) {
+    return '<div class="section"><div class="section-title">Deep Paragraph Explanations</div><div class="loading">Loading paragraphs...</div></div>';
+  }
+  var h = '<div class="section"><div class="section-title">Deep Paragraph Explanations  ' + d.paragraphs_data.total + ' Detailed Analyses</div>';
+  d.paragraphs_data.paragraphs.forEach(function(p) {
+    h += '<div class="item"><div class="item-header"><div class="item-title">' + p.title + '</div><span class="badge badge-Medium">' + p.type + '</span></div>';
+    h += '<div class="item-body" style="white-space:pre-line;font-size:13px;line-height:1.8;">' + p.paragraph + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function bnnHtml(d) {
+  if (!d.bnn_data) {
+    return '<div class="section"><div class="section-title">BNN Hidden Gems</div><div class="loading">Loading BNN analysis...</div></div>';
+  }
+  var bnn = d.bnn_data;
+  var h = '<div class="section"><div class="section-title">BNN Hidden Gems  Bhrigu Nandi Nadi Techniques</div>';
+  
+  if (bnn.conjunctions_5_degree && bnn.conjunctions_5_degree.length) {
+    h += '<div class="subsection"><div class="subsection-title">5-Degree Conjunctions (BNN Rule)</div>';
+    bnn.conjunctions_5_degree.forEach(function(c) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + c.planets[0] + ' + ' + c.planets[1] + ' (' + c.degree_diff + ')</div><span class="badge badge-Medium">' + c.strength + '</span></div>';
+      h += '<div class="item-body">' + c.bnn_effect + '</div>';
+      h += '<div class="item-ref">' + c.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  if (bnn.karakas && bnn.karakas.karakas) {
+    h += '<div class="subsection"><div class="subsection-title">Karakas (Jaimini System)</div>';
+    Object.entries(bnn.karakas.karakas).forEach(function(e) {
+      var k = e[0], v = e[1];
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + k + ': ' + v.planet + '</div><span class="badge badge-Medium">' + v.degree + '</span></div>';
+      h += '<div class="item-body">' + v.meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  if (bnn.bnn_yogas && bnn.bnn_yogas.length) {
+    h += '<div class="subsection"><div class="subsection-title">BNN Yogas</div>';
+    bnn.bnn_yogas.forEach(function(y) {
+      h += '<div class="item"><div class="item-header"><div class="item-title">' + y.name + '</div><span class="badge badge-' + y.strength + '">' + y.strength + '</span></div>';
+      h += '<div class="item-body">' + y.effect + '</div>';
+      h += '<div class="item-ref">' + y.classical_ref + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  if (bnn.nakshatra_pada && bnn.nakshatra_pada.length) {
+    h += '<div class="subsection"><div class="subsection-title">Nakshatra Pada Analysis</div>';
+    bnn.nakshatra_pada.forEach(function(n) {
+      h += '<div class="item"><div class="item-title">' + n.planet + ' in ' + n.nakshatra + ' pada ' + n.pada + '</div>';
+      h += '<div class="item-body">' + n.pada_meaning + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  if (bnn.retrograde_reversals && bnn.retrograde_reversals.length) {
+    h += '<div class="subsection"><div class="subsection-title">Retrograde Reversals (BNN Rule)</div>';
+    bnn.retrograde_reversals.forEach(function(r) {
+      h += '<div class="item"><div class="item-title">' + r.planet + ' (Retrograde)</div>';
+      h += '<div class="item-body">' + r.bnn_effect + '</div></div>';
+    });
+    h += '</div>';
+  }
+  
+  h += '</div>';
+  return h;
+}
+
+async function loadCountry(country) {
+  document.querySelectorAll('.mp-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.querySelector('.mp-btn[data-country="' + country + '"]');
+  if (btn) btn.classList.add('active');
+  
+  document.getElementById('mpContent').innerHTML = '<div class="loading">Calculating master prediction for ' + country + '...</div>';
+  document.getElementById('mpTabs').style.display = 'none';
+  
+  try {
+    var res = await fetch('/api/world/master-v2/predict/' + encodeURIComponent(country));
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    var d = await res.json();
+    DATA = d;
+    
+    try {
+      var pRes = await fetch('/api/world/deep-paragraph/paragraphs/' + encodeURIComponent(country));
+      if (pRes.ok) d.paragraphs_data = await pRes.json();
+    } catch(e) { console.log('Paragraphs error:', e); }
+    
+    try {
+      var bRes = await fetch('/api/world/deep-paragraph/bnn/' + encodeURIComponent(country));
+      if (bRes.ok) d.bnn_data = await bRes.json();
+    } catch(e) { console.log('BNN error:', e); }
+    
+    // Fetch paragraphs
+    try {
+      var pRes = await fetch('/api/world/deep-paragraph/paragraphs/' + encodeURIComponent(country));
+      if (pRes.ok) d.paragraphs_data = await pRes.json();
+    } catch(e) { console.log('Paragraphs error:', e); }
+    
+    // Fetch BNN
+    try {
+      var bRes = await fetch('/api/world/deep-paragraph/bnn/' + encodeURIComponent(country));
+      if (bRes.ok) d.bnn_data = await bRes.json();
+    } catch(e) { console.log('BNN error:', e); }
+    
+    // Fetch paragraphs
+    try {
+      var pRes = await fetch('/api/world/deep-paragraph/paragraphs/' + encodeURIComponent(country));
+      if (pRes.ok) d.paragraphs_data = await pRes.json();
+    } catch(e) { console.log('Paragraphs error:', e); }
+    
+    // Fetch BNN
+    try {
+      var bRes = await fetch('/api/world/deep-paragraph/bnn/' + encodeURIComponent(country));
+      if (bRes.ok) d.bnn_data = await bRes.json();
+    } catch(e) { console.log('BNN error:', e); }
+    
+    var html = '';
+    html += '<div id="tab-overview" class="mp-content active">' + overviewHtml(d) + '</div>';
+    html += '<div id="tab-planets" class="mp-content">' + planetsHtml(d) + '</div>';
+    html += '<div id="tab-dasha" class="mp-content">' + dashaHtml(d) + '</div>';
+    html += '<div id="tab-yogas" class="mp-content">' + yogasHtml(d) + '</div>';
+    html += '<div id="tab-transit" class="mp-content">' + transitHtml(d) + '</div>';
+    html += '<div id="tab-varshphal" class="mp-content">' + varshphalHtml(d) + '</div>';
+    html += '<div id="tab-nadi" class="mp-content">' + nadiHtml(d) + '</div>';
+    html += '<div id="tab-paragraphs" class="mp-content">' + paragraphsHtml(d) + '</div>';
+    html += '<div id="tab-bnn" class="mp-content">' + bnnHtml(d) + '</div>';
+    html += '<div id="tab-paragraphs" class="mp-content">' + paragraphsHtml(d) + '</div>';
+    html += '<div id="tab-bnn" class="mp-content">' + bnnHtml(d) + '</div>';
+    html += '<div id="tab-paragraphs" class="mp-content">' + paragraphsHtml(d) + '</div>';
+    html += '<div id="tab-bnn" class="mp-content">' + bnnHtml(d) + '</div>';
+    html += '<div id="tab-explanations" class="mp-content">' + explanationsHtml(d) + '</div>';
+    
+    document.getElementById('mpContent').innerHTML = html;
+    document.getElementById('mpTabs').style.display = 'flex';
+    document.querySelectorAll('.mp-tab').forEach(function(t) {
+      t.onclick = function() { switchTab(t.dataset.tab); };
+    });
+  } catch (e) {
+    document.getElementById('mpContent').innerHTML = '<div class="loading" style="color:#f0a0a0;">Error: ' + e.message + '</div>';
+  }
+}
+
+function loadCountries() {
+  var countries = ['India', 'USA', 'China', 'Russia', 'Pakistan', 'UK', 'Israel', 'Ukraine', 'Japan', 'Germany', 'France', 'Brazil', 'Australia', 'Canada', 'Saudi Arabia', 'Iran', 'North Korea', 'South Korea', 'Nepal', 'Sri Lanka', 'Bangladesh'];
+  var h = '';
+  countries.forEach(function(c) {
+    h += '<button class="mp-btn" data-country="' + c + '" onclick="loadCountry(\'' + c + '\')">' + c + '</button>';
+  });
+  document.getElementById('mpCountries').innerHTML = h;
+  loadCountry('India');
+}
+
+document.addEventListener('DOMContentLoaded', loadCountries);
+</script>
+</body>
+</html>

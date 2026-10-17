@@ -1,0 +1,69 @@
+from pathlib import Path
+
+html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refund Policy  Vastu One</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+body { font-family: 'Inter', sans-serif; background: #0a0608; color: #f5f1e8; line-height: 1.7; }
+.page { max-width: 900px; margin: 0 auto; padding: 6rem 2rem 4rem; }
+h1 { font-family: 'Fraunces', serif; font-size: 48px; color: #d4a961; margin-bottom: 1rem; }
+h2 { font-size: 22px; color: #d4a961; margin-top: 2.5rem; margin-bottom: 1rem; }
+p { font-size: 15px; color: #a8a29e; margin-bottom: 1rem; }
+ul { margin: 1rem 0 1rem 2rem; }
+li { font-size: 15px; color: #a8a29e; margin-bottom: 0.5rem; }
+.card { background: rgba(90,20,32,0.3); border: 1px solid rgba(212,169,97,0.2); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+.card-title { font-size: 18px; color: #d4a961; font-weight: 600; margin-bottom: 0.5rem; }
+.card-desc { font-size: 14px; color: #a8a29e; }
+</style>
+</head>
+<body>
+<div class="page">
+    <h1>Refund Policy</h1>
+    <p>We want you to be completely satisfied with Vastu One. This Refund Policy explains when and how you can request a refund.</p>
+
+    <h2>1. Subscription Refunds</h2>
+    <div class="card">
+        <div class="card-title">Pro Plan</div>
+        <div class="card-desc">Full refund available within 7 days of purchase if you haven't downloaded more than 2 PDF reports. After 7 days, no refund is available.</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Enterprise Plan</div>
+        <div class="card-desc">Custom refund terms are defined in your contract. Contact your account manager for details.</div>
+    </div>
+
+    <h2>2. Product Refunds</h2>
+    <p>Physical products (gemstones, yantras, rudraksha) can be returned within 14 days of delivery if:</p>
+    <ul>
+        <li>Product is unused and in original packaging</li>
+        <li>Certificate of authenticity is intact</li>
+        <li>Return is initiated via our support portal</li>
+    </ul>
+    <p>Return shipping costs are borne by the customer unless the product is defective.</p>
+
+    <h2>3. Course Refunds</h2>
+    <p>LMS courses can be refunded within 3 days of enrollment if less than 20% of the course has been completed. After 3 days, no refund is available.</p>
+
+    <h2>4. Non-Refundable Items</h2>
+    <ul>
+        <li>PDF reports once downloaded</li>
+        <li>Personalized astrology consultations</li>
+        <li>Digital products (e-books, courses once completed)</li>
+        <li>Custom puja services</li>
+    </ul>
+
+    <h2>5. How to Request a Refund</h2>
+    <p>Email <strong>refunds@vastuone.com</strong> with your order ID and reason for refund. We will respond within 48 hours. Approved refunds are processed within 7-10 business days to the original payment method.</p>
+
+    <p style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(212,169,97,0.2); font-size: 13px; color: #6b6b6b;"> 2026 Vastu One  India  All Rights Reserved</p>
+</div>
+</body>
+</html>
+"""
+
+Path("frontend/legal/refund-policy.html").write_text(html, encoding="utf-8")
+print("File written: refund-policy.html")

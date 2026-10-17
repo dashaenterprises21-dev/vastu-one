@@ -1,0 +1,84 @@
+from pathlib import Path
+
+html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security  Vastu One</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/royal-theme.css">
+<style>
+body { font-family: 'Inter', sans-serif; background: #0a0608; color: #f5f1e8; line-height: 1.7; }
+.page { max-width: 900px; margin: 0 auto; padding: 6rem 2rem 4rem; }
+h1 { font-family: 'Fraunces', serif; font-size: 48px; color: #d4a961; margin-bottom: 1rem; }
+h2 { font-size: 22px; color: #d4a961; margin-top: 2.5rem; margin-bottom: 1rem; }
+h3 { font-size: 18px; color: #f5f1e8; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+p { font-size: 15px; color: #a8a29e; margin-bottom: 1rem; }
+ul { margin: 1rem 0 1rem 2rem; }
+li { font-size: 15px; color: #a8a29e; margin-bottom: 0.5rem; }
+.card { background: rgba(90,20,32,0.3); border: 1px solid rgba(212,169,97,0.2); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+.card-title { font-size: 18px; color: #d4a961; font-weight: 600; margin-bottom: 0.5rem; }
+.card-desc { font-size: 14px; color: #a8a29e; }
+.badge { display: inline-block; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #6ee7b7; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<div class="page">
+    <span class="badge"> Enterprise-Grade Security</span>
+    <h1>Security at Vastu One</h1>
+    <p>We take the security of your data seriously. This page outlines the measures we take to protect your information and ensure a safe experience.</p>
+
+    <h2>1. Data Encryption</h2>
+    <div class="card">
+        <div class="card-title">AES-256 Encryption</div>
+        <div class="card-desc">All sensitive data is encrypted at rest using AES-256. Data in transit is protected with TLS 1.3.</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Hashing & Salting</div>
+        <div class="card-desc">Passwords are hashed using bcrypt with a unique salt for every user. We never store plaintext passwords.</div>
+    </div>
+
+    <h2>2. Authentication & Authorization</h2>
+    <div class="card">
+        <div class="card-title">JWT Tokens</div>
+        <div class="card-desc">We use JSON Web Tokens (JWT) with short expiry and refresh tokens for secure session management.</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Role-Based Access Control (RBAC)</div>
+        <div class="card-desc">Users are assigned roles (Admin, Astrologer, Student, Customer) with granular permissions.</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Rate Limiting</div>
+        <div class="card-desc">API endpoints are protected by rate limiting to prevent brute-force attacks and abuse.</div>
+    </div>
+
+    <h2>3. Infrastructure Security</h2>
+    <div class="card">
+        <div class="card-title">Sentinel Monitoring</div>
+        <div class="card-desc">Our custom Sentinel middleware monitors all requests for suspicious activity and blocks threats in real-time.</div>
+    </div>
+    <div class="card">
+        <div class="card-title">Audit Logging</div>
+        <div class="card-desc">Every sensitive action is logged with IP address, user agent, and timestamp for forensic analysis.</div>
+    </div>
+
+    <h2>4. Compliance</h2>
+    <ul>
+        <li>GDPR  General Data Protection Regulation (EU)</li>
+        <li>DPDP Act 2023  Digital Personal Data Protection Act (India)</li>
+        <li>PCI DSS  Payment Card Industry Data Security Standard</li>
+        <li>ISO 27001  Information Security Management (planned)</li>
+    </ul>
+
+    <h2>5. Reporting a Vulnerability</h2>
+    <p>If you discover a security vulnerability, please report it responsibly to <strong>security@vastuone.com</strong>. We will acknowledge your report within 24 hours and work with you to resolve the issue.</p>
+
+    <p style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(212,169,97,0.2); font-size: 13px; color: #6b6b6b;"> 2026 Vastu One  India  All Rights Reserved</p>
+</div>
+</body>
+</html>
+"""
+
+Path("frontend/legal/security.html").write_text(html, encoding="utf-8")
+print("File written: security.html")

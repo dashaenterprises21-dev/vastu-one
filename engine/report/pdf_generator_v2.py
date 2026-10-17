@@ -952,7 +952,7 @@ def make_disclaimer(story, styles):
     <b>Confidentiality:</b> This report is generated for the requesting user and should be 
     treated as personal information.
     <br/><br/>
-    <b>© 2026 Vastu One · Nagpur, Maharashtra · All Rights Reserved</b>
+    <b>© 2026 Vastu One · India · All Rights Reserved</b>
     <br/><br/>
     For questions or support, contact: <b>support@vastuone.com</b>
     """

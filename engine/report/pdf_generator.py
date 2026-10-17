@@ -462,7 +462,7 @@ def create_disclaimer(story, styles):
     Vastu One and its creators are not responsible for any actions taken based on 
     this report. Always consult qualified professionals for important decisions.
     <br/><br/>
-    <b>© 2026 Vastu One · Nagpur, Maharashtra</b>
+    <b>© 2026 Vastu One · India</b>
     """
     
     story.append(Paragraph(disclaimer, styles["BodyText2"]))

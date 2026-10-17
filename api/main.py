@@ -70,6 +70,8 @@ from api.routes import advanced_routes
 from api.routes import real_transit_routes
 from api.routes import full_prediction_routes
 from api.routes import pdf_download_routes
+from api.routes import master_v2_routes
+from api.routes import deep_paragraph_routes
 
 app = FastAPI(
     title="VASTU ONE",
@@ -134,6 +136,8 @@ app.include_router(advanced_routes.router)
 app.include_router(real_transit_routes.router)
 app.include_router(full_prediction_routes.router)
 app.include_router(pdf_download_routes.router)
+app.include_router(master_v2_routes.router)
+app.include_router(deep_paragraph_routes.router)
 
 
 @app.get("/api")
@@ -152,6 +156,7 @@ async def health():
 if (FRONTEND_DIR / "static").exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
 app.mount("/legal", StaticFiles(directory=str(FRONTEND_DIR / "legal"), html=True), name="legal")
+app.mount("/reports", StaticFiles(directory=str(Path(__file__).parent.parent / "reports")), name="reports")
 
 
 # ==========================================
